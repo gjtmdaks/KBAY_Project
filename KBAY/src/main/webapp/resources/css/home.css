@@ -1,0 +1,152 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Pretendard', sans-serif; color: #333; line-height: 1.6; }
+ul { list-style: none; }
+a { text-decoration: none; color: inherit; }
+.container { width: 1100px; margin: 0 auto; }
+
+/* 헤더 영역 */
+header { padding: 20px 0; border-bottom: 1px solid #eee; }
+.header-inner { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 28px; color: #2C3E50; font-weight: 800; }
+.logo span { color: #E74C3C; }
+
+.search-bar { flex: 0.6; display: flex; }
+.search-bar input { flex: 1; padding: 10px; border: 2px solid #2C3E50; border-radius: 4px 0 0 4px; outline: none; }
+.search-bar button { padding: 0 20px; background: #2C3E50; color: #fff; border: none; border-radius: 0 4px 4px 0; cursor: pointer; }
+
+/* 네비게이션 */
+nav { background: #fff; border-bottom: 2px solid #F4F4F4; sticky; top: 0; z-index: 100; }
+.menu { display: flex; align-items: center; }
+.menu li a { display: block; padding: 15px 25px; font-weight: 600; }
+.menu li a.active { color: #E74C3C; border-bottom: 3px solid #E74C3C; }
+.btn-register { background: #E74C3C; color: #fff !important; margin-left: auto; border-radius: 4px; padding: 8px 15px !important; margin-top: 7px; }
+
+/* 배너 영역 */
+.banner { height: 300px; background: #34495E; color: #fff; display: flex; align-items: center; margin-bottom: 40px; }
+.banner-content h2 { font-size: 36px; margin-bottom: 10px; }
+
+/* 아이템 그리드 */
+.section-title { font-size: 24px; margin-bottom: 20px; border-left: 5px solid #2C3E50; padding-left: 10px; }
+.item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.item-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; transition: transform 0.3s; }
+.item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.item-img { height: 200px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: #ccc; font-weight: bold; }
+.item-info { padding: 15px; }
+.item-info h4 { font-size: 16px; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.price { font-size: 14px; color: #666; }
+.price strong { display: block; font-size: 18px; color: #E74C3C; }
+.item-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: #999; }
+.timer { color: #2C3E50; font-weight: bold; }
+/* --- BEST ITEM 가로 스크롤 설정 --- */
+.scroll-container {
+    width: 100%;
+    overflow-x: auto; /* 가로 스크롤 활성화 */
+    padding-bottom: 20px;
+    -ms-overflow-style: none; /* IE 스크롤바 숨기기 */
+    scrollbar-width: thin; /* 파이어폭스 스크롤바 얇게 */
+}
+
+/* 스크롤바 디자인 (크롬, 사파리) */
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+.scroll-container::-webkit-scrollbar-track {
+    background: #F1F1F1;
+    border-radius: 10px;
+}
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #2C3E50;
+    border-radius: 10px;
+}
+
+.item-grid {
+    display: flex; /* grid 대신 flex를 사용하여 가로로 나열 */
+    gap: 20px;
+}
+
+.item-card {
+    flex: 0 0 260px; /* 카드의 너비를 260px로 고정하고 줄어들지 않게 설정 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* --- Footer 영역 스타일 --- */
+footer {
+    background: #F8F9FA;
+    padding: 40px 0;
+    margin-top: 60px;
+    border-top: 1px solid #eee;
+    color: #666;
+    font-size: 13px;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.footer-links a {
+    font-weight: bold;
+    color: #444;
+}
+
+
+.footer-info p {
+    margin-bottom: 5px;
+    line-height: 1.8;
+}
+
+.copy {
+    margin-top: 15px;
+    color: #999;
+}
+/* 1. 멤버 링크 호버 (로그인/회원가입) */
+.hover-link {
+    transition: color 0.3s, font-weight 0.3s;
+}
+.hover-link:hover {
+    color: #E74C3C; /* 강조 색상 */
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* 2. 네비게이션 호버 (현재 진행중인 경매 등) */
+.nav-item {
+    position: relative;
+    transition: color 0.3s;
+}
+.nav-item:hover {
+    color: #E74C3C;
+}
+.nav-item::after { /* 호버 시 아래 바 생성 효과 */
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background-color: #E74C3C;
+    transition: width 0.3s;
+}
+.nav-item:hover::after {
+    width: 100%;
+}
+
+/* 3. 푸터 링크 호버 */
+.f-link {
+    transition: all 0.2s;
+}
+.f-link:hover {
+    color: #333;
+    text-decoration: underline;
+    transform: scale(1.05); /* 살짝 커지는 효과 */
+}
+
+
+/* 베스트 아이템 카드 호버 */
+.item-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border-color: #E74C3C;
+}
