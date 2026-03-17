@@ -1,0 +1,4 @@
+datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+datasource.url=
+datasource.username=
+datasource.password=
