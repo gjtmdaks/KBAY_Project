@@ -1,5 +1,14 @@
 package com.kh.kbay.item.model.vo;
 
-public class ItemImg {
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+public class ItemImg {
+	
+	private int itemNo;
+	private String imgUrl;
+	private int itemImgNo;
+	
 }

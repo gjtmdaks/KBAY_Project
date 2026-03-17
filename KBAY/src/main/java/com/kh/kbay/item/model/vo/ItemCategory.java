@@ -1,5 +1,13 @@
 package com.kh.kbay.item.model.vo;
 
-public class ItemCategory {
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+public class ItemCategory {
+	// 경매 카태고리
+	private int itemCdNo;
+	private String itemCdName;
+	
 }
