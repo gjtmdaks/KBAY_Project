@@ -29,5 +29,16 @@
 			</div>
 		</div>
 	</header>
+	<nav>
+		<div class="container">
+			<ul class="menu">
+				<li><a href="ongoing.jsp" class="nav-item">현재 진행중인 경매</a></li>
+				<li><a href="ended.jsp" class="nav-item">종료된 경매</a></li>
+				<li><a href="upcoming.jsp" class="nav-item">시작 예정인 경매</a></li>
+				<li><a href="community.me" class="nav-item">커뮤니티</a></li>
+				<li><a href="item_reg.jsp" class="btn-register">물품등록</a></li>
+			</ul>
+		</div>
+	</nav>
 </body>
 </html>
