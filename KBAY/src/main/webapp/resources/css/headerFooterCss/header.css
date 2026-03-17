@@ -1,0 +1,16 @@
+@import "../main.css";
+/* 헤더 영역 */
+header { padding: 20px 0; border-bottom: 1px solid #eee; }
+.header-inner { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 28px; color: #2C3E50; font-weight: 800; }
+.logo span { color: #E74C3C; }
+
+.search-bar { flex: 0.5; display: flex; }
+.search-bar input {
+    flex: 1;
+    padding: 15px 50px;
+    border: 2px solid #2C3E50;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+.search-bar button { padding: 15px 20px; background: #2C3E50; color: #fff; border: none; border-radius: 0 4px 4px 0; cursor: pointer; }

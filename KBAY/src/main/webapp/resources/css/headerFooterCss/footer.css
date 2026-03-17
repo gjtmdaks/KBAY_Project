@@ -1,0 +1,41 @@
+@import "../main.css";
+/* --- Footer 영역 스타일 --- */
+footer {
+    background: #F8F9FA;
+    padding: 40px 0;
+    margin-top: 60px;
+    border-top: 1px solid #eee;
+    color: #666;
+    font-size: 13px;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.footer-links a {
+    font-weight: bold;
+    color: #444;
+}
+
+
+.footer-info p {
+    margin-bottom: 5px;
+    line-height: 1.8;
+}
+
+.copy {
+    margin-top: 15px;
+    color: #999;
+}
+/* 3. 푸터 링크 호버 */
+.f-link {
+    transition: all 0.2s;
+}
+.f-link:hover {
+    color: #333;
+    text-decoration: underline;
+    transform: scale(1.05); /* 살짝 커지는 효과 */
+}
