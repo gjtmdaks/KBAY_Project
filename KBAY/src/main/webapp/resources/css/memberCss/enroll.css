@@ -1,0 +1,55 @@
+body {
+	margin: 0;
+	font-family: Arial;
+}
+
+/* 단계 표시 */
+.step-area {
+	text-align: center;
+	margin: 40px 0;
+}
+.step {
+	display: inline-block;
+	width: 120px;
+	height: 120px;
+	border-radius: 60px;
+	background: #ccc;
+	line-height: 120px;
+	margin: 0 20px;
+}
+.step.active {
+	background: #222;
+	color: white;
+}
+
+/* 회원가입 폼 */
+.enroll-area {
+	width: 800px;
+	margin: auto;
+}
+.enroll-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.enroll-table td {
+	border: 1px solid #ccc;
+	padding: 10px;
+}
+.enroll-table td:first-child {
+	width: 150px;
+	background: #eee;
+}
+.enroll-table input {
+	width: 95%;
+	padding: 8px;
+}
+.submit-btn {
+	text-align: center;
+	margin: 30px;
+}
+.submit-btn button {
+	background: #222;
+	color: white;
+	border: none;
+	padding: 10px 30px;
+}
