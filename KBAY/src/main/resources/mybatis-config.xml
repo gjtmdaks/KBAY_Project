@@ -8,7 +8,7 @@
     </settings>
     
     <typeAliases>
-    	<package name="com.kh.kbay" />
+    	
     </typeAliases>
 
 </configuration>
