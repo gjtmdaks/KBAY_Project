@@ -8,8 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/board")
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class BoardController {
-	
+	@RequestMapping("community.me")
+    public String agreeForm() {
+        return "board/board";
+    }
+
 }
