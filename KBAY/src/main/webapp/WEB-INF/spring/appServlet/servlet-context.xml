@@ -75,10 +75,8 @@
 		 - WebSocket/Sockjs는 메세지를 실시간으로 송수신하기 위한 양방향 채널이며
 		   특별한 "기능적인 규약"은 존재하지 않는다.
 	 -->
-<!-- 
-*******************************
 	<beans:bean id="chatHandler" class="com.kh.kbay.chat.model.websocket.ChatWebsocket" />
- -->	
+
 	<websocket:handlers>
 		<!-- 웹소켓 요청을 처리할 수 있는 bean객체 등록 -->
 		<websocket:mapping handler="chatHandler" path="/chat" />
@@ -129,7 +127,6 @@
 		<interceptor>
 			<mapping path="/board/update/**"/>
 			<mapping path="/board/delete/**"/>
-			<!-- ********************************************* -->
 			<beans:bean class="com.kh.kbay.common.interceptors.BoardOwnerCheckInterceptor" />
 		</interceptor>
 	</interceptors>
