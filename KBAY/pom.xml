@@ -92,11 +92,13 @@
 		</dependency>
 				
 		<!-- Servlet -->
+		<!-- Source: https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<!-- 2.5 -> 4.0.1 -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>4.0.1</version>
+		    <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
@@ -154,13 +156,31 @@
 		    <scope>compile</scope>
 		</dependency>
 		<!-- db관련 라이브러리 끝 -->
+		<!-- 롬복 -->
 		<!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
 		    <version>1.18.42</version>
 		    <scope>compile</scope>
-		</dependency>       
+		</dependency>
+		<!-- java를 json으로 -->
+		<!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.21.1</version>
+		    <scope>compile</scope>
+		</dependency>
+		
+		<!-- 스프링 시큐리티 관련 -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springsecurity-version}</version>
+        </dependency>
+         
 	</dependencies>
     <build>
         <plugins>
