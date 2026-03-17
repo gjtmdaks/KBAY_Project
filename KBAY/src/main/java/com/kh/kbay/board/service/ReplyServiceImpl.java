@@ -2,6 +2,8 @@ package com.kh.kbay.board.service;
 
 import org.springframework.stereotype.Service;
 
+import com.kh.kbay.board.dao.ReplyDao;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,5 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
-
+	private final ReplyDao rd;
+	
 }

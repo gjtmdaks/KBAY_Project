@@ -5,13 +5,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.kh.kbay.member.dao.MemberDao;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service("securityServiceImpl")
 @Slf4j
 @RequiredArgsConstructor
-public class MemberServiceImpl implements UserDetailsService {
+public class MemberServiceImpl implements UserDetailsService, MemberService {
+	private final MemberDao md;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
