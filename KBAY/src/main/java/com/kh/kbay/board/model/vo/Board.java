@@ -2,8 +2,6 @@ package com.kh.kbay.board.model.vo;
 
 import java.util.Date;
 
-import com.kh.kbay.board.controller.BoardController;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,5 +16,4 @@ public class Board {
 	private int boardCdNo;
 	private int userNo;
 	private int boardCount;
-	
 }
