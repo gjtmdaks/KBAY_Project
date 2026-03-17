@@ -7,6 +7,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+	<body>
+    <jsp:include page="header.jsp"></jsp:include>
+    <br>
+    <div align="center">
+        <img src="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678069-sign-error-64.png">
+        <br><br>
+        <h1 style="font-weight:bold;">${errorMsg }</h1>
+    </div>
+    <jsp:include page="footer.jsp"></jsp:include>
+	</body>
 </body>
 </html>
