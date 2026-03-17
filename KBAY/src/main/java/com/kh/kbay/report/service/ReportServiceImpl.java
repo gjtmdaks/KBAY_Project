@@ -1,5 +1,13 @@
 package com.kh.kbay.report.service;
 
-public class ReportServiceImpl implements ReportService{
+import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ReportServiceImpl implements ReportService{
+	
 }

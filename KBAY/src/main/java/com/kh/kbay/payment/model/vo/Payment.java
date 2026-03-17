@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-
 public class Payment {
-	
 	private int paymentNo;
 	private int resultNo;
 	private int buyerNo;

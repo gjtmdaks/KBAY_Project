@@ -9,5 +9,4 @@ public class ItemCategory {
 	// 경매 카태고리
 	private int itemCdNo;
 	private String itemCdName;
-	
 }

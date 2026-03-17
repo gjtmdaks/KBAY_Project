@@ -1,5 +1,15 @@
 package com.kh.kbay.board.controller;
 
-public class ReplyController {
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequestMapping("/reply")
+@RequiredArgsConstructor
+public class ReplyController {
+	
 }

@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-
 public class Report {
-	
 	private int reportNo;
 	private int reportCdNo;
 	private int reportorNo;

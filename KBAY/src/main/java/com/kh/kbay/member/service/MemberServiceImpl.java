@@ -5,7 +5,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Service("securityServiceImpl")
+@Slf4j
+@RequiredArgsConstructor
 public class MemberServiceImpl implements UserDetailsService {
 
 	@Override
@@ -13,5 +18,4 @@ public class MemberServiceImpl implements UserDetailsService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

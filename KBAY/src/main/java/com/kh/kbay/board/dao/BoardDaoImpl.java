@@ -1,5 +1,13 @@
 package com.kh.kbay.board.dao;
 
-public class BoardDaoImpl implements BoardDao {
+import org.springframework.stereotype.Repository;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Repository
+@Slf4j
+@RequiredArgsConstructor
+public class BoardDaoImpl implements BoardDao {
+	
 }
