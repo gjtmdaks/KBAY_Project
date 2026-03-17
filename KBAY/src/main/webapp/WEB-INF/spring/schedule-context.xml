@@ -14,7 +14,7 @@
 		 - 기본 동작방식은 싱글쓰레드 방식이며, 멀티쓰레드 스케쥴링이 필요한 경우, 설정을
 		   통해 변경도 가능.
 	 -->
-	 <!-- ************************************** -->
+	
 	<task:annotation-driven scheduler="khScheduler" />
 	<context:component-scan
 	 base-package="com.kh.kbay.common.scheduling" />
