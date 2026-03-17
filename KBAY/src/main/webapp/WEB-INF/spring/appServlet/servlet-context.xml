@@ -3,13 +3,23 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
+	<!-- 
+		<mvc:annotation-drive/>에서 mvc접두어를 뺀 태그. (mvc가 default로 설정되어있어서.)
+		mvc와 관련된 어노테이션을 활성화시키는 역할
+	 -->
 	<annotation-driven />
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
@@ -23,6 +33,135 @@
 	
 	<context:component-scan base-package="com.kh.kbay" />
 	
+	<!-- @Transactional어노테이션 활성화 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
 	
+	<!-- 웹소켓 설정 시작 -->
+	<!-- 
+		Http/Https
+		 - 클라이언트와 웹서버 간에 요청과 응답기반으로 동작하는 전통적인 통신 방식
+		 - 클라이언트의 요청이 있어야만 응답이 발생하는 "단방향"통신 구조
+		 - 연결을 "유지하지 않고" 매 요청시마다 새로운 연결을 생성하는 방식을
+		   사용한다.
+		 - 실시간 처리기능을 개발하는게 어려움.
+		 - 단, 구현방식이 단순하고 범용적으로 많이 사용된다.
+		 
+		WebSocket
+		 - 클라이언트와 서버 간의 지속적인 연결을 유지하며, 양방향 통신을
+		   지원하는 프로토콜
+		    * 양방향 통신 : 양쪽 장치가 동시에 송/수신을 독립적으로 할 수 있는
+		    통신방식(전화기)
+		 - 서버와 클라이언트가 서로 "실시간"으로 데이터를 주고 받을 수 있고, 이
+		   때문에 실시간 서비스 개발에 사용할 수 있다.
+		 - 일반 http개발보다 구현이 복잡하고, 연결 클라이언트 수 유지에 따른
+		   리소스 관리가 필요.
+		   
+		WebSocket 사용을 위한 스펙
+		 - HTML은 HTML5부터 웹소켓을 지원
+		 - Java에서는 Java7부터 지원
+		 - Spring framework는 4.0이상부터 지원
+		 - Spring모듈 : spring-websocket, spring-messaging
+		 
+		WebSocket의 동작방식
+		 - 첫 연결 요청은 http프로토콜을 사용하고, 연결 성공시 통신방식을
+		   WebSocket통신으로 전환한다.(ws:)
+		 - 연결되고 나서부터는 "데이터프레임"을 주고 받는다.
+		 
+		SockJS
+		 - WebSocket을 지원하지 않는 환경에서도 WebSocket처럼 동작하게
+		   해주는 자바스크립트 라이브러리.
+		 - WebSocket을 사용할 수 없는 경우 xhr스트리밍, polling방식을 통새
+		   유사한 기능을 제공.
+		 - WebSocket/Sockjs는 메세지를 실시간으로 송수신하기 위한 양방향 채널이며
+		   특별한 "기능적인 규약"은 존재하지 않는다.
+	 -->
+<!-- 
+*******************************
+	<beans:bean id="chatHandler" class="com.kh.kbay.chat.model.websocket.ChatWebsocket" />
+ -->	
+	<websocket:handlers>
+		<!-- 웹소켓 요청을 처리할 수 있는 bean객체 등록 -->
+		<websocket:mapping handler="chatHandler" path="/chat" />
+		
+		<!-- 
+			첫 웹소켓 연결 요청시 전달되는 HttpSession정보를 WebSocketSession
+			으로 복사해주는 인터셉터
+		 -->
+		 <websocket:handshake-interceptors>
+		 	<beans:bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></beans:bean>
+		 </websocket:handshake-interceptors>
+		 
+		 <websocket:sockjs></websocket:sockjs>
+	</websocket:handlers>
+	<!-- 웹소켓 설정 끝 -->
+	
+	<!-- 
+		STOMP
+		 - WebSocket위에서 동작하는 메시징 프로토콜로 웹소켓을 활용한 복잡한
+		   기능을 구현할 때 사용한다.
+		 - 메세지에 "목적지", "구독", "명령", "헤더", "바디" 등을 추가하여
+		   의미있는 통신을 가능하게 한다.
+		   
+		stopm-endpoint
+		 - stomp서버의 연결경로
+		 
+		application-destination-prefix
+		 - 클라이언트가 "서버"로 보낼 메세지의 시작 url을 지정하는 속성
+		 
+		simple-broker
+		 - 클라이언트가 메세지를 받을 구독 경로
+	 -->
+	<websocket:message-broker application-destination-prefix="/app">
+		<websocket:stomp-endpoint path="/stomp">
+			<websocket:sockjs></websocket:sockjs>
+		</websocket:stomp-endpoint>
+		<websocket:simple-broker prefix="/topic" />
+	</websocket:message-broker>
+	
+	<!-- 
+		인터셉터(Interceptor)
+		 - DispatcherServlet에서 Controller로 보내는 요청을 가로채는
+		   컴포넌트
+		 - 공통관심사(로그인체크, 권한, 인가체크, 로깅체크 등..) 등을 분리하여 관리한다.
+		 - 스프링의 빈객체로 등록하여 기타 서비스나 dao객체를 의존성 주입을 받을 수 있다.
+	 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/board/update/**"/>
+			<mapping path="/board/delete/**"/>
+			<!-- ********************************************* -->
+			<beans:bean class="com.kh.kbay.common.interceptors.BoardOwnerCheckInterceptor" />
+		</interceptor>
+	</interceptors>
+	
+	<!-- 
+		AOP(Aspect Oriented Programming
+		 - 관점지향프로그래밍
+		 - 핵심 비지니스 로직과는 별개로 여러 모듈에서 공통적으로 수행되ㅣ어야 하는 로직들을
+		   특정 관심사로 분리하여 핵심 로직에 영향을 주지 않고 모듈화 시키는 프로그래밍 기법.
+		 - ex) 서비스 메서드 실행 전 후로 로깅처리, 예외처리하는 로직을 추가
+		 
+		aspectj_autoproxy
+		 - Spring에서 AOP를 활성화 시켜주는 속성으로 @Aspect어노테이션을 통해
+		   AOP클래스를 정의할 수 있게 해준다.
+		 - Proxy객체를 생성하여 "대상 메서드" 실행 전/후에 공통 관심사를 삽입
+		 
+		proxy-target-class
+		 - 인터페이스를 구현한 클래스들에 대해서만 프록시를 적용하고자 할때 사용하는 속성
+		 - true속성 추가시 : interface를 구현하지 않은 클래스에 대해서도 프록시를 적용
+		 - false속성 추가시 : interface를 구현한 클래스에 대해서만 프록시를 적용
+		 
+		AOP VS Interceptors의 차이
+		 - Interceptors : DispatcherServlet에서 Controller로 들어오는 요청에서
+		   동작한다.
+		   -> 주로 인증/인가, 로깅, 인코딩처리시 사용
+		 - AOP : service/repository등 비지니스 로직에서 동작(메서드 실행 전/후로)
+		   -> 주로 트랜잭션 처리, 성능 체크, 보안체크 및 공통 소스코드 작성시 사용
+		   
+		스프링 요청 / 응답 흐름
+		클라이언트 요청 -> Filter -> DispatcherServlet -> interceptor
+			-> controller -> AOP -> service -> AOP -> DAO -> DB
+	 -->
+	<aop:aspectj-autoproxy proxy-target-class="false" />
 	
 </beans:beans>
