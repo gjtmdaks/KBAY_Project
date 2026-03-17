@@ -183,6 +183,18 @@
             <version>${org.springsecurity-version}</version>
         </dependency>
         
+        <dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>${org.springsecurity-version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>${org.springsecurity-version}</version>
+		</dependency>
+        
         <!-- 웹소켓(실시간통신) 의존성 -->
         <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
 		<dependency>
@@ -200,6 +212,12 @@
 		    <scope>compile</scope>
 		</dependency>
         <!-- 웹소켓 의존성 끝 -->
+        
+        <dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.4</version>
+		</dependency>
          
 	</dependencies>
     <build>

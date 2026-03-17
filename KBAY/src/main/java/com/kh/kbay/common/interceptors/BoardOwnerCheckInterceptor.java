@@ -1,5 +1,7 @@
 package com.kh.kbay.common.interceptors;
 
-public class BoardOwnerCheckInterceptor {
+import org.springframework.web.servlet.HandlerInterceptor;
+
+public class BoardOwnerCheckInterceptor implements HandlerInterceptor {
 
 }
