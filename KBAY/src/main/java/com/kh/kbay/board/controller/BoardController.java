@@ -4,21 +4,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.kh.kbay.board.service.BoardService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/community.me")
 @RequiredArgsConstructor
 public class BoardController {
 //	private final BoardService bs;
 	
-	@GetMapping("community.me")
-    public String agreeForm() {
+	@GetMapping("")
+    public String communityForm() {
         return "board/board";
     }
+	
+	// 게시판 등록
+	@GetMapping("/insert")
+    public String enrollForm() {
+        return "board/boardWriting";
+    }
+
 
 }

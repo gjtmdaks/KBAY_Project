@@ -1,0 +1,73 @@
+/* 전체 레이아웃 (Flexbox 사용) */
+.community-container {
+    display: flex;
+    max-width: 1000px;
+    margin: 50px auto;
+    gap: 30px;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: 200px;
+}
+.sidebar-title {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 15px 0;
+    margin: 0;
+}
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #a9a9a9;
+}
+.sidebar-menu li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    border-bottom: 1px solid #c0c0c0;
+}
+.sidebar-menu li a:hover {
+    background-color: #888;
+}
+
+/* 게시판 메인 영역 스타일 */
+.content-area {
+    flex: 1;
+}
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+.board-table th, .board-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+.board-table th {
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
+}
+
+/* 글작성 버튼 영역 */
+.button-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+.write-btn {
+    display: none; /* 기본적으로 버튼을 숨김 */
+    padding: 8px 15px;
+    background-color: #d3d3d3;
+    border: 1px solid #aaa;
+    cursor: pointer;
+}
