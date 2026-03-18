@@ -1,0 +1,50 @@
+/* 가입완료 영역 */
+.complete-area {
+	width: 800px;
+	margin: auto;
+	text-align: center;
+}
+
+/* 카드 */
+.complete-box {
+	border: 1px solid #ddd;
+	padding: 60px 40px;
+	background: #fafafa;
+}
+
+/* 아이콘 */
+.complete-icon {
+	font-size: 60px;
+	color: #222;
+	margin-bottom: 20px;
+}
+
+/* 제목 */
+.complete-box h2 {
+	margin-bottom: 20px;
+}
+
+/* 설명 */
+.complete-box p {
+	color: #555;
+	line-height: 1.6;
+	margin-bottom: 40px;
+}
+
+/* 버튼 */
+.submit-btn {
+	text-align: center;
+}
+
+.submit-btn button {
+	background: #222;
+	color: white;
+	border: none;
+	padding: 12px 40px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.submit-btn button:hover {
+	background: #444;
+}

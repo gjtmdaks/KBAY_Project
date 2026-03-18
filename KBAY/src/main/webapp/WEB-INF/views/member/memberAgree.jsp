@@ -7,6 +7,8 @@
 <title>K-Bay 회원가입</title>
 
 <link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/memberCss/insert.css">
+<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/memberCss/agree.css">
 </head>
 <body>
@@ -24,7 +26,7 @@
 	<!-- 약관 -->
 	<div class="agree-area">
 		<h3>약관동의</h3>
-		<form action="enrollForm.me" method="get">
+		<form id="agreeForm" action="${pageContext.request.contextPath}/member/enrollForm.me" method="get">
 			<div class="agree-box">
 				<input type="checkbox" id="allCheck"> 모든 약관을 확인하고 전체 동의합니다.
 			</div>
@@ -42,7 +44,7 @@
 			</div>
 
 			<div class="agree-box">
-				<input type="checkbox"> [선택] 홍보 및 마케팅 목적의 정보 수신 동의
+				<input type="checkbox" class="select" name="marketingAgree" value="Y"> [선택] 홍보 및 마케팅 목적의 정보 수신 동의
 			</div>
 
 			<div class="btn-area">
@@ -52,19 +54,49 @@
 	</div>
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
-
 	<script>
-		/* 전체 동의 */
-
-		document.getElementById("allCheck").onclick = function() {
-
-			let agrees = document.querySelectorAll(".agree");
-
-			for (let i = 0; i < agrees.length; i++) {
-				agrees[i].checked = this.checked;
-			}
-
-		}
+		const allCheck = document.getElementById("allCheck");
+		const required = document.querySelectorAll(".agree");
+		const optional = document.querySelectorAll(".select");
+		const allBoxes = document.querySelectorAll(".agree, .select");
+		const form = document.getElementById("agreeForm");
+		
+		// 1️. 전체동의 클릭
+		allCheck.addEventListener("click", function(){
+		    allBoxes.forEach(function(box){
+		        box.checked = allCheck.checked;
+		    });
+		});
+		
+		// 2️. 개별 체크박스 클릭 시 전체동의 상태 변경
+		allBoxes.forEach(function(box){
+		    box.addEventListener("click", function(){
+		        let checkedCount = 0;
+		
+		        allBoxes.forEach(function(item){
+		            if(item.checked){
+		                checkedCount++;
+		            }
+		        });
+		
+		        if(checkedCount === allBoxes.length){
+		            allCheck.checked = true;
+		        }else{
+		            allCheck.checked = false;
+		        }
+		    });
+		});
+		
+		// 3️. submit 시 필수만 검사
+		form.addEventListener("submit", function(e){
+		    for(let i = 0; i < required.length; i++){
+		        if(!required[i].checked){
+		            alert("필수 약관에 동의해주세요.");
+		            e.preventDefault();   // 제출 막기
+		            return;
+		        }
+		    }
+		});
 	</script>
 </body>
 </html>

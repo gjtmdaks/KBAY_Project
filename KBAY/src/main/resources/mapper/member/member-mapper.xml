@@ -7,4 +7,30 @@
 		WHERE USER_ID = #{userId}
 			AND USER_PWD = #{userPwd}
 	</select>
+	
+	<insert id="insertMember">
+		INSERT INTO MEMBER VALUES(
+		SEQ_USER_NO.NEXTVAL,
+		1,
+		#{userId},
+		#{userPwd},
+		#{userName},
+		#{userAddress},
+		#{userPhone},
+		#{userEmail},
+		DEFAULT,
+		DEFAULT,
+		DEFAULT,
+		DEFAULT,
+		DEFAULT,
+		DEFAULT,
+		DEFAULT
+		)
+	</insert>
+	
+	<select id="idCheck" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER
+		WHERE USER_ID = #{userId}
+	</select>
 </mapper>

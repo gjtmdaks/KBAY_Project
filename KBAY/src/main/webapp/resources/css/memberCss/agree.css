@@ -1,27 +1,3 @@
-body {
-	margin: 0;
-	font-family: Arial;
-}
-
-/* 단계 */
-.step-area {
-	text-align: center;
-	margin: 40px;
-}
-.step {
-	display: inline-block;
-	width: 120px;
-	height: 120px;
-	border-radius: 60px;
-	background: #ccc;
-	line-height: 120px;
-	margin: 0 20px;
-}
-.step.active {
-	background: #222;
-	color: white;
-}
-
 /* 약관 */
 .agree-area {
 	width: 800px;

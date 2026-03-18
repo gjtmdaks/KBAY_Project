@@ -33,4 +33,14 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
 
 	    return null;
 	}
+
+	@Override
+	public int insertMember(Member m) {
+		return md.insertMember(m);
+	}
+
+	@Override
+	public int idCheck(String userId) {
+		return md.idCheck(userId);
+	}
 }
