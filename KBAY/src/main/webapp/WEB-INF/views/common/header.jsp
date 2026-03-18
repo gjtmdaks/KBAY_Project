@@ -1,61 +1,54 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
-</head>
-<body>
-	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
-	<header>
-		<div class="container header-inner">
-			<h1 class="logo">
-				<a href="${contextPath}">K-Bay <span>Auction</span></a>
-			</h1>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-			<div class="search-bar">
-				<form action="search.jsp" method="get" id="searchForm">
-					<input type="text" name="keyword" placeholder="검색어를 입력하세요."
-						id="searchInput">
-					<button type="submit">검색</button>
-				</form>
-			</div>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<header>
+	<div class="container header-inner">
+		<h1 class="logo">
+			<a href="${contextPath}">K-Bay <span>Auction</span></a>
+		</h1>
 
-			<div class="member-links">
-				<c:if test="${empty loginUser}">
-					<a href="${contextPath}/member/loginForm.me" class="hover-link">로그인</a> | 
+		<div class="search-bar">
+			<form action="search.jsp" method="get" id="searchForm">
+				<input type="text" name="keyword" placeholder="검색어를 입력하세요."
+					id="searchInput">
+				<button type="submit">검색</button>
+			</form>
+		</div>
+
+		<div class="member-links">
+			<c:if test="${empty loginUser}">
+				<a href="${contextPath}/member/loginForm.me" class="hover-link">로그인</a> | 
 					<a href="${contextPath}/member/agreeForm.me" class="hover-link">회원가입</a>
-				</c:if>
-				<c:if test="${not empty loginUser}">
+			</c:if>
+			<c:if test="${not empty loginUser}">
 					${loginUser.userName}님 <br>
-					<c:if test="${loginUser.authority == 1}">
-						<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
-					</c:if>
-					<c:if test="${loginUser.authority == 2}">
-						<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
-					</c:if>
-					<c:if test="${loginUser.authority == 3}">
-						<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
-					</c:if>
-					 | <a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
+				<c:if test="${loginUser.authority == 1}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
 				</c:if>
-			</div>
+				<c:if test="${loginUser.authority == 2}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+				</c:if>
+				<c:if test="${loginUser.authority == 3}">
+					<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
+				</c:if>
+					 | <a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
+			</c:if>
 		</div>
-	</header>
-	<nav>
-		<div class="container">
-			<ul class="menu">
-				<li><a href="${contextPath}/item/yetstart" class="nav-item">현재 진행중인 경매</a></li>
-				<li><a href="${contextPath}/auction/ended.jsp" class="nav-item">종료된 경매</a></li>
-				<li><a href="${contextPath}/auction/upcoming.jsp" class="nav-item">시작 예정인 경매</a></li>
-				<li><a href="${contextPath}/board/community.me" class="nav-item">커뮤니티</a></li>
-				<li><a href="${contextPath}/item_reg.jsp" class="btn-register">물품등록</a></li>
-			</ul>
-		</div>
-	</nav>
-</body>
-</html>
+	</div>
+</header>
+<nav>
+	<div class="container">
+		<ul class="menu">
+			<li><a href="${contextPath}/auction/nowdeal" class="nav-item">현재
+					진행중인 경매</a></li>
+			<li><a href="${contextPath}/auction/enddeal" class="nav-item">종료된
+					경매</a></li>
+			<li><a href="${contextPath}/auction/yetdeal" class="nav-item">시작
+					예정인 경매</a></li>
+			<li><a href="${contextPath}/board/community.me" class="nav-item">커뮤니티</a></li>
+			<li><a href="${contextPath}/item_reg.jsp" class="btn-register">물품등록</a></li>
+		</ul>
+	</div>
+</nav>

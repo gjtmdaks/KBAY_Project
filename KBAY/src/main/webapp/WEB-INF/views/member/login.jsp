@@ -6,7 +6,11 @@
 <meta charset="UTF-8">
 <title>K-Bay Login</title>
 <link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
+<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/memberCss/login.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />

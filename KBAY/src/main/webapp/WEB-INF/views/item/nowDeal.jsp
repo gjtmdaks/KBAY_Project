@@ -7,11 +7,16 @@
 <head>
 <meta charset="UTF-8">
 <title>K-Bay 경매 목록</title>
-
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/home.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/itemCss/auction.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/paging.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -59,6 +64,7 @@
 		</div>
 	</section>
 	
+	<jsp:include page="/WEB-INF/views/common/paging.jsp" />
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 </body>
 </html>
