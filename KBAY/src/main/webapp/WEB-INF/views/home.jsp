@@ -11,8 +11,6 @@
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-	
-
 	<section class="banner">
 		<div class="container">
 			<h2>K-Bay만의 특별한 경매 이벤트</h2>
