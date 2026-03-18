@@ -40,4 +40,44 @@ public class ItemController {
 	    
 		return "item/nowDeal";
 	}
+	
+	@GetMapping("enddeal")
+	public String endDealItem(
+				@RequestParam(value="page", defaultValue="1") int page,
+				Model model) {
+
+		int limit = 16;
+	    int offset = (page - 1) * limit;
+
+	    List<Item> list = is.selectNowdealList(limit, offset);
+	    int totalCount = is.selectNowdealItemCount();
+
+	    int maxPage = (int)Math.ceil((double)totalCount / limit);
+
+	    model.addAttribute("itemList", list);
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("maxPage", maxPage);
+	    
+		return "item/endDeal";
+	}
+	
+	@GetMapping("yetdeal")
+	public String yetDealItem(
+				@RequestParam(value="page", defaultValue="1") int page,
+				Model model) {
+
+		int limit = 16;
+	    int offset = (page - 1) * limit;
+
+	    List<Item> list = is.selectNowdealList(limit, offset);
+	    int totalCount = is.selectNowdealItemCount();
+
+	    int maxPage = (int)Math.ceil((double)totalCount / limit);
+
+	    model.addAttribute("itemList", list);
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("maxPage", maxPage);
+	    
+		return "item/yetDeal";
+	}
 }

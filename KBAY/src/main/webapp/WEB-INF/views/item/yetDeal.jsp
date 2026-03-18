@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<jsp:useBean id="now" class="java.util.Date" />
-<c:set var="now" value="${now}" scope="request"/>
+<jsp:useBean id="yet" class="java.util.Date" />
+<c:set var="yet" value="${yet}" scope="request"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -29,7 +29,7 @@
 			    <c:set var="item" value="${it}" scope="request"/>
 			
 			    <jsp:include page="itemCard.jsp">
-			        <jsp:param name="type" value="now"/>
+			        <jsp:param name="type" value="yet"/>
 			    </jsp:include>
 			</c:forEach>
 		</div>
