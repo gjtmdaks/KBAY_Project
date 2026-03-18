@@ -2,7 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="item">
 	<select id="selectAuctionList" resultType="com.kh.kbay.item.model.vo.Item">
-		SELECT *
+		SELECT * FROM (
+	        SELECT ROWNUM RNUM, A.*
+	        FROM (
+	            SELECT *
+	            FROM ITEM
+	            WHERE STATUS = 'AUCTION'
+	            ORDER BY ITEM_NO DESC
+	        ) A
+	        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
+	    )
+	    WHERE RNUM > #{offset}
+	</select>
+	<select id="selectNowdealItemCount" resultType="int">
+		SELECT COUNT(*)
 		FROM ITEM
+		WHERE SYSDATE BETWEEN START_TIME AND END_TIME
+		  AND STATUS = 'AUCTION'
 	</select>
 </mapper>

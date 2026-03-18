@@ -6,6 +6,8 @@ import com.kh.kbay.item.model.vo.Item;
 
 public interface ItemService {
 
-	List<Item> selectAuctionList();
+	List<Item> selectNowdealList(int limit, int offset);
+
+	int selectNowdealItemCount();
 
 }

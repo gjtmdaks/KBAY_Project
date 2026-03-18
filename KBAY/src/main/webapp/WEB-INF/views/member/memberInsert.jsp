@@ -5,11 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <title>K-Bay 회원가입</title>
-
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/memberCss/insert.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/memberCss/complete.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />

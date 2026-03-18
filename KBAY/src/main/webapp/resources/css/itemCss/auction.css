@@ -11,9 +11,16 @@
 	object-fit: cover;
 }
 
+/* auction.css 수정 */
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4개 고정 */
+    gap: 20px;
+}
+
 /* hover 시 클릭 가능 느낌 */
 .item-card {
-	cursor: pointer;
+    width: 100%;
 }
 
 /* 반응형 (선택) */

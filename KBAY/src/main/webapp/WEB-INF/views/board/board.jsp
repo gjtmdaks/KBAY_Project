@@ -72,7 +72,7 @@
 		
 		<!-- 아직 바인딩 처리 안함 -->
         <a class="btn btn-secondary" style="float:right"
-           href="${contextPath }/kbay/community.me/insert/${boardCode}">글쓰기</a>
+           href="${contextPath }/kbay/board/insert/${boardCode}">글쓰기</a>
            <!-- ${boardCode} -->
         
     </main>

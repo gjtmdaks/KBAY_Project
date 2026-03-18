@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.service.ItemService;
@@ -15,17 +16,28 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/item")
+@RequestMapping("/auction")
 @RequiredArgsConstructor
 public class ItemController {
 	private final ItemService is;
 	
-	@GetMapping("yetstart")
-	public String yetStartItem(Model model) {
+	@GetMapping("nowdeal")
+	public String nowDealItem(
+				@RequestParam(value="page", defaultValue="1") int page,
+				Model model) {
 
-	    List<Item> list = is.selectAuctionList();
+		int limit = 16;
+	    int offset = (page - 1) * limit;
+
+	    List<Item> list = is.selectNowdealList(limit, offset);
+	    int totalCount = is.selectNowdealItemCount();
+
+	    int maxPage = (int)Math.ceil((double)totalCount / limit);
 
 	    model.addAttribute("itemList", list);
-		return "item/yetStart";
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("maxPage", maxPage);
+	    
+		return "item/nowDeal";
 	}
 }

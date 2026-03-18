@@ -1,6 +1,8 @@
 package com.kh.kbay.item.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,16 @@ public class ItemServiceImpl implements ItemService {
 	private final ItemDao id;
 
 	@Override
-	public List<Item> selectAuctionList() {
-		return id.selectAuctionList();
+	public List<Item> selectNowdealList(int limit, int offset) {
+		Map<String, Object> param = new HashMap<>();
+	    param.put("limit", limit);
+	    param.put("offset", offset);
+
+	    return id.selectNowdealList(param);
+	}
+
+	@Override
+	public int selectNowdealItemCount() {
+		return id.selectNowdealItemCount();
 	}
 }
