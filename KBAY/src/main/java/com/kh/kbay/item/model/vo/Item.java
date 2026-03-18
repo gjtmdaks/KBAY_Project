@@ -18,7 +18,8 @@ public class Item {
 	private String itemTitle;
 	private int itemCdNo;
 	private String CreateCountry;
-	private char BuyNowPrice;
+	private int BuyNowPrice;
 	private int sellerNo;
 	private int currentPrice;
+	private char directBuy;
 }

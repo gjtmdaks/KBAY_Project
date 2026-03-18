@@ -49,7 +49,7 @@
 	<nav>
 		<div class="container">
 			<ul class="menu">
-				<li><a href="${contextPath}/auction/ongoing.jsp" class="nav-item">현재 진행중인 경매</a></li>
+				<li><a href="${contextPath}/item/yetstart" class="nav-item">현재 진행중인 경매</a></li>
 				<li><a href="${contextPath}/auction/ended.jsp" class="nav-item">종료된 경매</a></li>
 				<li><a href="${contextPath}/auction/upcoming.jsp" class="nav-item">시작 예정인 경매</a></li>
 				<li><a href="${contextPath}/auction/community.me" class="nav-item">커뮤니티</a></li>
