@@ -16,8 +16,8 @@
         <h3 class="sidebar-title">커뮤니티</h3>
         <ul class="sidebar-menu">
             <li><a href="community.me">전체</a></li>
-            <li><a href="/community.me/boast">물품자랑</a></li>
-            <li><a href="/community.me/request">구매요망</a></li>
+            <li><a href="${contextPath }/kbay/board/community.me/3">물품자랑</a></li>
+            <li><a href="${contextPath }/kbay/board/community.me/4">구매요망</a></li>
         </ul>
     </aside>
 
@@ -72,7 +72,7 @@
 		
 		<!-- 아직 바인딩 처리 안함 -->
         <a class="btn btn-secondary" style="float:right"
-           href="${contextPath }/kbay/community.me/insert/${boardCode}">글쓰기</a>
+           href="${contextPath }/kbay/board/insert/${boardCode}">글쓰기</a>
            <!-- ${boardCode} -->
         
     </main>
