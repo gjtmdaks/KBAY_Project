@@ -5,9 +5,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/boardCss/boardWriting.css">
 </head>
 <body>
 <div class="write-container">
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
     <h2>커뮤니티 글작성</h2>
     
     <form id="postForm">
@@ -43,6 +46,8 @@
             <button type="submit" class="btn-submit">게시글 작성</button>
         </div>
     </form>
+    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 </div>
+<script src="${pageContext.request.contextPath}/resources/js/boardJs/boardWriting.js"></script>
 </body>
 </html>

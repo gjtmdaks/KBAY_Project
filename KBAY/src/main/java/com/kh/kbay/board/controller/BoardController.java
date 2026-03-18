@@ -9,12 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/community.me")
+@RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
 //	private final BoardService bs;
 	
-	@GetMapping("")
+	@GetMapping("/community.me")
     public String communityForm() {
         return "board/board";
     }

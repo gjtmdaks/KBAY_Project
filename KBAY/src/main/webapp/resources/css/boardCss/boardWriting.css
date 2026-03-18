@@ -1,0 +1,101 @@
+.write-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 부드러운 그림자 효과 */
+}
+
+.write-container h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.form-group textarea {
+    resize: vertical; /* 세로로만 크기 조절 가능 */
+}
+
+/* 드래그 앤 드롭 영역 스타일 */
+.drop-zone {
+    width: 100%;
+    padding: 40px 20px;
+    border: 2px dashed #bbb;
+    border-radius: 4px;
+    text-align: center;
+    color: #777;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* 파일이 위로 올라왔을 때의 시각적 피드백 */
+.drop-zone.dragover {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.file-list li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* 하단 버튼 스타일 */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn-list, .btn-submit {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-list {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.btn-submit {
+    background-color: #8b0000; /* K-Bay 메인 컬러(다크레드) 느낌으로 매칭 */
+    color: #fff;
+}
+
+.btn-list:hover { background-color: #ccc; }
+.btn-submit:hover { background-color: #660000; }
