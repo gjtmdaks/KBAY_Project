@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/payment")
 @RequiredArgsConstructor
 public class PaymentController {
-	private final PaymentService ps;
+//	private final PaymentService ps;
 	
 }

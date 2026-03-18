@@ -10,6 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationDaoImpl implements NotificationDao {
-	private final SqlSessionTemplate session;
+//	private final SqlSessionTemplate session;
 	
 }

@@ -11,5 +11,5 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-	private final ItemDao id;
+//	private final ItemDao id;
 }

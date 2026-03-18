@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/report")
 @RequiredArgsConstructor
 public class ReportController {
-	private final ReportService rs;
+//	private final ReportService rs;
 	
 }

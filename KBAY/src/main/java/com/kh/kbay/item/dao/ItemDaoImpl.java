@@ -10,6 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemDaoImpl implements ItemDao {
-	private final SqlSessionTemplate session;
+//	private final SqlSessionTemplate session;
 	
 }
