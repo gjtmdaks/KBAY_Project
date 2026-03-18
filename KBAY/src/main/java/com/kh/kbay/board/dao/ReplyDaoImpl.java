@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
+
 public class ReplyDaoImpl {
 //	private final SqlSessionTemplate session;
 	

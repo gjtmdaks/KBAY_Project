@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+
 public class BidServiceImpl {
 //	private final BidDao bd;
 	
