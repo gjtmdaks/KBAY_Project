@@ -14,7 +14,7 @@
 	<header>
 		<div class="container header-inner">
 			<h1 class="logo">
-				<a href="/kbay">K-Bay <span>Auction</span></a>
+				<a href="${contextPath}">K-Bay <span>Auction</span></a>
 			</h1>
 
 			<div class="search-bar">
@@ -32,8 +32,16 @@
 				</c:if>
 				<c:if test="${not empty loginUser}">
 					${loginUser.userName}님 <br>
-					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a> | 
-					<a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
+					<c:if test="${loginUser.authority == 1}">
+						<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+					</c:if>
+					<c:if test="${loginUser.authority == 2}">
+						<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+					</c:if>
+					<c:if test="${loginUser.authority == 3}">
+						<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
+					</c:if>
+					 | <a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
 				</c:if>
 			</div>
 		</div>
