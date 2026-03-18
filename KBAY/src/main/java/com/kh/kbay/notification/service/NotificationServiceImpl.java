@@ -11,6 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-	private final NotificationDao nd;
+//	private final NotificationDao nd;
 	
 }

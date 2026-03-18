@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/noti")
 @RequiredArgsConstructor
 public class NotificationController {
-	private final NotificationService ns;
+//	private final NotificationService ns;
 	
 }

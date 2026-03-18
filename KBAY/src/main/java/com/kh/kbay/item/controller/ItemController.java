@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/item")
 @RequiredArgsConstructor
 public class ItemController {
-	private final ItemService is;
+//	private final ItemService is;
 	
 }

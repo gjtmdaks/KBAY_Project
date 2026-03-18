@@ -11,6 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
-	private final ReportDao rd;
+//	private final ReportDao rd;
 	
 }

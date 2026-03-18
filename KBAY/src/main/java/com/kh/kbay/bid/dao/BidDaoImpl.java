@@ -10,6 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class BidDaoImpl implements BidDao {
-	private final SqlSessionTemplate session;
+//	private final SqlSessionTemplate session;
 	
 }

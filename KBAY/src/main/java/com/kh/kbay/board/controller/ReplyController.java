@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/reply")
 @RequiredArgsConstructor
 public class ReplyController {
-	private final ReplyService rs;
+//	private final ReplyService rs;
 	
 }

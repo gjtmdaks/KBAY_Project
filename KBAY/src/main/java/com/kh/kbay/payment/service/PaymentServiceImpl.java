@@ -11,6 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
-	private final PaymentDao pd;
+//	private final PaymentDao pd;
 	
 }

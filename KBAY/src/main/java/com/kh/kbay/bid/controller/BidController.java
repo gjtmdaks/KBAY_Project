@@ -13,6 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/bid")
 @RequiredArgsConstructor
 public class BidController {
-	private final BidService bs;
+//	private final BidService bs;
 	
 }

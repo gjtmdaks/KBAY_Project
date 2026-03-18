@@ -11,5 +11,5 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
-	private final BoardDao bd;
+//	private final BoardDao bd;
 }

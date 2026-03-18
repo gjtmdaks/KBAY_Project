@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class BoardController {
-	private final BoardService bs;
+//	private final BoardService bs;
 	
 	@GetMapping("community.me")
     public String agreeForm() {
