@@ -3,6 +3,7 @@ package com.kh.kbay.item.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
@@ -113,10 +115,25 @@ public class ItemController {
 
 		if (result > 0) {
             ra.addFlashAttribute("alertMsg", " 물품이 성공적으로 등록되었습니다!"); 
-			return "redirect:/auction/nowdeal";
+			return "redirect:/auction/nowDeal";
 		} else {
             ra.addFlashAttribute("alertMsg", "물품 등록에 실패했습니다."); 
-			return "redirect:/auction/nowdeal";
+			return "redirect:/auction/nowDeal";
 		}
+	}
+	
+	@GetMapping("/detail/{itemNo}")
+	public String itemDetail(
+	        @PathVariable("itemNo") int itemNo,
+	        Model model) {
+		
+		Item item = is.selectItemDetail(itemNo);
+		ItemCategory itemCategory = is.selectItemCategory(item.getItemCdNo());
+
+	    model.addAttribute("item", item);
+	    model.addAttribute("itemCategory", itemCategory);
+	    model.addAttribute("now", new Date());
+		
+		return "item/itemDetail";
 	}
 }

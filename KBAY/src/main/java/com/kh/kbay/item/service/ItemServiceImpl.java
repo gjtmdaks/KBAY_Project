@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.dao.ItemDao;
 import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,15 @@ public class ItemServiceImpl implements ItemService {
 	        }
 	    }
 	    return result;
+	}
+
+	@Override
+	public Item selectItemDetail(int itemNo) {
+		return id.selectItemDetail(itemNo);
+	}
+
+	@Override
+	public ItemCategory selectItemCategory(int itemCdNo) {
+		return id.selectItemCategory(itemCdNo);
 	}
 }
