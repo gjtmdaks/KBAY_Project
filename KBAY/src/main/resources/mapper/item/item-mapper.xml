@@ -1,29 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="item">
-	<select id="selectNowdealList"
-		resultType="com.kh.kbay.item.model.vo.Item">
-		SELECT * FROM (
-		SELECT ROWNUM RNUM, A.*
-		FROM (
-		SELECT I.*,
-		(SELECT IMG_URL FROM ITEM_IMG IMG WHERE IMG.ITEM_NO = I.ITEM_NO AND ROWNUM =
-		1) AS THUMBNAIL
-		FROM ITEM I
-		WHERE I.STATUS = 'N'
-		ORDER BY I.ITEM_NO DESC
-		) A
-		WHERE ROWNUM <![CDATA[<=]]>
-		#{offset} + #{limit}
-		)
-		WHERE RNUM > #{offset}
+	<select id="selectItemCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM ITEM
+	    <where>
+	        <choose>
+	            <when test="type == 'nowDeal'">
+	                STATUS = 'N'
+	            </when>
+	            <when test="type == 'endDeal'">
+	                STATUS = 'E'
+	            </when>
+	            <when test="type == 'yetDeal'">
+	                STATUS = 'Y'
+	            </when>
+	            <when test="type == 'search'">
+	                ITEM_TITLE LIKE '%' || #{keyword} || '%'
+	            </when>
+	        </choose>
+	    </where>
 	</select>
-
-	<select id="selectNowdealItemCount" resultType="_int">
-		SELECT COUNT(*)
-		FROM ITEM
-		WHERE STATUS = 'N' AND SYSDATE BETWEEN START_TIME AND
-		END_TIME
+	<select id="selectItemList" resultType="item">
+	    SELECT *
+	    FROM (
+	        SELECT ROWNUM RNUM, A.*
+	        FROM (
+	            SELECT *
+	            FROM ITEM
+	            <where>
+	                <choose>
+	                    <when test="type == 'nowDeal'">
+	                        STATUS = 'N'
+	                    </when>
+	                    <when test="type == 'endDeal'">
+	                        STATUS = 'E'
+	                    </when>
+	                    <when test="type == 'yetDeal'">
+	                        STATUS = 'Y'
+	                    </when>
+	                    <when test="type == 'search' and keyword != null and keyword != ''">
+	                        ITEM_TITLE LIKE '%' || #{keyword} || '%'
+	                    </when>
+	                </choose>
+	            </where>
+	            ORDER BY ITEM_NO DESC
+	        ) A
+	        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
+	    )
+	    WHERE RNUM > #{offset}
 	</select>
 
 	<insert id="insertItem"
@@ -60,8 +85,6 @@
 		SYSDATE
 		)
 	</insert>
-
-
 	<insert id="insertItemImg"
 		parameterType="com.kh.kbay.item.model.vo.ItemImg">
 		INSERT INTO ITEM_IMG (

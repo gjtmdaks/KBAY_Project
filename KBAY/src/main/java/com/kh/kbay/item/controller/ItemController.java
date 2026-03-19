@@ -11,12 +11,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.model.vo.ItemImg;
 import com.kh.kbay.item.service.ItemService;
@@ -32,24 +34,28 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemController {
 	private final ItemService is;
 	
-	@GetMapping("nowdeal")
-	public String nowDealItem(
-				@RequestParam(value="page", defaultValue="1") int page,
-				Model model) {
+	@GetMapping("{type}")
+	public String itemList(
+	        @PathVariable("type") String type,
+	        @RequestParam(value="page", defaultValue="1") int page,
+	        @RequestParam(value="keyword", required=false) String keyword,
+	        Model model) {
 
-		int limit = 16;
-	    int offset = (page - 1) * limit;
+	    int totalCount = is.selectItemCount(type, keyword);
+	    PageInfo pi = PageInfo.of(page, totalCount, 16);
 
-	    List<Item> list = is.selectNowdealList(limit, offset);
-	    int totalCount = is.selectNowdealItemCount();
-
-	    int maxPage = (int)Math.ceil((double)totalCount / limit);
+	    List<Item> list = is.selectItemList(type, keyword, pi);
 
 	    model.addAttribute("itemList", list);
-	    model.addAttribute("currentPage", page);
-	    model.addAttribute("maxPage", maxPage);
-	    
-		return "item/nowDeal";
+	    model.addAttribute("pi", pi);
+
+	    // JSP에서 쓰는 값 따로 넣어줘야 함	
+	    model.addAttribute("currentPage", pi.getCurrentPage());
+	    model.addAttribute("maxPage", pi.getMaxPage());
+	    model.addAttribute("type", type);
+	    model.addAttribute("keyword", keyword);
+
+	    return "item/" + type;
 	}
 	
 	@GetMapping("enroll")

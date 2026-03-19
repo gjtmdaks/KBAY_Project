@@ -8,9 +8,9 @@ import com.kh.kbay.item.model.vo.ItemImg;
 
 public interface ItemDao {
 
-	List<Item> selectNowdealList(Map<String, Object> param);
+	int selectItemCount(Map<String, Object> param);
 
-	int selectNowdealItemCount();
+	List<Item> selectItemList(Map<String, Object> param);
 
 	int insertItem(Item item);
 

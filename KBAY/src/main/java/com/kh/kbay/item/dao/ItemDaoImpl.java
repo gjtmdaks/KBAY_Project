@@ -19,13 +19,13 @@ public class ItemDaoImpl implements ItemDao {
 	private final SqlSessionTemplate session;
 
 	@Override
-	public List<Item> selectNowdealList(Map<String, Object> param) {
-		return session.selectList("item.selectNowdealList", param);
+	public int selectItemCount(Map<String, Object> param) {
+		return session.selectOne("item.selectItemCount", param);
 	}
 
 	@Override
-	public int selectNowdealItemCount() {
-		return session.selectOne("item.selectNowdealItemCount");
+	public List<Item> selectItemList(Map<String, Object> param) {
+		return session.selectList("item.selectItemList", param);
 	}
 
 	@Override

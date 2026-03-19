@@ -1,6 +1,7 @@
 package com.kh.kbay.item.model.vo;
 
 
+import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
@@ -20,10 +21,10 @@ public class Item {
 	private char directBuy;
 	private int buyNowPrice;
 	private int currentPrice;
-	private String startTime;
-	private String endTime;
+	private Date startTime;
+	private Date endTime;
 	private String status;
-	private String createAt;
+	private Date createAt;
 	private String countryNo;
 	private int deliveryNo;
 	

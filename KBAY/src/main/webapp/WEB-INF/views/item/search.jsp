@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:useBean id="now" class="java.util.Date" />
 <c:set var="now" value="${now}" scope="request"/>
 <!DOCTYPE html>
@@ -29,9 +28,25 @@
 			<c:forEach var="it" items="${itemList}">
 			    <c:set var="item" value="${it}" scope="request"/>
 			
-			    <jsp:include page="itemCard.jsp">
-			        <jsp:param name="type" value="end"/>
-			    </jsp:include>
+			    <c:choose>
+			        <c:when test="${now.time < item.startTime.time}">
+			            <jsp:include page="itemCard.jsp">
+			                <jsp:param name="type" value="yet"/>
+			            </jsp:include>
+			        </c:when>
+			
+			        <c:when test="${now.time > item.endTime.time}">
+			            <jsp:include page="itemCard.jsp">
+			                <jsp:param name="type" value="end"/>
+			            </jsp:include>
+			        </c:when>
+			
+			        <c:otherwise>
+			            <jsp:include page="itemCard.jsp">
+			                <jsp:param name="type" value="now"/>
+			            </jsp:include>
+			        </c:otherwise>
+			    </c:choose>
 			</c:forEach>
 		</div>
 	</section>

@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<% %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <header>
@@ -11,7 +10,7 @@
 		</h1>
 
 		<div class="search-bar">
-			<form action="search.jsp" method="get" id="searchForm">
+			<form action="${contextPath}/auction/search" method="get" id="searchForm">
 				<input type="text" name="keyword" placeholder="검색어를 입력하세요."
 					id="searchInput">
 				<button type="submit">검색</button>
@@ -42,13 +41,12 @@
 <nav>
 	<div class="container">
 		<ul class="menu">
-			<li><a href="${contextPath}/auction/nowdeal" class="nav-item">현재
+			<li><a href="${contextPath}/auction/nowDeal" class="nav-item">현재
 					진행중인 경매</a></li>
-			<li><a href="${contextPath}/auction/enddeal" class="nav-item">종료된
+			<li><a href="${contextPath}/auction/endDeal" class="nav-item">종료된
 					경매</a></li>
-			<li><a href="${contextPath}/auction/yetdeal" class="nav-item">시작
+			<li><a href="${contextPath}/auction/yetDeal" class="nav-item">시작
 					예정인 경매</a></li>
-
 			<li><a href="${contextPath}/board/community.me/1" class="nav-item">커뮤니티</a></li>
 			<li><a href="${contextPath}/auction/enroll" class="btn-register">물품등록</a></li>
 		</ul>
