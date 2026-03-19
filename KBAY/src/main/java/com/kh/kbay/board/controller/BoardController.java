@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.kh.kbay.board.model.vo.Board;
+import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.service.BoardService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
@@ -48,17 +48,17 @@ public class BoardController {
 		log.debug("pi : {}", pi);
 		paramMap.put("pi",pi);
 		
-		List<Board> list = bs.selectList(paramMap);
+		List<BoardPost> list = bs.selectList(paramMap);
 		model.addAttribute("list",list);
 		model.addAttribute("pi",pi);
 		
-		return "board/boardListView";
+		return "board/board";
     }
 	
 	// 게시판 등록
 	@PostMapping("/insert")
 	public String insertBoard(
-			@ModelAttribute Board b,
+			@ModelAttribute BoardPost b,
 			@PathVariable("boardCd") String boardCd,
 			Model model,
 			RedirectAttributes ra,
@@ -67,14 +67,14 @@ public class BoardController {
 		
 		
 		
-		return "board/";
+		return "board/boardWriting";
 		
 	}
 	
 	@GetMapping("/insert/{boardCd}")
 	public String enrollForm(
 			@PathVariable("boardCd") String boardCd,
-			@ModelAttribute Board b,
+			@ModelAttribute BoardPost b,
 			Model m
 			) {
 		m.addAttribute("b",b);

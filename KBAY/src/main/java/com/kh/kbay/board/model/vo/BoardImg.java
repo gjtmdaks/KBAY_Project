@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardImg {
 	private int boardNo;
-	private String imgUrl;
+	private char imgLevel;
+	private String originName;
+	private String changeName;
 	private int boardImgNo;
 }

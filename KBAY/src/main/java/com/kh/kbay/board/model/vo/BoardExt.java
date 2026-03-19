@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class BoardExt extends Board {
+public class BoardExt extends BoardPost {
 	// 보드 상세보기용
 	private List<BoardImg> imgList;
 	private String userName;

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.kh.kbay.board.model.vo.Board;
+import com.kh.kbay.board.model.vo.BoardPost;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class BoardDaoImpl implements BoardDao {
 	}
 
 	@Override
-	public List<Board> selectList(Map<String, Object> paramMap) {
+	public List<BoardPost> selectList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return session.selectList("selectList",paramMap);
 	}

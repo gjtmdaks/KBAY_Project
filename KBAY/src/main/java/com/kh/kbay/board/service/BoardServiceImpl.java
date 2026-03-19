@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.kh.kbay.board.dao.BoardDao;
-import com.kh.kbay.board.model.vo.Board;
+import com.kh.kbay.board.model.vo.BoardPost;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<Board> selectList(Map<String, Object> paramMap) {
+	public List<BoardPost> selectList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return boardDao.selectList(paramMap);
 	}
