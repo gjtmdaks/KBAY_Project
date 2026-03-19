@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Board {
+public class BoardPost {
 	// Board 테이블
-	private String boardContent;
 	private int boardNo;
+	private String boardContent;
+	private char boardDelete;
 	private Date boardDate;
-	private String boardTitle;
-	private int boardCdNo;
 	private int userNo;
-	private int boardCount;
+	private String boardTitle;
+	private int viewCount;
+	private int boardCdNo; // board_Cd_No = boardCategoryNo
 }

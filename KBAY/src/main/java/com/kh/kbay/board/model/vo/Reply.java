@@ -12,7 +12,7 @@ public class Reply {
 	private int boardNo;
 	private String replyContent;
 	private int replyNo;
-	private Date replyDate;
-	private int userNol;
 	private char replyDelete; // 삭제여부
+	private Date replyDate;
+	private int userNo;
 }
