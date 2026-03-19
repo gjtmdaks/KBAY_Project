@@ -75,6 +75,23 @@
     min-height: 150px;
 }
 
+/* 입력창 화살표 스피너*/
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1; /* 화살표 항상 보이게 */
+    margin-left: 5px;
+}
+
+/* 사용자 아이템 단위 사이즈 */
+#unit-display {
+    position: absolute;
+    right: 35px; /* 화살표 안쪽으로 들어오게 위치 조정 */	
+    color: #888;
+    font-weight: bold;
+    pointer-events: none; /* 클릭 방해 금지 */
+    background: white; /* 배경을 깔끔하게 처리 */
+    padding: 0 5px;
+    }
 /* 파일 업로드 디자인 */
 .form-group input[type="file"] {
     width: 100%;
