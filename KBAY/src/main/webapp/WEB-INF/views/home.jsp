@@ -44,6 +44,5 @@
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
-	<script src="domain.js"></script>
 </body>
 </html>

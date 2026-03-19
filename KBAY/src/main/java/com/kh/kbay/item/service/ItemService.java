@@ -10,4 +10,6 @@ public interface ItemService {
 
 	int selectNowdealItemCount();
 
+	int insertItem(Item item);
+
 }

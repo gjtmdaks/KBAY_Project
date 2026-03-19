@@ -10,5 +10,7 @@
     <typeAliases>
     	<package name="com.kh.kbay.*.model.vo"/>
     </typeAliases>
-
+	<typeHandlers>
+    <typeHandler handler="org.apache.ibatis.type.LocalDateTimeTypeHandler" />
+</typeHandlers>
 </configuration>

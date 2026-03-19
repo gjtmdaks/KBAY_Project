@@ -1,0 +1,114 @@
+@charset "UTF-8";
+
+.enroll-container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 40px 50px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
+}
+
+/* 폼 제목 */
+.section-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 35px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #222; 
+}
+
+/* 폼 그룹 간격 */
+.form-group {
+    margin-bottom: 22px;
+}
+
+/* 입력 라벨(제목) */
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 15px;
+}
+
+/* 입력 창 공통 디자인 */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="datetime-local"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 15px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+/* 입력 창 클릭(포커스) 했을 때 효과 */
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="datetime-local"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #222;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(34, 34, 34, 0.1); 
+}
+
+.form-group input[readonly] {
+    border-color: #ddd;
+    color: #999;
+}
+
+.form-group input:invalid {
+    border-color: #ff4d4f;
+}
+/* 상세 설명 텍스트 에어리어 */
+.form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* 파일 업로드 디자인 */
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px dashed #aaa;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+/* 파일 업로드 마우스 오버 효과 */
+.form-group input[type="file"]:hover {
+    background-color: #f1f3f5;
+    border-color: #888;
+}
+
+/* 제출 버튼 디자인 */
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* 제출 버튼 마우스 오버 효과 */
+.submit-btn:hover {
+    background-color: #444;
+}
