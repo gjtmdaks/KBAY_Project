@@ -29,24 +29,21 @@
 			    <c:set var="item" value="${it}" scope="request"/>
 			
 			    <c:choose>
-			        <c:when test="${now.time < item.startTime.time}">
-			            <jsp:include page="itemCard.jsp">
-			                <jsp:param name="type" value="yet"/>
-			            </jsp:include>
-			        </c:when>
-			
-			        <c:when test="${now.time > item.endTime.time}">
-			            <jsp:include page="itemCard.jsp">
-			                <jsp:param name="type" value="end"/>
-			            </jsp:include>
-			        </c:when>
-			
-			        <c:otherwise>
-			            <jsp:include page="itemCard.jsp">
-			                <jsp:param name="type" value="now"/>
-			            </jsp:include>
-			        </c:otherwise>
-			    </c:choose>
+				    <c:when test="${now.time < item.startTime.time}">
+				        <c:set var="type" value="yetDeal" scope="request"/>
+				        <jsp:include page="itemCard.jsp"/>
+				    </c:when>
+				
+				    <c:when test="${now.time > item.endTime.time}">
+				        <c:set var="type" value="endDeal" scope="request"/>
+				        <jsp:include page="itemCard.jsp"/>
+				    </c:when>
+				
+				    <c:otherwise>
+				        <c:set var="type" value="nowDeal" scope="request"/>
+				        <jsp:include page="itemCard.jsp"/>
+				    </c:otherwise>
+				</c:choose>
 			</c:forEach>
 		</div>
 	</section>

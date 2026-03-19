@@ -30,7 +30,7 @@
 			    <c:set var="item" value="${it}" scope="request"/>
 			
 			    <jsp:include page="itemCard.jsp">
-			        <jsp:param name="type" value="end"/>
+			        <jsp:param name="type" value="nowDeal"/>
 			    </jsp:include>
 			</c:forEach>
 		</div>

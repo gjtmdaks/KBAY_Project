@@ -21,7 +21,7 @@
 
     <div class="item-info">
         <h4>${item.itemTitle}</h4>
-
+        
         <!-- 가격 or 상태 -->
         <c:choose>
             <c:when test="${type eq 'nowDeal'}">
