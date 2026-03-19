@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="board">
+<mapper namespace="boardPost">
 	<select id="getBoardTypeMap" resultType="boardCategory">
 		SELECT BOARD_CATEGORY_NO AS "boardCategory", BOARD_CATEGORY
 		FROM BOARD_TYPE
 	</select>
 	
-	<select id="selectList" resultType="boardPost">
+	<!-- board.jsp에서 리스트 출력 -->
+	<select id="boardPost.selectList" resultType="boardPost">
 SELECT * FROM (
 SELECT ROWNUM AS RNUM, T1.* FROM (
 SELECT BOARD_NO, BOARD_TITLE, USER_NAME AS BOARD_WRITER, B.VIEW_COUNT, BOARD_DATE
@@ -61,4 +62,44 @@ ORDER BY BOARD_NO DESC
 			</choose>
 		</if>
 	</select>
+	
+	<insert id="insertBoard" parameterType="boardPost">
+    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+        SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO BOARD_POST (
+        BOARD_NO, 
+        BOARD_TITLE, 
+        BOARD_CONTENT, 
+        BOARD_CD_NO, 
+        USER_NO,
+        VIEW_COUNT,
+        BOARD_DATE,
+        BOARD_DELETE
+    ) VALUES (
+        #{boardNo}, 
+        #{boardTitle}, 
+        #{boardContent}, 
+        #{boardCdNo}, 
+        #{userNo},
+        DEFAULT, 
+        DEFAULT, 
+        DEFAULT
+    )
+</insert>
+	<insert id="insertBoardImgList" parameterType="list">
+		<foreach collection="list" item="img" open="DECLARE BEGIN" separator=";" close="; END;">
+        
+	        INSERT INTO BOARD_IMG (
+	            IMG_NO,ORIGIN_NAME,CHANGE_NAME,REF_BNO,IMG_LEVEL) VALUES (
+	            SEQ_IMG_NO.NEXTVAL, 
+	            #{img.originName}, 
+	            #{img.changeName}, 
+	            #{img.refBno}, 
+	            #{img.imgLevel}
+	        )
+	        
+	    </foreach>
+	</insert>
 </mapper>
