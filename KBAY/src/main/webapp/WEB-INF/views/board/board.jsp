@@ -15,9 +15,9 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">커뮤니티</h3>
         <ul class="sidebar-menu">
-            <li><a href="community.me">전체</a></li>
-            <li><a href="${contextPath }/kbay/board/community.me/3">물품자랑</a></li>
-            <li><a href="${contextPath }/kbay/board/community.me/4">구매요망</a></li>
+            <li><a href="${contextPath }/kbay/board/community.me/1">전체</a></li>
+            <li><a href="${contextPath }/kbay/board/community.me/2">물품자랑</a></li>
+            <li><a href="${contextPath }/kbay/board/community.me/3">구매요망</a></li>
         </ul>
     </aside>
 
