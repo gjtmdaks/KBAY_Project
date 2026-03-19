@@ -52,8 +52,8 @@
 	</select>
 
 	<insert id="insertItem"
-		parameterType="com.kh.kbay.item.model.vo.Item">
-		<selectKey keyProperty="itemNo" resultType="_int"
+		parameterType="item">
+		<selectKey keyProperty="itemNo" resultType="int"
 			order="BEFORE">
 			SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
 		</selectKey>
@@ -75,10 +75,9 @@
 		#{itemNo},
 		#{itemTitle},
 		#{itemContent},
-		#{item_Size}, #{startPrice},
+		#{itemSize}, #{startPrice},
 		#{directBuy},
-		#{buyNowPrice}, #{startPrice}, TO_DATE(#{endTime},
-		'YYYY-MM-DD"T"HH24:MI'),
+		#{buyNowPrice}, #{startPrice}, #{endTime},
 		#{itemCdNo},
 		#{userNo}, #{countryNo}, 'N',
 		SYSDATE,
@@ -86,7 +85,7 @@
 		)
 	</insert>
 	<insert id="insertItemImg"
-		parameterType="com.kh.kbay.item.model.vo.ItemImg">
+		parameterType="itemImg">
 		INSERT INTO ITEM_IMG (
 		ITEM_IMG_NO, ITEM_NO, IMG_URL
 		)
@@ -94,4 +93,15 @@
 		SEQ_ITEM_IMG_NO.NEXTVAL, #{itemNo}, #{imgUrl}
 		)
 	</insert>
+	
+	<select id="selectItemDetail" resultType="item">
+		SELECT *
+		FROM ITEM
+		WHERE ITEM_NO = #{itemNo}
+	</select>
+	<select id="selectItemCategory" resultType="itemCategory">
+		SELECT *
+		FROM ITEM_CD
+		WHERE ITEM_CATEGORY_NO = #{itemCdNo}
+	</select>
 </mapper>
