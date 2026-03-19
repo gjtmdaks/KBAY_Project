@@ -7,6 +7,10 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
+<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/boardWriting.css">
 </head>
 <body>

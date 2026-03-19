@@ -48,6 +48,12 @@ public class BoardController {
 		log.debug("pi : {}", pi);
 		paramMap.put("pi",pi);
 		
+		int offset = (currentPage - 1) * boardLimit + 1;  // 시작 행 번호 (예: 1페이지면 1)
+	    int limit = currentPage * boardLimit;             // 끝 행 번호 (예: 1페이지면 10)
+	    
+	    paramMap.put("offset", offset);
+	    paramMap.put("limit", limit);
+		
 		List<BoardPost> list = bs.selectList(paramMap);
 		model.addAttribute("list",list);
 		model.addAttribute("pi",pi);

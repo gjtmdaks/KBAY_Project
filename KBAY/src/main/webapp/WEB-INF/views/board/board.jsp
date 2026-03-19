@@ -1,11 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/board.css">
 </head>
@@ -43,7 +48,6 @@
                     <th>제목</th>
                     <th>작성자</th>
                     <th>조회</th>
-                    <th>댓글</th>
                     <th>등록일</th>
                 </tr>
             </thead>
@@ -55,16 +59,17 @@
 	                    </tr>
 	                </c:when>
 	            	<c:otherwise>
-		            	<c:forEach var="board" items="${list }"> 
-			                <tr onclick="movePage(${board.boardNo})">
-		                        <td>${board.boardNo }</td>
-		                        <td>${board.boardTitle }</td>
-		                        <td>${board.boardWriter}</td>
-		                        <td>${board.count }</td>
-		                        <td>${board.commentcount }</td>
-		                        <td>${board.createDate }</td>
-		                    </tr>
-		                </c:forEach>
+		            	<c:forEach var="boardPost" items="${list}"> 
+					    <tr onclick="movePage(${boardPost.boardNo})">
+					        <td>${boardPost.boardNo}</td>
+					        <td>${boardPost.boardTitle}</td>
+					        <td>${boardPost.userNo}</td>
+					        <td>${boardPost.viewCount}</td>
+					        
+					        <fmt:parseDate value="${boardPost.boardDate}" var="parsedDate" pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
+					        <td><fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm" /></td>
+					    </tr>
+					</c:forEach>
 	                </c:otherwise>
             	</c:choose>
             </tbody>
