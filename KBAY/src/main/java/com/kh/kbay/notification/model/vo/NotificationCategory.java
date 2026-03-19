@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class NotificationCategory {
-	private int notiCdNo;
-	private String notiCdName;
+	private int notiCategoryNo;
+	private String notiCategory;
 }
