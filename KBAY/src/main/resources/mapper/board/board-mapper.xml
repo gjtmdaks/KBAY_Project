@@ -2,72 +2,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="board">
 	<select id="getBoardTypeMap" resultType="boardCategory">
-		SELECT BOARD_CD AS "boardCd", BOARD_NAME
+		SELECT BOARD_CATEGORY_NO AS "boardCategory", BOARD_CATEGORY
 		FROM BOARD_TYPE
 	</select>
 	
-	<select id="selectList" resultType="board">
-		SELECT * FROM(
-			SELECT ROWNUM AS RNUM, T1.*
-			FROM(
-			SELECT BOARD_NO,
-						BOARD_TITLE, USER_NAME AS BOARD_WRITER,
-						COUNT,
-						CREATE_DATE
-					FROM BOARD B
-					LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
-			        WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
-			        <if test="keyword != null and keyword != ''">
-			        	AND
-						<choose>
-						    <when test="condition == 'title'">
-						        BOARD_TITLE LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <when test="condition == 'writer'">
-						        USER_NAME LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <when test="condition == 'content'">
-						        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <otherwise>
-						        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
-						        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
-						    </otherwise>
-						</choose>
-			        </if>
-			        ORDER BY BOARD_NO DESC) T1)
-			WHERE RNUM BETWEEN #{offset} AND #{limit}
-			
-	</select>
+	<select id="selectList" resultType="boardPost">
+SELECT * FROM (
+SELECT ROWNUM AS RNUM, T1.* FROM (
+SELECT BOARD_NO, BOARD_TITLE, USER_NAME AS BOARD_WRITER, B.VIEW_COUNT, BOARD_DATE
+FROM BOARD_POST B LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+WHERE B.BOARD_DELETE = 'Y' 
+<choose>
+<when test="boardCdNo == 1">
+AND BOARD_CD_NO IN (2, 3)
+</when>
+<otherwise>
+AND BOARD_CD_NO = #{boardCdNo}
+</otherwise>
+</choose>
+<if test="keyword != null and keyword != ''">
+AND
+<choose>
+<when test="condition == 'title'">BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
+<when test="condition == 'writer'">USER_NAME LIKE '%' || #{keyword} || '%'</when>
+<when test="condition == 'content'">BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
+<otherwise>(BOARD_TITLE LIKE '%' || #{keyword} || '%' OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
+</choose>
+</if>
+ORDER BY BOARD_NO DESC
+) T1
+) WHERE RNUM BETWEEN #{offset} AND #{limit}
+</select>
 	
-	<select id="selectListCount" resultType="int">
+	<select id="selectBoardListCount" resultType="int">
 		SELECT COUNT(*)
-		FROM BOARD B
-		LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-		WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
+		FROM BOARD_POST B
+		LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+		WHERE B.BOARD_DELETE = 'Y' AND BOARD_CD_NO = #{boardCdNo}
 		<if test="keyword != null and keyword != ''">
-			        	AND
-						<choose>
-						    <when test="condition == 'title'">
-						        BOARD_TITLE LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <when test="condition == 'writer'">
-						        USER_NAME LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <when test="condition == 'content'">
-						        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-						    </when>
-						
-						    <otherwise>
-						        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
-						        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
-						    </otherwise>
-						</choose>
-			        </if>
+        	AND
+			<choose>
+			    <when test="condition == 'title'">
+			        BOARD_TITLE LIKE '%' || #{keyword} || '%'
+			    </when>
+			    
+			    <when test="condition == 'writer'">
+			        USER_NAME LIKE '%' || #{keyword} || '%'
+			    </when>
+			    
+			    <when test="condition == 'content'">
+			        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+			    </when>
+			    
+			    <otherwise>
+			        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
+			        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+			    </otherwise>
+			</choose>
+		</if>
 	</select>
 </mapper>
