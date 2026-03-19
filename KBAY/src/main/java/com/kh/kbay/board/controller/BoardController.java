@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.board.model.vo.Board;
 import com.kh.kbay.board.service.BoardService;
+import com.kh.kbay.common.PageInfo;
+import com.kh.kbay.common.template.Pagination;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +49,7 @@ public class BoardController {
 //		log.info("pi : {}", pi);
 		paramMap.put("pi",pi);
 		
-		List<Board> list = boardService.selectList(paramMap);
+		List<Board> list = BoardService.selectList(paramMap);
 		model.addAttribute("list",list);
 		model.addAttribute("pi",pi);
 //		model.addAttribute("param",paramMap); // 추가로할필요가 없음 삭제해도 좋음
