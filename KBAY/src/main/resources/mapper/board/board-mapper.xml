@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="board">
-	<select id="getBoardTypeMap" resultType="boardType">
+	<select id="getBoardTypeMap" resultType="boardCategory">
 		SELECT BOARD_CD AS "boardCd", BOARD_NAME
 		FROM BOARD_TYPE
 	</select>
@@ -19,22 +19,24 @@
 			        WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
 			        <if test="keyword != null and keyword != ''">
 			        	AND
-			        	<choose>
-			        		<when test="condition.equals('title')">
-			        			BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<when test="condition.equals('writer')">
-			        			USER_NAME LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<when test="condition.equals('content')">
-			        			BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<otherwise>
-			        			(BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			        			OR BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-			        			)
-			        		</otherwise>
-			        	</choose>
+						<choose>
+						    <when test="condition == 'title'">
+						        BOARD_TITLE LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <when test="condition == 'writer'">
+						        USER_NAME LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <when test="condition == 'content'">
+						        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <otherwise>
+						        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
+						        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+						    </otherwise>
+						</choose>
 			        </if>
 			        ORDER BY BOARD_NO DESC) T1)
 			WHERE RNUM BETWEEN #{offset} AND #{limit}
@@ -48,22 +50,24 @@
 		WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
 		<if test="keyword != null and keyword != ''">
 			        	AND
-			        	<choose>
-			        		<when test="condition.equals('title')">
-			        			BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<when test="condition.equals('writer')">
-			        			USER_NAME LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<when test="condition.equals('content')">
-			        			BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-			        		</when>
-			        		<otherwise>
-			        			(BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			        			OR BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-			        			)
-			        		</otherwise>
-			        	</choose>
+						<choose>
+						    <when test="condition == 'title'">
+						        BOARD_TITLE LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <when test="condition == 'writer'">
+						        USER_NAME LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <when test="condition == 'content'">
+						        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+						    </when>
+						
+						    <otherwise>
+						        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
+						        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+						    </otherwise>
+						</choose>
 			        </if>
 	</select>
 </mapper>

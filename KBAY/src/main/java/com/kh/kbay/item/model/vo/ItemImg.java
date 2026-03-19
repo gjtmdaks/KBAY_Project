@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ItemImg {
+	private int itemImgNo;
 	private int itemNo;
 	private String imgUrl;
-	private int itemImgNo;
 }

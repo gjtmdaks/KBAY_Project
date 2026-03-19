@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class Report {
 	private int reportNo;
+	private int userNo;
 	private int reportCdNo;
-	private int reportorNo;
-	private int reportedNo;
-	private int targetType;
+	private String targetType;
 	private int targetNo;
 	private char status;
 	private Date createAt;

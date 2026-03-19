@@ -38,6 +38,8 @@
 		
 		<!-- mapper파일의 위치 등록 -->
 		<property name="mapperLocations" value="classpath*:mapper/**/*.xml" />
+		
+    	<property name="typeAliasesPackage" value="com.kh.kbay.*.model.vo"/>
 	</bean>
 	
 	<!-- 3단계 : sql구문을 실행하기 위한 템플릿을 제공하는 bean객체 등록 -->

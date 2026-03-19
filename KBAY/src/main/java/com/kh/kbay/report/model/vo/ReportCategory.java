@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ReportCategory {
-	private int reportCdNo;
-	private String reportCd;
+	private int reportCategoryNo;
+	private String reportCategory;
 }

@@ -48,8 +48,9 @@
 					경매</a></li>
 			<li><a href="${contextPath}/auction/yetdeal" class="nav-item">시작
 					예정인 경매</a></li>
+
 			<li><a href="${contextPath}/board/community.me/1" class="nav-item">커뮤니티</a></li>
-			<li><a href="${contextPath}/item_reg.jsp" class="btn-register">물품등록</a></li>
+			<li><a href="${contextPath}/auction/enroll" class="btn-register">물품등록</a></li>
 		</ul>
 	</div>
 </nav>

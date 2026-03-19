@@ -43,6 +43,12 @@
 			<version>${org.aspectj-version}</version>
 		</dependency>	
 		
+		<!-- AspectWeaver -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -143,6 +149,13 @@
 		    <version>3.5.19</version>
 		    <scope>compile</scope>
 		</dependency>
+		
+		<!-- JAVA8 날짜 타입 MyBatis 의존성  -->
+		<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis-typehandlers-jsr310</artifactId>
+    <version>1.0.2</version>
+</dependency>
 		<!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
 		<dependency>
 		    <groupId>org.mybatis</groupId>
@@ -218,6 +231,7 @@
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.4</version>
 		</dependency>
+         
          
 	</dependencies>
     <build>

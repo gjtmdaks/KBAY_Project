@@ -1,23 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="item">
-	<select id="selectAuctionList" resultType="com.kh.kbay.item.model.vo.Item">
+	<select id="selectNowdealList"
+		resultType="com.kh.kbay.item.model.vo.Item">
 		SELECT * FROM (
-	        SELECT ROWNUM RNUM, A.*
-	        FROM (
-	            SELECT *
-	            FROM ITEM
-	            WHERE STATUS = 'AUCTION'
-	            ORDER BY ITEM_NO DESC
-	        ) A
-	        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
-	    )
-	    WHERE RNUM > #{offset}
+		SELECT ROWNUM RNUM, A.*
+		FROM (
+		SELECT I.*,
+		(SELECT IMG_URL FROM ITEM_IMG IMG WHERE IMG.ITEM_NO = I.ITEM_NO AND ROWNUM =
+		1) AS THUMBNAIL
+		FROM ITEM I
+		WHERE I.STATUS = 'N'
+		ORDER BY I.ITEM_NO DESC
+		) A
+		WHERE ROWNUM <![CDATA[<=]]>
+		#{offset} + #{limit}
+		)
+		WHERE RNUM > #{offset}
 	</select>
-	<select id="selectNowdealItemCount" resultType="int">
+
+	<select id="selectNowdealItemCount" resultType="_int">
 		SELECT COUNT(*)
 		FROM ITEM
-		WHERE SYSDATE BETWEEN START_TIME AND END_TIME
-		  AND STATUS = 'AUCTION'
+		WHERE STATUS = 'N' AND SYSDATE BETWEEN START_TIME AND
+		END_TIME
 	</select>
+
+	<insert id="insertItem"
+		parameterType="com.kh.kbay.item.model.vo.Item">
+		<selectKey keyProperty="itemNo" resultType="_int"
+			order="BEFORE">
+			SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO ITEM (
+		ITEM_NO,
+		ITEM_TITLE,
+		ITEM_CONTENT,
+		ITEM_SIZE,
+		START_PRICE,
+		DIRECT_BUY,
+		BUY_NOW_PRICE,
+		CURRENT_PRICE,
+		END_TIME,
+		ITEM_CD_NO,
+		USER_NO, COUNTRY_NO, STATUS,
+		START_TIME,
+		CREATE_AT
+		) VALUES (
+		#{itemNo},
+		#{itemTitle},
+		#{itemContent},
+		#{item_Size}, #{startPrice},
+		#{directBuy},
+		#{buyNowPrice}, #{startPrice}, TO_DATE(#{endTime},
+		'YYYY-MM-DD"T"HH24:MI'),
+		#{itemCdNo},
+		#{userNo}, #{countryNo}, 'N',
+		SYSDATE,
+		SYSDATE
+		)
+	</insert>
+
+
+	<insert id="insertItemImg"
+		parameterType="com.kh.kbay.item.model.vo.ItemImg">
+		INSERT INTO ITEM_IMG (
+		ITEM_IMG_NO, ITEM_NO, IMG_URL
+		)
+		VALUES (
+		SEQ_ITEM_IMG_NO.NEXTVAL, #{itemNo}, #{imgUrl}
+		)
+	</insert>
 </mapper>

@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 public class Payment {
 	private int paymentNo;
 	private int resultNo;
-	private int buyerNo;
-	private int amount;
 	private String paymentMethod;
 	private String paymentStatus;
 	private Date paymentTime;
+	private String payCode;
 }
