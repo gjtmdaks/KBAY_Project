@@ -13,7 +13,8 @@ public class Item {
 	private int itemCdNo;
 	private int userNo;
 	private String itemTitle;
-	private int item_Size;
+
+	private int itemSize;
 	private String itemContent;
 	private int startPrice;
 	private char directBuy;
@@ -28,6 +29,4 @@ public class Item {
 	
 	private List<ItemImg> imgList;
     private String thumbnail;
-	
-	
 }

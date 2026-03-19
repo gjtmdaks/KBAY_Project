@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:useBean id="now" class="java.util.Date" />
+<c:set var="now" value="${now}" scope="request"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>

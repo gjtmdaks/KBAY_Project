@@ -41,21 +41,18 @@ public class BoardController {
 		
 		int boardLimit = 10;
 		int pageLimit = 10;
-		int listCount = BoardService.selectListCount(paramMap);
+		int boardListCount = bs.selectBoardListCount(paramMap);
 		
 		PageInfo pi =
-				Pagination.getPageInfo(listCount, currentPage, pageLimit, boardLimit);
+				Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
 		log.debug("pi : {}", pi);
-//		log.info("pi : {}", pi);
 		paramMap.put("pi",pi);
 		
-		List<Board> list = BoardService.selectList(paramMap);
+		List<Board> list = bs.selectList(paramMap);
 		model.addAttribute("list",list);
 		model.addAttribute("pi",pi);
-//		model.addAttribute("param",paramMap); // 추가로할필요가 없음 삭제해도 좋음
 		
 		return "board/boardListView";
-        return "board/board";
     }
 	
 	// 게시판 등록
@@ -70,7 +67,7 @@ public class BoardController {
 		
 		
 		
-		return boardCd;
+		return "board/";
 		
 	}
 	

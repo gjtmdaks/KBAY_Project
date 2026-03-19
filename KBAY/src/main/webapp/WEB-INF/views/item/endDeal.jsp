@@ -1,0 +1,41 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<jsp:useBean id="end" class="java.util.Date" />
+<c:set var="end" value="${end}" scope="request"/>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>K-Bay 경매 목록</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/home.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/itemCss/auction.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/paging.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
+</head>
+<body>
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
+	
+	<section class="container auction-list">
+		<h3 class="section-title">경매 상품 목록</h3>
+		<div class="item-grid">
+			<c:forEach var="it" items="${itemList}">
+			    <c:set var="item" value="${it}" scope="request"/>
+			
+			    <jsp:include page="itemCard.jsp">
+			        <jsp:param name="type" value="end"/>
+			    </jsp:include>
+			</c:forEach>
+		</div>
+	</section>
+	
+	<jsp:include page="/WEB-INF/views/common/paging.jsp" />
+	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+</body>
+</html>
