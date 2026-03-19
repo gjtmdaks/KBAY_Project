@@ -25,8 +25,12 @@
 				<label for="itemCdNo">카테고리</label> <select id="itemCdNo"
 					name="itemCdNo">
 					<option value="1">디지털/가전</option>
-					<option value="2">의류/잡화</option>
-					<option value="3">도서/티켓</option>
+					<option value="2">예술</option>
+					<option value="3">도서/문헌</option>
+					<option value="4">근현대생활사</option>
+					<option value="5">컬렉터블</option>
+					<option value="6">세컨핸드(중고)</option>
+					<option value="7">키덜트</option>
 				</select>
 			</div>
 
@@ -53,6 +57,9 @@
 				<label for="BuyNowPrice">즉시 구매 가격 (원)</label> <input type="number"
 					id="BuyNowPrice" name="buyNowPrice" step="1000" min="0" value="0"
 					readonly style="background-color: #f1f1f1; cursor: not-allowed;">
+				<small id="priceGuide"
+					style="color: #666; font-size: 12px; display: none;"> * 시작
+					가격의 30% 이상 가격으로 설정해야 합니다. </small>
 			</div>
 
 			<div class="form-group">
@@ -83,9 +90,19 @@
 			</div>
 
 			<div class="form-group">
-				<label for="item_Size">물품 사이즈(cm)</label> <input type="number"
+				<label for="sizeUnit">측정 단위</label> <select id="sizeUnit"
+					name="sizeUnit">
+					<option value="cm">cm (센티미터)</option>
+					<option value="inch">inch (인치)</option>
+					<option value="㎡">㎡ (제곱미터)</option>
+					<option value="kg">kg (킬로그램)</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="item_Size">물품 크기/수량</label> <input type="number"
 					id="item_Size" name="item_Size" step="10" min="0"
-					placeholder="10 단위로 입력">
+					placeholder="단위에 맞는 수치를 입력하세요">
 			</div>
 
 			<div class="form-group">
@@ -99,8 +116,11 @@
 			</div>
 
 			<div class="form-group">
-				<label for="upfiles">이미지 첨부</label> <input type="file" id="upfiles"
-					name="upfiles" accept="image/*" multiple required>
+				<label for="upfiles">이미지 첨부</label> <input type="file"
+					id="upfiles" name="upfiles" accept="image/*" multiple required>
+
+				<div id="image-preview-container"
+					style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;"></div>
 			</div>
 
 			<button type="submit" class="submit-btn">물품 등록하기</button>
@@ -110,76 +130,126 @@
 
 
 	</main>
+
+
+
 	<script>
-		document
-				.addEventListener(
-						'DOMContentLoaded',
-						function() {
-							const directBuy = document
-									.getElementById('directBuy');
-							const buyNowPrice = document
-									.getElementById('BuyNowPrice');
-							const endTimeInput = document
-									.getElementById('endTime');
+		document.addEventListener('DOMContentLoaded', function() {
+			const directBuy = document.getElementById('directBuy');
+			const buyNowPrice = document.getElementById('BuyNowPrice');
+			const priceGuide = document.getElementById('priceGuide');
+			const sizeUnit = document.getElementById('sizeUnit');
+			const itemSize = document.getElementById('item_Size');
+			const startPriceInput = document.getElementById('startPrice');
+			const upfiles = document.getElementById('upfiles');
+			const previewContainer = document.getElementById('image-preview-container');
+			
+	        buyNowPrice.addEventListener('click', function() {
+	            if (this.readOnly) {
+	                alert("즉시 구매 가능 여부를 '가능'으로 먼저 변경해주세요");
+	                directBuy.focus();
+	            }
+	        });
+			
+			
+			// 이미지 미리보기 및 삭제(초기화) 로직
+			upfiles.addEventListener('change', function(e) {
+				previewContainer.innerHTML = "";
+				const files = Array.from(e.target.files); 
 
-							// 1. 즉시 구매가 활성화 로직
-							directBuy
-									.addEventListener(
-											'change',
-											function() {
-												if (this.value === 'Y') {
-													buyNowPrice.readOnly = false;
-													buyNowPrice.style.backgroundColor = "#fff";
-													buyNowPrice.style.cursor = "text";
-													buyNowPrice.value = ""; // 입력하기 편하게 초기화
-												} else {
-													buyNowPrice.readOnly = true;
-													buyNowPrice.style.backgroundColor = "#f1f1f1";
-													buyNowPrice.style.cursor = "not-allowed";
-													buyNowPrice.value = "0";
-												}
-											});
+				
+				files.forEach(file => {
+					if (!file.type.match('image.*')) {
+						alert("이미지 파일만 업로드 가능합니다.");
+						return;
+					}
+				
+					const reader = new FileReader();
+					reader.onload = function(event) {
+						const card = document.createElement('div');
+						card.style.cssText = "width: 120px; border: 1px solid #eee; padding: 5px; border-radius: 8px; background: #f9f9f9; text-align: center; position: relative;";
 
-							// 비활성화 상태에서 클릭 시 알림
-							buyNowPrice.addEventListener('click', function() {
-								if (this.readOnly) {
-									alert("즉시 구매 가능 여부를 '가능'으로 먼저 변경해주세요!");
-									directBuy.focus();
-								}
-							});
+						const delBtn = document.createElement('button');
+						delBtn.innerHTML = "&times;";
+						delBtn.style.cssText = "position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; border-radius: 50%; background: #ff5f5f; color: white; border: none; cursor: pointer;";
+							
+						delBtn.onclick = function() {
+							upfiles.value = "";
+							previewContainer.innerHTML = "";
+						};
+					
+						const img = document.createElement('img');
+						img.src = event.target.result;
+						img.style.cssText = "width: 100%; height: 100px; object-fit: cover; border-radius: 5px;";
 
-							// 2. 경매 종료 일시 제한 (현재~10일 후)
-							const now = new Date();
-							const tenDaysLater = new Date();
-							tenDaysLater.setDate(now.getDate() + 10);
+						const nameLabel = document.createElement('p');
+						nameLabel.innerText = file.name;
+						nameLabel.style.cssText = "font-size: 11px; color: #555; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
 
-							// datetime-local 형식(YYYY-MM-DDTHH:mm)으로 변환 함수
-							function formatDate(date) {
-								const tzOffset = date.getTimezoneOffset() * 60000; // 로컬 시간 보정
-								return new Date(date - tzOffset).toISOString()
-										.slice(0, 16);
-							}
+						card.appendChild(delBtn);
+						card.appendChild(img);
+						card.appendChild(nameLabel);
+						previewContainer.appendChild(card);
+					};
+					reader.readAsDataURL(file);
+				});
+			});
 
-							endTimeInput.min = formatDate(now);
-							endTimeInput.max = formatDate(tenDaysLater);
+			sizeUnit.addEventListener('change', function() {
+				itemSize.placeholder = this.value + "를 입력하세요";
+			});
 
-							// 3. 1000원 단위 입력 검증 (제출 전 확인)
-							document
-									.getElementById('enrollForm')
-									.addEventListener(
-											'submit',
-											function(e) {
-												const startPrice = document
-														.getElementById('startPrice').value;
-												const bPrice = buyNowPrice.value;
+			directBuy.addEventListener('change', function() {
+				if (this.value === 'Y') {
+					buyNowPrice.readOnly = false;
+					buyNowPrice.style.backgroundColor = "#fff";
+					buyNowPrice.style.cursor = "text";
+					buyNowPrice.value = "";
+					priceGuide.style.display = "block";
+				} else {
+					buyNowPrice.readOnly = true;
+					buyNowPrice.style.backgroundColor = "#f1f1f1";
+					buyNowPrice.style.cursor = "not-allowed";
+					buyNowPrice.value = "0";
+					priceGuide.style.display = "none";
+				}
+			});
 
-												if (startPrice % 1000 !== 0
-														|| (directBuy.value === 'Y' && bPrice % 1000 !== 0)) {
-													alert("가격은 1000원 단위로만 입력이 가능합니다.");
-													e.preventDefault(); // 제출 방지
-												}
-											});
-						});
+			document.getElementById('enrollForm').addEventListener('submit', function(e) {
+				const sPrice = parseInt(startPriceInput.value);
+				const bPrice = parseInt(buyNowPrice.value);
+
+				if (sPrice % 1000 !== 0 || (directBuy.value === 'Y' && bPrice % 1000 !== 0)) {
+					alert("가격은 1000원 단위로만 입력이 가능합니다.");
+					e.preventDefault();
+					return;
+				}
+				
+				if (directBuy.value === 'Y') {
+					const minPrice = sPrice * 1.3;
+					if (bPrice < minPrice) {
+						alert("즉시 구매 가격은 시작 가격의 30% 이상 높아야 합니다.\n(최소 금액: " + Math.ceil(minPrice) + "원)");
+						buyNowPrice.focus();
+						e.preventDefault();
+						return;
+					}
+				}
+			});
+
+			// 날짜 제한 설정
+			const now = new Date();
+			const tenDaysLater = new Date();
+			tenDaysLater.setDate(now.getDate() + 10);
+
+			function formatDate(date) {
+				const tzOffset = date.getTimezoneOffset() * 60000;
+				return new Date(date - tzOffset).toISOString().slice(0, 16);
+			}
+
+			const endTimeInput = document.getElementById('endTime');
+			endTimeInput.min = formatDate(now);
+			endTimeInput.max = formatDate(tenDaysLater);
+		});
 	</script>
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
