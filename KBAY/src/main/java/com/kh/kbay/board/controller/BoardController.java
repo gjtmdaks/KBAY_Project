@@ -43,8 +43,8 @@ public class BoardController {
 		int pageLimit = 10;
 		int boardListCount = bs.selectBoardListCount(paramMap);
 		
-		PageInfo pi =
-				Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
+		PageInfo pi =null;
+//				Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
 		log.debug("pi : {}", pi);
 		paramMap.put("pi",pi);
 		

@@ -1,17 +1,20 @@
 package com.kh.kbay.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class PageInfo {
-	private int boardListCount; // 총 게시글 갯수
-	private int reportListCount; // 문의 게시글 총 갯수
-	private int currentPage;
-	private int pageLimin;
-	private int boardLimit;
-	
-	private int maxPage;
-	private int startPage;
-	private int endPage;
-	
+    private int currentPage;
+    private int limit;
+    private int offset;
+    private int totalCount;
+    private int maxPage;
+
+    public static PageInfo of(int page, int totalCount, int limit) {
+        int offset = (page - 1) * limit;
+        int maxPage = (int)Math.ceil((double)totalCount / limit);
+        return new PageInfo(page, limit, offset, totalCount, maxPage);
+    }
 }

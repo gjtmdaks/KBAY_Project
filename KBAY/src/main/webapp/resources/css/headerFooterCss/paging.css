@@ -11,6 +11,13 @@
 }
 
 .pagination .active {
+    font-weight: bold;
     background: #333;
     color: white;
+}
+
+.pagination .disabled {
+    color: #ccc;
+    pointer-events: none;
+    cursor: default;
 }

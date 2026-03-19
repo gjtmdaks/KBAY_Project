@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.dao.ItemDao;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.model.vo.ItemImg;
@@ -21,17 +22,22 @@ public class ItemServiceImpl implements ItemService {
 	private final ItemDao id;
 
 	@Override
-	public List<Item> selectNowdealList(int limit, int offset) {
-		Map<String, Object> param = new HashMap<>();
-	    param.put("limit", limit);
-	    param.put("offset", offset);
-
-	    return id.selectNowdealList(param);
+	public int selectItemCount(String type, String keyword) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("type", type);
+	    param.put("keyword", keyword);
+	    return id.selectItemCount(param);
 	}
 
 	@Override
-	public int selectNowdealItemCount() {
-		return id.selectNowdealItemCount();
+	public List<Item> selectItemList(String type, String keyword, PageInfo pi) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("type", type);
+	    param.put("keyword", keyword);
+	    param.put("offset", pi.getOffset());
+	    param.put("limit", pi.getLimit());
+
+	    return id.selectItemList(param);
 	}
 	
 	@Transactional
