@@ -41,7 +41,7 @@ public class BoardController {
 	@GetMapping("/community.me/{boardCdNo}")
     public String communityForm(
 			@PathVariable("boardCdNo") int boardCdNo,
-			@RequestParam(value="currentPage", defaultValue = "1")
+			@RequestParam(value="cpage", defaultValue = "1")
 			int currentPage,
 			Model model ,
 			@RequestParam Map<String, Object> paramMap) {
@@ -51,8 +51,8 @@ public class BoardController {
 		int pageLimit = 10;
 		int boardListCount = bs.selectBoardListCount(paramMap);
 		
-		PageInfo pi =null;
-//				Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
+		
+		PageInfo pi = Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
 		log.debug("pi : {}", pi);
 		paramMap.put("pi",pi);
 		

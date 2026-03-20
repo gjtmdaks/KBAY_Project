@@ -71,3 +71,50 @@
     border: 1px solid #aaa;
     cursor: pointer;
 }
+
+/* 숫자바 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    gap: 8px; /* 버튼 사이 간격 */
+}
+
+/* 기본 버튼 디자인 */
+.pagination-container a {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 34px;
+    text-align: center;
+    border: 1px solid #ddd;
+    color: #555;
+    text-decoration: none;
+    border-radius: 5px; /* 모서리를 살짝 둥글게 */
+    font-size: 15px;
+    transition: background-color 0.2s, border-color 0.2s; /* 부드러운 색상 변화 */
+}
+
+/* 마우스를 올렸을 때 */
+.pagination-container a:hover:not(.disabled):not(.active) {
+    background-color: #f1f1f1;
+    border-color: #aaa;
+}
+
+/* 현재 보고 있는 페이지 (활성화) */
+.pagination-container a.active {
+    background-color: #333; /* 사이드바와 깔맞춤한 다크 그레이 */
+    color: white;
+    border-color: #333;
+    font-weight: bold;
+    pointer-events: none; /* 클릭 방지 */
+}
+
+/* 이전/다음 버튼이 비활성화될 때 (1페이지에서 이전 누르기 방지 등) */
+.pagination-container a.disabled {
+    color: #ccc;
+    background-color: #fafafa;
+    pointer-events: none; /* 클릭 방지 */
+}

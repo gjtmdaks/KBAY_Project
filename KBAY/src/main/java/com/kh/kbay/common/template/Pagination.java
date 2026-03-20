@@ -3,14 +3,9 @@ package com.kh.kbay.common.template;
 import com.kh.kbay.common.PageInfo;
 
 public class Pagination {
-/*
+
 	public static PageInfo getPageInfo(int boardlistCount, int currentPage, int pageLimit, int boardLimit) {
 		PageInfo pi = new PageInfo();
-		
-		pi.setBoardListCount(boardlistCount);
-		pi.setCurrentPage(currentPage);
-		pi.setPageLimin(pageLimit);
-		pi.setBoardLimit(boardLimit);
 		
 		int maxPage = (int) Math.ceil(boardlistCount / (double)boardLimit);
 		
@@ -24,11 +19,15 @@ public class Pagination {
 			endPage = maxPage;
 		}
 		
+		pi.setBoardListCount(boardlistCount);
+		pi.setCurrentPage(currentPage);
+		pi.setPageLimit(pageLimit);
+		pi.setBoardLimit(boardLimit);
 		pi.setStartPage(startPage);
 		pi.setEndPage(endPage);
 		pi.setMaxPage(maxPage);
 		
 		return pi;
 	}
-*/
+
 }

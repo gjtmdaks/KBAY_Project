@@ -35,32 +35,31 @@ ORDER BY BOARD_NO DESC
 ) WHERE RNUM BETWEEN #{offset} AND #{limit}
 </select>
 	
-	<select id="selectBoardListCount" resultType="int">
-		SELECT COUNT(*)
-		FROM BOARD_POST B
-		LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
-		WHERE B.BOARD_DELETE = 'N' AND BOARD_CD_NO = #{boardCdNo}
-		<if test="keyword != null and keyword != ''">
-        	AND
-			<choose>
-			    <when test="condition == 'title'">
-			        BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			    </when>
-			    
-			    <when test="condition == 'writer'">
-			        USER_NAME LIKE '%' || #{keyword} || '%'
-			    </when>
-			    
-			    <when test="condition == 'content'">
-			        BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-			    </when>
-			    
-			    <otherwise>
-			        (BOARD_TITLE LIKE '%' || #{keyword} || '%'
-			        OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
-			    </otherwise>
-			</choose>
-		</if>
+	<!-- 보드 리스트 숫자세기 -->
+	<select id="selectBoardListCount" resultType="_int">
+	    SELECT COUNT(*)
+	    FROM BOARD_POST B
+	    LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+	    WHERE B.BOARD_DELETE = 'N' 
+	    
+	    <choose>
+	        <when test="boardCdNo == 1">
+	            AND B.BOARD_CD_NO IN (2, 3)
+	        </when>
+	        <otherwise>
+	            AND B.BOARD_CD_NO = #{boardCdNo}
+	        </otherwise>
+	    </choose>
+	    
+	    <if test="keyword != null and keyword != ''">
+	        AND
+	        <choose>
+	            <when test="condition == 'title'">B.BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
+	            <when test="condition == 'writer'">M.USER_NAME LIKE '%' || #{keyword} || '%'</when>
+	            <when test="condition == 'content'">B.BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
+	            <otherwise>(B.BOARD_TITLE LIKE '%' || #{keyword} || '%' OR B.BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
+	        </choose>
+	    </if>
 	</select>
 	
 	<insert id="insertBoard" parameterType="boardPost">
