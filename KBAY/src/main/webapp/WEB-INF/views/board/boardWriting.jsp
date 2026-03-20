@@ -19,8 +19,8 @@
 <div class="write-container">
     <h2>커뮤니티 글작성</h2>
     
-    <form id="postForm" action="${pageContext.request.contextPath}/board/insert?${_csrf.parameterName}=${_csrf.token}" 
-      method="post"enctype="multipart/form-data">
+    <form id="postForm" action="${pageContext.request.contextPath}/board/insert" 
+      method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="postTitle">제목</label>
             <input type="text" id="boardTitle" name="boardTitle" placeholder="제목을 입력하세요" required>
@@ -49,7 +49,8 @@
         </div>
 
         <div class="button-group">
-            <button type="button" class="btn-list" onclick="history.back()">목록으로</button>
+        	<button type="button" class="btn-list" onclick="location.href='${contextPath}/board/community.me/${boardCdNo}'">목록으로</button>
+            
             <button type="submit" class="btn-submit">게시글 작성</button>
         </div>
     </form>

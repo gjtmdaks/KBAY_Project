@@ -76,9 +76,9 @@
         </table>
 		
 		<div class="button-wrap">
-            <a class="btn btn-secondary write-btn" style="display:inline-block;" 
-               href="${pageContext.request.contextPath}/board/insert/${boardCode}">글쓰기</a>
-        </div>
+		    <a class="btn btn-secondary write-btn" style="display:inline-block;" 
+		       href="${pageContext.request.contextPath}/board/insert/${boardCdNo}">글쓰기</a>
+		</div>
            
         <div class="pagination-container">
             <c:choose>
