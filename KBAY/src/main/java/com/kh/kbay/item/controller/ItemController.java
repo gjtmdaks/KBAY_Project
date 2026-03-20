@@ -82,7 +82,8 @@ public class ItemController {
 		item.setUserNo(loginUser.getUserNo());
 		
 		String savePath = "C:/upload/item/";
-		String webPath = "/upload/item/";
+		String serverIp = "192.168.10.25:8081";
+		String webPath = "/kbay/upload/item/";
 		
 		File dir = new File(savePath);
 		if (!dir.exists()) {
@@ -101,7 +102,7 @@ public class ItemController {
 					file.transferTo(new File(savePath + changeName));
 					
 					ItemImg img = new ItemImg();
-					img.setImgUrl(webPath + changeName);
+					img.setImgUrl("http://" + serverIp + webPath + changeName);
 					imgList.add(img);
 					
 				} catch (IOException e) {
