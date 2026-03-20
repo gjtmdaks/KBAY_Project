@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <header>
@@ -10,7 +11,8 @@
 		</h1>
 
 		<div class="search-bar">
-			<form action="${contextPath}/auction/search" method="get" id="searchForm">
+			<form action="${contextPath}/auction/search" method="get"
+				id="searchForm">
 				<input type="text" name="keyword" placeholder="검색어를 입력하세요."
 					id="searchInput">
 				<button type="submit">검색</button>
@@ -18,23 +20,15 @@
 		</div>
 
 		<div class="member-links">
-			<c:if test="${empty loginUser}">
-				<a href="${contextPath}/member/loginForm.me" class="hover-link">로그인</a> | 
-					<a href="${contextPath}/member/agreeForm.me" class="hover-link">회원가입</a>
-			</c:if>
-			<c:if test="${not empty loginUser}">
-					${loginUser.userName}님 <br>
-				<c:if test="${loginUser.authority == 1}">
-					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
-				</c:if>
-				<c:if test="${loginUser.authority == 2}">
-					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
-				</c:if>
-				<c:if test="${loginUser.authority == 3}">
-					<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
-				</c:if>
-					 | <a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
-			</c:if>
+			<sec:authorize access="isAnonymous()">
+				<a href="${contextPath}/member/login" class="hover-link">로그인</a> | 
+        <a href="${contextPath}/member/agreeForm.me" class="hover-link">회원가입</a>
+			</sec:authorize>
+
+			<sec:authorize access="isAuthenticated()">
+				<strong><sec:authentication property="principal.userName" /></strong>님 환영합니다! | 
+        <a href="${contextPath}/member/logout" class="hover-link">로그아웃</a>
+			</sec:authorize>
 		</div>
 	</div>
 </header>
@@ -47,8 +41,9 @@
 					경매</a></li>
 			<li><a href="${contextPath}/auction/yetDeal" class="nav-item">시작
 					예정인 경매</a></li>
-			<li><a href="${contextPath}/board/community.me/1" class="nav-item">커뮤니티</a></li>
-			<li><a href="${contextPath}/auction/enroll" class="btn-register">물품등록</a></li>
+			<li><a href="${contextPath}/board/community.me/1"
+				class="nav-item">커뮤니티</a></li>
+			<li><a href="${contextPath}/auction/itemEnroll" class="btn-register">물품등록</a></li>
 		</ul>
 	</div>
 </nav>

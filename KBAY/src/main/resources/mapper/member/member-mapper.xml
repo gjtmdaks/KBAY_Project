@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="member">
-	<select id="login" resultType="com.kh.kbay.member.model.vo.Member">
-		SELECT *
-		FROM MEMBER
-		WHERE USER_ID = #{userId}
-			AND USER_PWD = #{userPwd}
-	</select>
-	
+<resultMap id="memberResultSet" type="member">
+    <id column="USER_NO" property="userNo" />
+    <result column="USER_ID" property="userId" />
+    <result column="USER_PWD" property="userPwd" /> <result column="USER_NAME" property="userName" />
+    <result column="AUTHORITY" property="authority" />
+    <result column="USER_ADDRESS" property="userAddress" />
+    <result column="USER_PHONE" property="userPhone" />
+    <result column="USER_EMAIL" property="userEmail" />
+    <result column="USER_ENROLL_DATE" property="userEnrollDate" />
+    <result column="USER_DELETE_YN" property="userDeleteYn" />
+</resultMap>
+	<select id="loginUserById" resultMap="memberResultSet"> SELECT USER_NO, USER_ID,
+		USER_PWD, USER_NAME, AUTHORITY, USER_DELETE_YN FROM MEMBER WHERE
+		USER_ID = #{userId} AND USER_DELETE_YN = 'N' </select>
+
 	<insert id="insertMember">
 		INSERT INTO MEMBER VALUES(
 		SEQ_USER_NO.NEXTVAL,
-		1,
+		#{authority},
 		#{userId},
 		#{userPwd},
 		#{userName},
@@ -25,10 +33,11 @@
 		DEFAULT
 		)
 	</insert>
-	
+
 	<select id="idCheck" resultType="int">
 		SELECT COUNT(*)
 		FROM MEMBER
-		WHERE USER_ID = #{userId}
+		WHERE
+		USER_ID = #{userId}
 	</select>
 </mapper>
