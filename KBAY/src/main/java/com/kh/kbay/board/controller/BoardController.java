@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,14 +74,13 @@ public class BoardController {
 	        @PathVariable("boardCdNo") int boardCdNo,
 	        Model model,
 	        RedirectAttributes ra,
-	        HttpSession session
+	        Authentication auth
 	        ) {
 	    
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
-	        ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
-	        return "redirect:/member/loginForm.me"; 
-	    }
+	    if (auth == null || !auth.isAuthenticated()) {
+            ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+            return "redirect:/member/login";
+        }
 	    
 	    model.addAttribute("boardCdNo", boardCdNo); 
 	    
@@ -97,13 +94,14 @@ public class BoardController {
 			Model model,
 			RedirectAttributes ra,
 			@RequestParam(value = "upfile", required = false) List<MultipartFile> upfiles,
-			HttpSession session
+			Authentication auth
 			) {
-		Member loginUser = (Member) session.getAttribute("loginUser");
-		if (loginUser == null) {
-	        ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
-	        return "redirect:/member/loginForm.me"; 
-	    }
+		if (auth == null || !auth.isAuthenticated()) {
+            ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
+            return "redirect:/member/login";
+        }
+		
+		Member loginUser = (Member) auth.getPrincipal();
 		
 		List<BoardImg> imgList = new ArrayList<>();
 		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
