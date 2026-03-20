@@ -60,7 +60,7 @@
 	                </c:when>
 	            	<c:otherwise>
 		            	<c:forEach var="boardPost" items="${list}" varStatus="status"> 
-					    <tr onclick="movePage(${boardPost.boardNo})">
+		            	<tr onclick="location.href='${pageContext.request.contextPath}/board/boardDetail/${boardPost.boardNo}'" style="cursor:pointer;">
 					        <td>${status.count}</td>
 					        <td>${boardPost.boardTitle}</td>
 					        <td>${boardPost.boardWriter}</td>
@@ -83,5 +83,6 @@
     </main>
 	</div>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+	<script src="${pageContext.request.contextPath}/resources/js/boardJs/board.js"></script>
 </body>
 </html>
