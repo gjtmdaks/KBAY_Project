@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+// <<<<<<< 이인호(security_에러페이지포워딩)
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+// import javax.servlet.ServletContext;
+
+// import org.springframework.security.core.annotation.AuthenticationPrincipal;
+// >>>>>>> main
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +28,11 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.service.BoardService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
-import com.kh.kbay.common.util.Utils;
+// <<<<<<< 이인호(security_에러페이지포워딩)
+// 지움
+// ====
+// import com.kh.kbay.common.util.Utils;
+// >>>>>>> main
 import com.kh.kbay.member.model.vo.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -37,24 +46,37 @@ public class BoardController {
 	private final BoardService bs;
 	private final ServletContext application;
 	
-	//커뮤니티 목록 불류 및 목록을 보여주기
+// <<<<<<< 이인호(security_에러페이지포워딩)
+// =======
+// 	//커뮤니티 목록 불류 및 목록을 보여주기
+// >>>>>>> main
 	@GetMapping("/community.me/{boardCdNo}")
     public String communityForm(
 			@PathVariable("boardCdNo") int boardCdNo,
 			@RequestParam(value="currentPage", defaultValue = "1")
 			int currentPage,
+			Authentication auth,
 			Model model ,
 			@RequestParam Map<String, Object> paramMap) {
+		
+		log.info("===== 게시판 접근 권한 확인 시작 =====");
+		if (auth != null) {
+			log.info("로그인 유저: {}", auth.getName());
+			log.info("보유 권한: {}", auth.getAuthorities());
+			Member loginUser = (Member) auth.getPrincipal();
+			log.info("유저 번호: {}", loginUser.getUserNo());
+		} else {
+			log.warn("인증 정보 없음 (비로그인 상태)");
+		}
+		
 		paramMap.put("boardCdNo", boardCdNo);
 		
 		int boardLimit = 10;
 		int pageLimit = 10;
 		int boardListCount = bs.selectBoardListCount(paramMap);
 		
-		PageInfo pi =null;
-//				Pagination.getPageInfo(boardListCount, currentPage, pageLimit, boardLimit);
-		log.debug("pi : {}", pi);
-		paramMap.put("pi",pi);
+		PageInfo pi = null;
+		paramMap.put("pi", pi);
 		
 		int offset = (currentPage - 1) * boardLimit + 1;  // 시작 행 번호 (예: 1페이지면 1)
 	    int limit = currentPage * boardLimit;             // 끝 행 번호 (예: 1페이지면 10)
@@ -63,22 +85,30 @@ public class BoardController {
 	    paramMap.put("limit", limit);
 		
 		List<BoardPost> list = bs.selectList(paramMap);
-		model.addAttribute("list",list);
-		model.addAttribute("pi",pi);
+		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
 		
 		return "board/board";
     }
 	
-	// 게시판 띄어주기
-	@GetMapping("/insert")
-	public String insertBoardForm() {
-		return "board/boardWriting";
-	}
-	// 게시판 등록버튼
+// <<<<<<< 이인호(security_에러페이지포워딩)
 	@PostMapping("/insert")
 	public String insertBoard(
 			@ModelAttribute BoardPost b,
-			@RequestParam("boardCdNo") int boardCdNo,
+			@PathVariable("boardCd") String boardCd,
+			Authentication auth,
+// =======
+// 	// 게시판 띄어주기
+// 	@GetMapping("/insert")
+// 	public String insertBoardForm() {
+// 		return "board/boardWriting";
+// 	}
+// 	// 게시판 등록버튼
+// 	@PostMapping("/insert")
+// 	public String insertBoard(
+// 			@ModelAttribute BoardPost b,
+// 			@RequestParam("boardCdNo") int boardCdNo,
+// >>>>>>> main
 			Model model,
 			RedirectAttributes ra,
 			@RequestParam(value = "upfile", required = false) List<MultipartFile> upfiles,
@@ -89,60 +119,88 @@ public class BoardController {
 			return "redirect:/member/login"; // 본인의 로그인 페이지 주소로 맞춰주세요!
 		}
 		
-		List<BoardImg> imgList = new ArrayList<>();
-		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
+// <<<<<<< 이인호(security_에러페이지포워딩)
+		if (auth == null || !auth.isAuthenticated()) {
+			log.warn("등록 시도 거부: 인증되지 않은 사용자");
+			ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+			return "redirect:/member/login";
+		}
+
+		Member loginUser = (Member) auth.getPrincipal();
+		log.info("게시글 등록 유저 번호: {}", loginUser.getUserNo());
+		b.setUserNo(loginUser.getUserNo());
 		
-		if(upfiles != null) {
-			for(MultipartFile upfile : upfiles) {
-				if(upfile.isEmpty()) {
-					continue;
-				}
-				// 첨부파일이 존재한다면 WEB서버 상에 첨부파일 저장
-				// Utils.saveFile이 boardCdNo를 String으로 받는다면 String.valueOf()로 변환!
-				String changeName = Utils.saveFile(upfile, application, boardCdNo);
+		return "board/boardWriting";
+// =======
+// 		List<BoardImg> imgList = new ArrayList<>();
+// 		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
+		
+// 		if(upfiles != null) {
+// 			for(MultipartFile upfile : upfiles) {
+// 				if(upfile.isEmpty()) {
+// 					continue;
+// 				}
+// 				// 첨부파일이 존재한다면 WEB서버 상에 첨부파일 저장
+// 				// Utils.saveFile이 boardCdNo를 String으로 받는다면 String.valueOf()로 변환!
+// 				String changeName = Utils.saveFile(upfile, application, boardCdNo);
 				
-				// 첨부파일 관리를 위해 DB에 첨부파일 위치정보 저장
-				BoardImg bi = new BoardImg();
-				bi.setChangeName(changeName);
-				bi.setOriginName(upfile.getOriginalFilename());
-				bi.setImgLevel(imgLevel);
-				imgList.add(bi);
-			}
-		}
+// 				// 첨부파일 관리를 위해 DB에 첨부파일 위치정보 저장
+// 				BoardImg bi = new BoardImg();
+// 				bi.setChangeName(changeName);
+// 				bi.setOriginName(upfile.getOriginalFilename());
+// 				bi.setImgLevel(imgLevel);
+// 				imgList.add(bi);
+// 			}
+// 		}
 		
-		// 게시글 등록 서비스 호출
-		//  - 게시글 등록 서비스 호출 전, 게시글 정보 바인딩
-		//  - 회원번호, 게시판
-//		b.setBoardCdNo(boardCdNo);
-//		MemberExt m =
-//		(MemberExt)SecurityContextHolder.getContext().getAuthentication()
-//		.getPrincipal();
+// 		// 게시글 등록 서비스 호출
+// 		//  - 게시글 등록 서비스 호출 전, 게시글 정보 바인딩
+// 		//  - 회원번호, 게시판
+// //		b.setBoardCdNo(boardCdNo);
+// //		MemberExt m =
+// //		(MemberExt)SecurityContextHolder.getContext().getAuthentication()
+// //		.getPrincipal();
 		
-		b.setUserNo(10);
-		//b.setUserNo(loginUser.getUserNo());//m.getUserNo()
+// 		b.setUserNo(10);
+// 		//b.setUserNo(loginUser.getUserNo());//m.getUserNo()
 		
-		log.debug("board : {}", b);
-		log.debug("imgList : {}", imgList);
+// 		log.debug("board : {}", b);
+// 		log.debug("imgList : {}", imgList);
 		
-		int result = bs.insertBoard(b, imgList);
+// 		int result = bs.insertBoard(b, imgList);
 		
-		if(result<=0) {
-			throw new RuntimeException("게시즐 작성 실패");
-		}
+// 		if(result<=0) {
+// 			throw new RuntimeException("게시즐 작성 실패");
+// 		}
 		
-		ra.addFlashAttribute("alertMsg","게시글 등록 성공");
+// 		ra.addFlashAttribute("alertMsg","게시글 등록 성공");
 		
-		return "redirect:/board/community.me/" + boardCdNo;
+// 		return "redirect:/board/community.me/" + boardCdNo;
+// >>>>>>> main
 	}
 	// 게시판 등록에서 목록으로 버튼 누를시 되돌리는 기능
 	@GetMapping("/insert/{boardCd}")
 	public String enrollForm(
 			@PathVariable("boardCd") String boardCd,
 			@ModelAttribute BoardPost b,
+			Authentication auth,
+			RedirectAttributes ra,
 			Model m
 			) {
-		m.addAttribute("b",b);
-		return "board/board";
+// <<<<<<< 이인호(security_에러페이지포워딩)
+		
+		if (auth == null || !auth.isAuthenticated()) {
+			log.warn("등록 폼 접근 거부: 인증되지 않은 사용자");
+			ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+			return "redirect:/member/login";
+		}
+		
+		m.addAttribute("b", b);
+		return "board/boardEnrollForm";
+// =======
+// 		m.addAttribute("b",b);
+// 		return "board/board";
+// >>>>>>> main
 	}
 
 
