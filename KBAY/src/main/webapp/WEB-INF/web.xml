@@ -70,6 +70,6 @@
 	 </filter>
 	 <filter-mapping>
 	 	<filter-name>springSecurityFilterChain</filter-name>
-	 	<url-pattern>/*</url-pattern>
+	 	<url-pattern>/abc/*</url-pattern>
 	 </filter-mapping>
 </web-app>

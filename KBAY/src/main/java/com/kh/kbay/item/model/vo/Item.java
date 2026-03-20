@@ -37,5 +37,4 @@ public class Item {
     
     private String mainImg;      // 대표
     private List<ItemImg> subImgList; // 나머지
-
 }

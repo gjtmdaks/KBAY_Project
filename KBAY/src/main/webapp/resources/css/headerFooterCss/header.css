@@ -5,7 +5,7 @@ header { padding: 20px 0; border-bottom: 1px solid #eee; }
 .logo { font-size: 28px; color: #2C3E50; font-weight: 800; }
 .logo span { color: #E74C3C; }
 
-.search-bar { flex: 0.6; display: flex; }
+.search-bar { flex: 0.5; display: flex; }
 .search-bar input {
     flex: 1;
     padding: 15px 50px;

@@ -33,22 +33,19 @@
 	        <!-- 대표 이미지 -->
 	        <div class="main-image">
 	            <img id="mainImg"
-	                 src="${item.mainImg}"
-	                 onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+	                 src="${item.mainImg}">
 	        </div>
 	
 	        <!-- 썸네일 리스트 -->
 	        <div class="thumbnail-list">
 	            <!-- 대표도 포함 -->
 			    <c:if test="${item.mainImg != null}">
-			        <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)"
-			        	onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+			        <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
 			    </c:if>
 			
 			    <!-- 나머지 -->
 			    <c:forEach var="img" items="${item.subImgList}">
-			        <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)"
-			        	onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+			        <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)">
 			    </c:forEach>
 	        </div>
 	    </div>

@@ -1,50 +1,42 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <header>
-    <div class="container header-inner">
-        <h1 class="logo">
-            <a href="${contextPath}">K-Bay <span>Auction</span></a>
-        </h1>
+	<div class="container header-inner">
+		<h1 class="logo">
+			<a href="${contextPath}">K-Bay <span>Auction</span></a>
+		</h1>
 
-        <div class="search-group">
-            <div class="search-bar">
-                <form action="${contextPath}/auction/search" method="get" id="searchForm">
-                    <input type="text" name="keyword" placeholder="검색어를 입력하세요." id="searchInput">
-                    <button type="submit">검색</button>
-                </form>
-            </div>
-        </div>
+		<div class="search-bar">
+			<form action="${contextPath}/auction/search" method="get" id="searchForm">
+				<input type="text" name="keyword" placeholder="검색어를 입력하세요."
+					id="searchInput">
+				<button type="submit">검색</button>
+			</form>
+		</div>
 
-        <div class="member-links">
-            <%--  로그인하지 않은 경우 --%>
-            <sec:authorize access="isAnonymous()">
-                <a href="${contextPath}/member/login" class="hover-link">로그인</a> | 
-                <a href="${contextPath}/member/insert" class="hover-link">회원가입</a>
-            </sec:authorize>
-
-            <%--  로그인한 경우 --%>
-            <sec:authorize access="isAuthenticated()">
-                <sec:authentication property="principal" var="loginUser" />
-                
-                <strong>${loginUser.userName}</strong>님 | 
-                
-                <c:choose>
-                    <c:when test="${loginUser.authority == 3}">
-                        <a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
-                    </c:otherwise>
-                </c:choose>
-                
-                | <a href="${contextPath}/member/logout" class="hover-link">로그아웃</a>
-            </sec:authorize>
-        </div>
-    </div>
+		<div class="member-links">
+			<c:if test="${empty loginUser}">
+				<a href="${contextPath}/member/loginForm.me" class="hover-link">로그인</a> | 
+					<a href="${contextPath}/member/agreeForm.me" class="hover-link">회원가입</a>
+			</c:if>
+			<c:if test="${not empty loginUser}">
+					${loginUser.userName}님 <br>
+				<c:if test="${loginUser.authority == 1}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+				</c:if>
+				<c:if test="${loginUser.authority == 2}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+				</c:if>
+				<c:if test="${loginUser.authority == 3}">
+					<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
+				</c:if>
+					 | <a href="${contextPath}/member/logout.me" class="hover-link">로그아웃</a>
+			</c:if>
+		</div>
+	</div>
 </header>
 <nav>
 	<div class="container">
