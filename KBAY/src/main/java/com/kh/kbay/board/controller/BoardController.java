@@ -135,15 +135,24 @@ public class BoardController {
 		return "redirect:/board/community.me/" + boardCdNo;
 	}
 	// 게시판 등록에서 목록으로 버튼 누를시 되돌리는 기능
-	@GetMapping("/insert/{boardCd}")
+	@GetMapping("/insert/{boardCdNo}")
 	public String enrollForm(
-			@PathVariable("boardCd") String boardCd,
+			@PathVariable("boardCdNo") String boardCdNo,
 			@ModelAttribute BoardPost b,
 			Model m
 			) {
 		m.addAttribute("b",b);
 		return "board/board";
 	}
-
+	
+	@GetMapping("/boardDetail/{boardCdNo}")
+	public String boardDetail(
+			@PathVariable("boardCdNo") String boardCdNo,
+			@ModelAttribute BoardPost b,
+			Model m
+			) {
+		m.addAttribute("b",b);
+		return "board/boardDetail";
+	}
 
 }

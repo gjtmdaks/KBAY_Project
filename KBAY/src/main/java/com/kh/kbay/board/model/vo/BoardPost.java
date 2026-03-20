@@ -17,5 +17,8 @@ public class BoardPost {
 	private String boardTitle;
 	private int viewCount;
 	private int boardCdNo; // board_Cd_No = boardCategoryNo
+	
 	private String boardWriter;
+	private String originalFileName; 
+    private String renamedFileName;
 }
