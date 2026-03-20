@@ -59,7 +59,21 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public Item selectItemDetail(int itemNo) {
-		return id.selectItemDetail(itemNo);
+		Item item = id.selectItemDetail(itemNo);
+		List<ItemImg> imgList = id.selectItemImgList(itemNo);
+
+		// 정렬 보장 (혹시 몰라서)
+		imgList.sort((a,b) -> a.getItemImgNo() - b.getItemImgNo());
+
+		// 대표이미지
+		if(!imgList.isEmpty()){
+		    item.setMainImg(imgList.get(0).getImgUrl());
+		    item.setSubImgList(imgList.subList(1, imgList.size()));
+		}
+
+		item.setImgList(imgList);
+		
+		return item;
 	}
 
 	@Override

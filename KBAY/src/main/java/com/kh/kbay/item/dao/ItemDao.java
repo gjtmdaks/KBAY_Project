@@ -21,4 +21,6 @@ public interface ItemDao {
 
 	ItemCategory selectItemCategory(int itemCdNo);
 
+	List<ItemImg> selectItemImgList(int itemNo);
+
 }

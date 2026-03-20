@@ -26,8 +26,12 @@
 	    FROM (
 	        SELECT ROWNUM RNUM, A.*
 	        FROM (
-	            SELECT *
-	            FROM ITEM
+	            SELECT i.*,
+	                   (SELECT img_url
+	                    FROM ITEM_IMG
+	                    WHERE ITEM_NO = i.ITEM_NO
+	                    AND ROWNUM = 1) AS MAIN_IMG
+	            FROM ITEM i
 	            <where>
 	                <choose>
 	                    <when test="type == 'nowDeal'">
@@ -103,5 +107,11 @@
 		SELECT *
 		FROM ITEM_CD
 		WHERE ITEM_CATEGORY_NO = #{itemCdNo}
+	</select>
+	<select id="selectItemImgList" resultType="itemImg">
+		SELECT *
+	    FROM ITEM_IMG
+	    WHERE ITEM_NO = #{itemNo}
+	    ORDER BY ITEM_IMG_NO ASC
 	</select>
 </mapper>
