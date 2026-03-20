@@ -3,6 +3,7 @@ package com.kh.kbay.item.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
@@ -76,8 +78,9 @@ public class ItemController {
         item.setUserNo(loginUser.getUserNo()); 
         log.info("로그인 유저 번호 확인: {}", item.getUserNo());
 
-        String savePath = "C:/upload/item/";
-        String webPath = "/kbay/upload/item/";
+		    String savePath = "C:/upload/item/";
+		    String serverIp = "192.168.10.25:8081";
+		    String webPath = "/kbay/upload/item/";
         
         File dir = new File(savePath);
         if (!dir.exists()) {
@@ -97,7 +100,7 @@ public class ItemController {
                         file.transferTo(new File(savePath + changeName));
                         
                         ItemImg img = new ItemImg();
-                        img.setImgUrl(webPath + changeName);
+                        img.setImgUrl("http://" + serverIp + webPath + changeName);
                         imgList.add(img);
                         
                     } catch (IOException e) {

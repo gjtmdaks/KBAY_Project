@@ -26,8 +26,12 @@
 	    FROM (
 	        SELECT ROWNUM RNUM, A.*
 	        FROM (
-	            SELECT *
-	            FROM ITEM
+	            SELECT i.*,
+	                   (SELECT img_url
+	                    FROM ITEM_IMG
+	                    WHERE ITEM_NO = i.ITEM_NO
+	                    AND ROWNUM = 1) AS MAIN_IMG
+	            FROM ITEM i
 	            <where>
 	                <choose>
 	                    <when test="type == 'nowDeal'">
@@ -51,24 +55,41 @@
 	    WHERE RNUM > #{offset}
 	</select>
 
-	<insert id="insertItem" parameterType="com.kh.kbay.item.model.vo.Item">
-    <selectKey keyProperty="itemNo" resultType="_int" order="BEFORE">
-        SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
-    </selectKey>
-    INSERT INTO ITEM (
-        ITEM_NO, ITEM_TITLE, ITEM_CONTENT, ITEM_SIZE,
-        START_PRICE, DIRECT_BUY, BUY_NOW_PRICE, CURRENT_PRICE,
-        END_TIME, ITEM_CD_NO, USER_NO, COUNTRY_NO, STATUS,
-        START_TIME, CREATE_AT
-    ) VALUES (
-        #{itemNo}, #{itemTitle}, #{itemContent}, #{itemSize}, 
-        #{startPrice}, #{directBuy}, #{buyNowPrice}, #{startPrice}, 
-        #{endTime}, #{itemCdNo}, #{userNo}, #{countryNo}, 'N',
-        SYSDATE, SYSDATE
-    )
-</insert>
+	<insert id="insertItem"
+		parameterType="item">
+		<selectKey keyProperty="itemNo" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO ITEM (
+		ITEM_NO,
+		ITEM_TITLE,
+		ITEM_CONTENT,
+		ITEM_SIZE,
+		START_PRICE,
+		DIRECT_BUY,
+		BUY_NOW_PRICE,
+		CURRENT_PRICE,
+		END_TIME,
+		ITEM_CD_NO,
+		USER_NO, COUNTRY_NO, STATUS,
+		START_TIME,
+		CREATE_AT
+		) VALUES (
+		#{itemNo},
+		#{itemTitle},
+		#{itemContent},
+		#{itemSize}, #{startPrice},
+		#{directBuy},
+		#{buyNowPrice}, #{startPrice}, #{endTime},
+		#{itemCdNo},
+		#{userNo}, #{countryNo}, 'N',
+		SYSDATE,
+		SYSDATE
+		)
+	</insert>
 	<insert id="insertItemImg"
-		parameterType="com.kh.kbay.item.model.vo.ItemImg">
+		parameterType="itemImg">
 		INSERT INTO ITEM_IMG (
 		ITEM_IMG_NO, ITEM_NO, IMG_URL
 		)
@@ -76,4 +97,21 @@
 		SEQ_ITEM_IMG_NO.NEXTVAL, #{itemNo}, #{imgUrl}
 		)
 	</insert>
+	
+	<select id="selectItemDetail" resultType="item">
+		SELECT *
+		FROM ITEM
+		WHERE ITEM_NO = #{itemNo}
+	</select>
+	<select id="selectItemCategory" resultType="itemCategory">
+		SELECT *
+		FROM ITEM_CD
+		WHERE ITEM_CATEGORY_NO = #{itemCdNo}
+	</select>
+	<select id="selectItemImgList" resultType="itemImg">
+		SELECT *
+	    FROM ITEM_IMG
+	    WHERE ITEM_NO = #{itemNo}
+	    ORDER BY ITEM_IMG_NO ASC
+	</select>
 </mapper>

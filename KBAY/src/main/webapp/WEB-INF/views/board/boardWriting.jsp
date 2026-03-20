@@ -1,11 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/boardWriting.css">
 </head>
@@ -14,17 +19,18 @@
 <div class="write-container">
     <h2>커뮤니티 글작성</h2>
     
-    <form id="postForm">
+    <form id="postForm" action="${pageContext.request.contextPath}/board/insert?${_csrf.parameterName}=${_csrf.token}" 
+      method="post"enctype="multipart/form-data">
         <div class="form-group">
             <label for="postTitle">제목</label>
-            <input type="text" id="postTitle" placeholder="제목을 입력하세요" required>
+            <input type="text" id="boardTitle" name="boardTitle" placeholder="제목을 입력하세요" required>
         </div>
 
         <div class="form-group">
-            <label for="postCategory">카테고리</label>
-            <select id="postCategory">
-                <option value="boast">물품자랑</option>
-                <option value="request">구매요망</option>
+            <label for="boardCdNo">카테고리</label>
+            <select id="boardCdNo" name="boardCdNo">
+                <option value="2">물품자랑</option>
+                <option value="3">구매요망</option>
             </select>
         </div>
 
@@ -39,7 +45,7 @@
 
         <div class="form-group">
             <label for="postContent">내용</label>
-            <textarea id="postContent" rows="15" placeholder="게시글 내용을 자유롭게 입력하세요" required></textarea>
+            <textarea id="boardContent" name="boardContent" rows="15" placeholder="게시글 내용을 자유롭게 입력하세요" required></textarea>
         </div>
 
         <div class="button-group">
