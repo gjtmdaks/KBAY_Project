@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -69,10 +70,24 @@ public class BoardController {
 		return "board/board";
     }
 	
-	// 게시판 띄어주기
-	@GetMapping("/insert")
-	public String insertBoardForm() {
-		return "board/boardWriting";
+	// 게시판 등록 띄어주기
+	@GetMapping("/insert/{boardCdNo}")
+	public String insertBoardForm(
+	        @PathVariable("boardCdNo") int boardCdNo,
+	        Model model,
+	        RedirectAttributes ra,
+	        HttpSession session
+	        ) {
+	    
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+	        return "redirect:/member/loginForm.me"; 
+	    }
+	    
+	    model.addAttribute("boardCdNo", boardCdNo); 
+	    
+	    return "board/boardWriting";
 	}
 	// 게시판 등록버튼
 	@PostMapping("/insert")
@@ -82,12 +97,13 @@ public class BoardController {
 			Model model,
 			RedirectAttributes ra,
 			@RequestParam(value = "upfile", required = false) List<MultipartFile> upfiles,
-			@AuthenticationPrincipal Member loginUser
+			HttpSession session
 			) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
 		if (loginUser == null) {
-			ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
-			return "redirect:/member/login"; // 본인의 로그인 페이지 주소로 맞춰주세요!
-		}
+	        ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
+	        return "redirect:/member/loginForm.me"; 
+	    }
 		
 		List<BoardImg> imgList = new ArrayList<>();
 		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
@@ -110,16 +126,8 @@ public class BoardController {
 			}
 		}
 		
-		// 게시글 등록 서비스 호출
-		//  - 게시글 등록 서비스 호출 전, 게시글 정보 바인딩
-		//  - 회원번호, 게시판
-//		b.setBoardCdNo(boardCdNo);
-//		MemberExt m =
-//		(MemberExt)SecurityContextHolder.getContext().getAuthentication()
-//		.getPrincipal();
-		
-		b.setUserNo(10);
-		//b.setUserNo(loginUser.getUserNo());//m.getUserNo()
+		b.setBoardCdNo(boardCdNo);
+	    b.setUserNo(loginUser.getUserNo());
 		
 		log.debug("board : {}", b);
 		log.debug("imgList : {}", imgList);
@@ -133,16 +141,6 @@ public class BoardController {
 		ra.addFlashAttribute("alertMsg","게시글 등록 성공");
 		
 		return "redirect:/board/community.me/" + boardCdNo;
-	}
-	// 게시판 등록에서 목록으로 버튼 누를시 되돌리는 기능
-	@GetMapping("/insert/{boardCdNo}")
-	public String enrollForm(
-			@PathVariable("boardCdNo") String boardCdNo,
-			@ModelAttribute BoardPost b,
-			Model m
-			) {
-		m.addAttribute("b",b);
-		return "board/board";
 	}
 	
 	@GetMapping("/boardDetail/{boardCdNo}")
