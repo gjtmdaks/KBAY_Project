@@ -1,6 +1,7 @@
 package com.kh.kbay.member.controller;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MemberController {
 	private final MemberService ms;
-	private final BCryptPasswordEncoder bcryptPasswordEncoder;
+	private final HttpSession session;
 
 	@GetMapping("agreeForm.me")
     public String agreeForm() {
@@ -55,20 +56,18 @@ public class MemberController {
 	}
 	
 	@PostMapping("insertMember.me")
-	public String insertMember(Member m, Model model, RedirectAttributes ra) {
-	    String encPwd = bcryptPasswordEncoder.encode(m.getUserPwd());
-	    
-	    m.setUserPwd(encPwd);
-	    
-	    int result = ms.insertMember(m);
-	    
-	    if(result > 0) {
-	        ra.addFlashAttribute("alertMsg", "회원가입 성공");
-	        return "redirect:/";
-	    } else {
-	        model.addAttribute("errorMsg", "회원가입 실패");
-	        return "common/errorPage";
-	    }
+	public String insertMember(Member m,
+				Model model,
+				RedirectAttributes ra) {
+		int result = ms.insertMember(m);
+		
+		if(result > 0) {
+			ra.addFlashAttribute("alertMsg", "회원가입 성공");
+			return "redirect:/member/insertForm.me";
+		}else {
+			model.addAttribute("errorMsg", "회원가입 실패");
+			return "common/errorPage";
+		}
 	}
 
 	@GetMapping("insertForm.me")
@@ -76,12 +75,30 @@ public class MemberController {
         return "member/memberInsert";
     }
 
-	@GetMapping("login")
+	@GetMapping("loginForm.me")
     public String loginForm() {
         return "member/login";
     }
 
+	@PostMapping("login")
+    public String loginForm(Member m, Model model) {
+		Member loginUser = ms.login(m);
 
+	    if(loginUser == null) {
+            model.addAttribute("errorMsg", "로그인 실패");
+            return "common/errorPage";
+        }
+
+	    session.setAttribute("loginUser", loginUser);
+
+        return "redirect:/";
+    }
 	
+	@GetMapping("logout.me")
+	public String logout(HttpSession session) {
 
+	    session.invalidate();
+
+	    return "redirect:/";
+	}
 }

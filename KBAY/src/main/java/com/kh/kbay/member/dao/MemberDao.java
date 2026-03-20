@@ -10,6 +10,4 @@ public interface MemberDao {
 
 	int idCheck(String userId);
 
-	Member loginUserById(String username);
-
 }
