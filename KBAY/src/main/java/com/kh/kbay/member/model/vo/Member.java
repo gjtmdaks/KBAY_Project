@@ -19,6 +19,6 @@ public class Member {
 	private Date userEnrollDate;
 	private char userDeleteYn;
 	private String userLoginIp;
-	private int retingScore;
-	private int reviewCount;
+	private int likeCount;
+	private int noPayCount;
 }
