@@ -82,7 +82,7 @@ public class ItemController {
 		item.setUserNo(loginUser.getUserNo());
 		
 		String savePath = "C:/upload/item/";
-		String webPath = "/kbay/upload/item/";
+		String webPath = "/upload/item/";
 		
 		File dir = new File(savePath);
 		if (!dir.exists()) {

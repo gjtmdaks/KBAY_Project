@@ -48,5 +48,10 @@ public class ItemDaoImpl implements ItemDao {
 	public ItemCategory selectItemCategory(int itemCdNo) {
 		return session.selectOne("item.selectItemCategory", itemCdNo);
 	}
+
+	@Override
+	public List<ItemImg> selectItemImgList(int itemNo) {
+		return session.selectList("item.selectItemImgList", itemNo);
+	}
 	
 }
