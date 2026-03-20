@@ -61,7 +61,7 @@
 	            	<c:otherwise>
 		            	<c:forEach var="boardPost" items="${list}" varStatus="status"> 
 		            	<tr onclick="location.href='${pageContext.request.contextPath}/board/boardDetail/${boardPost.boardNo}'" style="cursor:pointer;">
-					        <td>${status.count}</td>
+					        <td>${(pi.currentPage - 1) * pi.boardLimit + status.count}</td>
 					        <td>${boardPost.boardTitle}</td>
 					        <td>${boardPost.boardWriter}</td>
 					        <td>${boardPost.viewCount}</td>
@@ -75,10 +75,41 @@
             </tbody>
         </table>
 		
-		<!-- 아직 바인딩 처리 안함 -->
-        <a class="btn btn-secondary" style="float:right"
-           href="${contextPath }/kbay/board/insert/${boardCode}">글쓰기</a>
-           <!-- ${boardCode} -->
+		<div class="button-wrap">
+            <a class="btn btn-secondary write-btn" style="display:inline-block;" 
+               href="${pageContext.request.contextPath}/board/insert/${boardCode}">글쓰기</a>
+        </div>
+           
+        <div class="pagination-container">
+            <c:choose>
+                <c:when test="${pi.currentPage == 1}">
+                    <a href="#" class="disabled">&lt;</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="?cpage=${pi.currentPage - 1}">&lt;</a>
+                </c:otherwise>
+            </c:choose>
+
+            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                <c:choose>
+                    <c:when test="${p == pi.currentPage}">
+                        <a href="#" class="active">${p}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?cpage=${p}">${p}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:choose>
+                <c:when test="${pi.currentPage == pi.maxPage}">
+                    <a href="#" class="disabled">&gt;</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="?cpage=${pi.currentPage + 1}">&gt;</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
         
     </main>
 	</div>
