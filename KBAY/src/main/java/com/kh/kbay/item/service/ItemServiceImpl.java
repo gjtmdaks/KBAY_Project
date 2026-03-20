@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.dao.ItemDao;
 import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,29 @@ public class ItemServiceImpl implements ItemService {
 	        }
 	    }
 	    return result;
+	}
+
+	@Override
+	public Item selectItemDetail(int itemNo) {
+		Item item = id.selectItemDetail(itemNo);
+		List<ItemImg> imgList = id.selectItemImgList(itemNo);
+
+		// 정렬 보장 (혹시 몰라서)
+		imgList.sort((a,b) -> a.getItemImgNo() - b.getItemImgNo());
+
+		// 대표이미지
+		if(!imgList.isEmpty()){
+		    item.setMainImg(imgList.get(0).getImgUrl());
+		    item.setSubImgList(imgList.subList(1, imgList.size()));
+		}
+
+		item.setImgList(imgList);
+		
+		return item;
+	}
+
+	@Override
+	public ItemCategory selectItemCategory(int itemCdNo) {
+		return id.selectItemCategory(itemCdNo);
 	}
 }

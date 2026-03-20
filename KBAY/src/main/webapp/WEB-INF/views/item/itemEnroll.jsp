@@ -100,8 +100,8 @@
 			</div>
 
 			<div class="form-group">
-				<label for="item_Size">물품 크기/수량</label> <input type="number"
-					id="item_Size" name="item_Size" step="10" min="0"
+				<label for="itemSize">물품 크기/수량</label> <input type="number"
+					id="itemSize" name="itemSize" step="10" min="0"
 					placeholder="단위에 맞는 수치를 입력하세요">
 			</div>
 

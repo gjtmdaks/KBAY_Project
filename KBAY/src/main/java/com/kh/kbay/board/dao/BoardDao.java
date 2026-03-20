@@ -3,6 +3,7 @@ package com.kh.kbay.board.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
 
 public interface BoardDao {
@@ -10,5 +11,9 @@ public interface BoardDao {
 	int selectBoardListCount(Map<String, Object> paramMap);
 
 	List<BoardPost> selectList(Map<String, Object> paramMap);
+
+	int insertBoard(BoardPost b);
+
+	int insertBoardImgList(List<BoardImg> imgList);
 
 }

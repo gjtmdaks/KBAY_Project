@@ -6,6 +6,7 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
 
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,25 @@ public class BoardDaoImpl implements BoardDao {
 	@Override
 	public int selectBoardListCount(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return session.selectOne("board.selectBoardListCount",paramMap);
+		return session.selectOne("boardPost.selectBoardListCount",paramMap);
 	}
 
 	@Override
 	public List<BoardPost> selectList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return session.selectList("selectList",paramMap);
+		return session.selectList("boardPost.selectList",paramMap);
+	}
+
+	@Override
+	public int insertBoard(BoardPost b) {
+		// TODO Auto-generated method stub
+		return session.insert("boardPost.insertBoard", b);
+	}
+
+	@Override
+	public int insertBoardImgList(List<BoardImg> imgList) {
+		// TODO Auto-generated method stub
+		return session.insert("boardPost.insertBoardImgList", imgList);
 	}
 	
 }

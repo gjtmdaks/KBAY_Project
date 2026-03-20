@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,21 @@ public class ItemDaoImpl implements ItemDao {
 	@Override
 	public int insertItemImg(ItemImg img) {
 		return session.insert("item.insertItemImg", img);
+	}
+
+	@Override
+	public Item selectItemDetail(int itemNo) {
+		return session.selectOne("item.selectItemDetail", itemNo);
+	}
+
+	@Override
+	public ItemCategory selectItemCategory(int itemCdNo) {
+		return session.selectOne("item.selectItemCategory", itemCdNo);
+	}
+
+	@Override
+	public List<ItemImg> selectItemImgList(int itemNo) {
+		return session.selectList("item.selectItemImgList", itemNo);
 	}
 	
 }
