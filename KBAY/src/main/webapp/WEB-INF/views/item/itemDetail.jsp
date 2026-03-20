@@ -33,29 +33,73 @@
 	        <!-- 대표 이미지 -->
 	        <div class="main-image">
 	            <img id="mainImg"
-	                 src="${item.mainImg}">
+	                 src="${item.mainImg}"
+	                 onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
 	        </div>
 	
 	        <!-- 썸네일 리스트 -->
-	        <div class="thumbnail-list">
-	            <!-- 대표도 포함 -->
-			    <c:if test="${item.mainImg != null}">
-			        <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
-			    </c:if>
+			<div class="thumbnail-wrapper">
+			    <button class="thumb-btn left" onclick="scrollThumb(-1)">❮</button>
 			
-			    <!-- 나머지 -->
-			    <c:forEach var="img" items="${item.subImgList}">
-			        <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)">
-			    </c:forEach>
-	        </div>
+			    <div class="thumbnail-list" id="thumbList">
+			        <c:if test="${item.mainImg != null}">
+			            <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
+			        </c:if>
+			
+			        <c:forEach var="img" items="${item.subImgList}">
+			            <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)">
+			        </c:forEach>
+			    </div>
+			
+			    <button class="thumb-btn right" onclick="scrollThumb(1)">❯</button>
+			</div>
 	    </div>
 	
 	    <!-- 상품 정보 -->
 	    <div class="info-section">
 	        <h2>${item.itemTitle}</h2>
 	
+	        <!-- 타이머 -->
+			<table class="auction-table">
+			    <tr>
+			        <th>남은시간</th>
+			        <td>
+			            <strong class="timer" id="timer"
+			                data-end="${item.endTime.time}"
+			                data-start="${item.startTime.time}">
+			            </strong>
+			        </td>
+			    </tr>
+			    <tr>
+			    	<th></th>
+			        <td class="end-time">
+			            (<fmt:formatDate value="${item.endTime}" pattern="yyyy년 M월 d일 HH:mm:ss"/>)
+			        </td>
+			    </tr>
+			
+			    <!-- 경매번호 -->
+			    <tr>
+			        <th>경매번호</th>
+			        <td>${item.itemNo}</td>
+			    </tr>
+			
+			    <!-- 입찰수 -->
+			    <tr>
+			        <th>입찰수</th>
+			        <td>
+			            <c:choose>
+			                <c:when test="${empty bidCount}">0회</c:when>
+			                <c:otherwise>${bidCount}회</c:otherwise>
+			            </c:choose>
+			        </td>
+			    </tr>
+			
+			</table>
+		    
+		    <hr>
+	
 	        <div class="meta">
-	            <span>카테고리: ${itemCategory.itemCategory}</span>
+	            <span>카테고리: ${itemCategory.itemCategory}</span> <br>
 	            <span>판매자: ${item.userNo}</span>
 	        </div>
 	
@@ -78,14 +122,6 @@
 	            <c:if test="${item.directBuy eq 'Y'}">
 	                <div class="buy-now">즉시구매가 ${item.buyNowPrice}</div>
 	            </c:if>
-	        </div>
-	
-	        <!-- 타이머 -->
-	        <div class="timer">
-	            <span id="timer"
-	                  data-end="${item.endTime.time}"
-	                  data-start="${item.startTime.time}">
-	            </span>
 	        </div>
 	
 	        <!-- 입찰 -->
@@ -137,10 +173,11 @@
 	    const d = Math.floor(sec / 86400);
 	    const h = Math.floor((sec % 86400)/3600);
 	    const m = Math.floor((sec % 3600)/60);
+	    const s = sec % 60;
 	
-	    if(d > 0) return d+"일 "+h+"시간 "+m+"분";
-	    if(h > 0) return h+"시간 "+m+"분";
-	    return m+"분";
+	    if(d > 0) return d+"일 "+h+"시간 "+m+"분"+s+"초";
+	    if(h > 0) return h+"시간 "+m+"분"+s+"초";
+	    return m+"분"+s+"초";
 	}
 	
 	setInterval(updateTimer,1000);
@@ -158,6 +195,37 @@
 	
 	    location.href = "${pageContext.request.contextPath}/auction/bid?itemNo=" + itemNo + "&price=" + price;
 	}
+	
+	const thumbList = document.getElementById("thumbList");
+
+	function scrollThumb(dir){
+	    thumbList.scrollLeft += dir * 200;
+	}
+
+	// 드래그 스크롤
+	let isDown = false;
+	let startX, scrollLeft;
+
+	thumbList.addEventListener("mousedown", (e)=>{
+	    isDown = true;
+	    startX = e.pageX - thumbList.offsetLeft;
+	    scrollLeft = thumbList.scrollLeft;
+	    thumbList.style.cursor = "grabbing";
+	});
+
+	thumbList.addEventListener("mouseleave", ()=> isDown = false);
+	thumbList.addEventListener("mouseup", ()=> {
+	    isDown = false;
+	    thumbList.style.cursor = "grab";
+	});
+
+	thumbList.addEventListener("mousemove", (e)=>{
+	    if(!isDown) return;
+	    e.preventDefault();
+	    const x = e.pageX - thumbList.offsetLeft;
+	    const walk = (x - startX) * 2;
+	    thumbList.scrollLeft = scrollLeft - walk;
+	});
 	</script>
 </body>
 </html>

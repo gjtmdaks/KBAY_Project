@@ -27,7 +27,17 @@
 
 			<sec:authorize access="isAuthenticated()">
 				<strong><sec:authentication property="principal.userName" /></strong>님 환영합니다! | 
-        <a href="${contextPath}/member/logout" class="hover-link">로그아웃</a>
+				
+				<c:if test="${loginUser.authority == 1}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+				</c:if>
+				<c:if test="${loginUser.authority == 2}">
+					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a>
+				</c:if>
+				<c:if test="${loginUser.authority == 3}">
+					<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
+				</c:if>
+        		<a href="${contextPath}/member/logout" class="hover-link">로그아웃</a>
 			</sec:authorize>
 		</div>
 	</div>

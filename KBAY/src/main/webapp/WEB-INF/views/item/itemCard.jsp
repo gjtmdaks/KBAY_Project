@@ -17,7 +17,8 @@
 	<div class="item-card">
 	
 	    <div class="item-img">
-	        <img src="${item.mainImg}">
+	        <img src="${item.mainImg}"
+	        	onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
 	    </div>
 	
 	    <div class="item-info">
