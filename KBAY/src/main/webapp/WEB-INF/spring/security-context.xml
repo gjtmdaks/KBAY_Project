@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.7.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 	
 	<!-- 암호화 인코딩 기능을 가진 bean객체 등록 -->
 	<bean id="bcryptPasswordEncoder"
@@ -20,25 +20,23 @@
 	 -->
 	<!-- 정적파일에 대한 보안검사 제외 옵션 -->
 	<security:http security="none" pattern="/resources/**" />
-	<security:http auto-config="true">
+		<security:http auto-config="true">
 		<!-- 
 			메인페이지, 회원가입페이지, 로그인페이지, 아이디 중복 체크 기능은
 			모든 사용자가 이용 가능하도록 설정.
 		 -->
-		<security:intercept-url pattern="/" access="permitAll" />
-		<security:intercept-url pattern="/security/insert" access="permitAll" />
-		<security:intercept-url pattern="/member/login" access="permitAll" />
-		<security:intercept-url pattern="/member/idCheck" access="permitAll" />
-		<security:intercept-url pattern="/security/accessDenied" access="permitAll" />
-		
-		<!-- 채팅과 관련된 url 권한 -->
-		<security:intercept-url pattern="/chat/**" access="hasRole('USER')" />
-		<security:intercept-url pattern="/board/**" access="hasRole('USER')" />
-		<security:intercept-url pattern="/reply/**" access="hasRole('USER')" />
-		<security:intercept-url pattern="/stomp/**" access="permitAll" />
-		
-		<security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
-		
+  		  <security:intercept-url pattern="/" access="permitAll" />
+   		 <security:intercept-url pattern="/member/login" access="permitAll" />
+  		  <security:intercept-url pattern="/member/idCheck" access="permitAll" />
+ 		   <security:intercept-url pattern="/security/**" access="permitAll" />
+ 		   <security:intercept-url pattern="/stomp/**" access="permitAll" />
+
+		   <security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
+ 		   <security:intercept-url pattern="/chat/**" access="hasAnyRole('USER', 'ADMIN')" />
+  		  <security:intercept-url pattern="/board/**" access="hasAnyRole('USER', 'ADMIN')" />
+  		  <security:intercept-url pattern="/reply/**" access="hasAnyRole('USER', 'ADMIN')" />
+  		  <security:intercept-url pattern="/action/enroll/**" access="hasAnyRole('USER', 'ADMIN')" />
+
 		<!-- 
 			form-login
 			 - 폼 기반 로그인 인증 설정을 지정하는 태그.
@@ -53,7 +51,7 @@
 		 -->
 		<security:form-login
 			login-page="/member/login"
-			login-processing-url="/member/loginProcess"
+			login-processing-url="/member/login"
 			username-parameter="userId"
 			password-parameter="userPwd"
 		/>
@@ -80,10 +78,14 @@
 				60*60*24 = 86400(1일)
 				14일 = 1209600
 		 -->
-		<security:remember-me
-			data-source-ref="datasource"
-			token-validity-seconds="1209600"
-		/>
+<!-- 		<security:remember-me -->
+<!-- 			data-source-ref="datasource" -->
+<!-- 			token-validity-seconds="1209600" -->
+<!-- 		/> -->
+		
+		<!-- 에러 방지 CSRF 비활성화 -->
+		<security:csrf disabled="true"/>
+		
 		
 		<!-- 접근권한 없는 url을 요청시 처리할 핸들러 -->
 		<security:access-denied-handler

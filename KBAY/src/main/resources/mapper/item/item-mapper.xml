@@ -51,40 +51,22 @@
 	    WHERE RNUM > #{offset}
 	</select>
 
-	<insert id="insertItem"
-		parameterType="com.kh.kbay.item.model.vo.Item">
-		<selectKey keyProperty="itemNo" resultType="_int"
-			order="BEFORE">
-			SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
-		</selectKey>
-		INSERT INTO ITEM (
-		ITEM_NO,
-		ITEM_TITLE,
-		ITEM_CONTENT,
-		ITEM_SIZE,
-		START_PRICE,
-		DIRECT_BUY,
-		BUY_NOW_PRICE,
-		CURRENT_PRICE,
-		END_TIME,
-		ITEM_CD_NO,
-		USER_NO, COUNTRY_NO, STATUS,
-		START_TIME,
-		CREATE_AT
-		) VALUES (
-		#{itemNo},
-		#{itemTitle},
-		#{itemContent},
-		#{item_Size}, #{startPrice},
-		#{directBuy},
-		#{buyNowPrice}, #{startPrice}, TO_DATE(#{endTime},
-		'YYYY-MM-DD"T"HH24:MI'),
-		#{itemCdNo},
-		#{userNo}, #{countryNo}, 'N',
-		SYSDATE,
-		SYSDATE
-		)
-	</insert>
+	<insert id="insertItem" parameterType="com.kh.kbay.item.model.vo.Item">
+    <selectKey keyProperty="itemNo" resultType="_int" order="BEFORE">
+        SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO ITEM (
+        ITEM_NO, ITEM_TITLE, ITEM_CONTENT, ITEM_SIZE,
+        START_PRICE, DIRECT_BUY, BUY_NOW_PRICE, CURRENT_PRICE,
+        END_TIME, ITEM_CD_NO, USER_NO, COUNTRY_NO, STATUS,
+        START_TIME, CREATE_AT
+    ) VALUES (
+        #{itemNo}, #{itemTitle}, #{itemContent}, #{itemSize}, 
+        #{startPrice}, #{directBuy}, #{buyNowPrice}, #{startPrice}, 
+        #{endTime}, #{itemCdNo}, #{userNo}, #{countryNo}, 'N',
+        SYSDATE, SYSDATE
+    )
+</insert>
 	<insert id="insertItemImg"
 		parameterType="com.kh.kbay.item.model.vo.ItemImg">
 		INSERT INTO ITEM_IMG (
