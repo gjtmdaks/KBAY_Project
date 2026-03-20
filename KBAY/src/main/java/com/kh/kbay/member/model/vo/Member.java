@@ -1,13 +1,19 @@
 package com.kh.kbay.member.model.vo;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class Member {
+public class Member implements UserDetails {
 	private int userNo;
 	private int authority;
 	private String userId;
@@ -21,4 +27,52 @@ public class Member {
 	private String userLoginIp;
 	private int likeCount;
 	private int noPayCount;
+
+
+	
+	public String getUserName() {
+        return userName;
+    }
+
+    public int getAuthority() {
+        return authority;
+    }
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        // int 타입을 String으로 변환하여 전달
+        authorities.add(new SimpleGrantedAuthority(String.valueOf(this.authority)));
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.userPwd;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,25 +62,24 @@ public class ItemController {
 	}
 	
 	@GetMapping("enroll")
-	public String itemEnrollForm(HttpSession session, RedirectAttributes ra) {
-		Member loginUser = (Member) session.getAttribute("loginUser");
-		if(loginUser == null) {
-			ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
-		    return "redirect:/member/loginForm.me";
-		}
-		
-		return "item/itemEnroll";
-	}
+    public String itemEnrollForm(Authentication auth, RedirectAttributes ra) {
+        if(auth == null || !auth.isAuthenticated()) {
+            ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+            return "redirect:/member/login"; 
+        }
+        return "item/itemEnroll";
+    }
 
-	@PostMapping("insert")
-	public String insertItem(Item item, MultipartFile[] upfiles, HttpSession session, RedirectAttributes ra) {
-		Member loginUser = (Member) session.getAttribute("loginUser");
-		if(loginUser == null) {
-			ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
-		    return "redirect:/member/loginForm.me";
-		}
+    @PostMapping("insert")
+    public String insertItem(Item item, MultipartFile[] upfiles, Authentication auth, RedirectAttributes ra) {
+        if (auth == null || !auth.isAuthenticated()) {
+            ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+            return "redirect:/member/login";
+        }
 
-		item.setUserNo(loginUser.getUserNo());
+        Member loginUser = (Member) auth.getPrincipal();
+        
+item.setUserNo(loginUser.getUserNo());
 		
 		String savePath = "C:/upload/item/";
 		String serverIp = "192.168.10.25:8081";
