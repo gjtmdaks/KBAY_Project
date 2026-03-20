@@ -72,7 +72,7 @@ public class MemberController {
         return "member/memberInsert";
     }
 
-	@GetMapping({"login", "loginForm.me"})
+	@GetMapping("login")
     public String loginForm() {
         return "member/login";
     }

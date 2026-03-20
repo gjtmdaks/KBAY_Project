@@ -38,7 +38,7 @@
 				로그인 후 다양한 서비스를 이용하실 수 있습니다.
 			</p>
 	
-			<form action="${pageContext.request.contextPath}/member/loginForm.me" method="get">
+			<form action="${pageContext.request.contextPath}/member/login" method="get">
 				<div class="submit-btn">
 					<button type="submit">로그인 하러가기</button>
 				</div>
