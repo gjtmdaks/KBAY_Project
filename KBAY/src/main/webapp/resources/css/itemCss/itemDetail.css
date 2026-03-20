@@ -7,7 +7,10 @@
 
 /* 이미지 */
 .image-section {
-    width: 50%;
+    width: 55%;
+    padding: 20px;
+    border: 1px solid #eee;
+    background: #fafafa;
 }
 
 .main-image img {
@@ -17,10 +20,22 @@
     border: 1px solid #ddd;
 }
 
+.thumbnail-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
 .thumbnail-list {
     display: flex;
+    overflow-x: auto;
     gap: 10px;
-    margin-top: 10px;
+    scroll-behavior: smooth;
+    cursor: grab;
+}
+
+.thumbnail-list::-webkit-scrollbar {
+    display: none;
 }
 
 .thumb {
@@ -31,9 +46,27 @@
     border: 1px solid #ccc;
 }
 
+.thumb-btn {
+    position: absolute;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 60px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.thumb-btn.left { left: 0; }
+.thumb-btn.right { right: 0; }
+
 /* 정보 */
 .info-section {
-    width: 50%;
+    width: 45%;
+    padding: 30px;
+    border: 1px solid #ddd;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
 .info-section h2 {
@@ -44,6 +77,18 @@
 .meta {
     color: gray;
     margin-bottom: 20px;
+}
+
+.auction-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.auction-row .price-box {
+    color: red;
+    font-size: 22px;
 }
 
 .price-box {
