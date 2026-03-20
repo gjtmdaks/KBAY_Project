@@ -59,11 +59,11 @@
 	                    </tr>
 	                </c:when>
 	            	<c:otherwise>
-		            	<c:forEach var="boardPost" items="${list}"> 
+		            	<c:forEach var="boardPost" items="${list}" varStatus="status"> 
 					    <tr onclick="movePage(${boardPost.boardNo})">
-					        <td>${boardPost.boardNo}</td>
+					        <td>${status.count}</td>
 					        <td>${boardPost.boardTitle}</td>
-					        <td>${boardPost.userNo}</td>
+					        <td>${boardPost.boardWriter}</td>
 					        <td>${boardPost.viewCount}</td>
 					        
 					        <fmt:parseDate value="${boardPost.boardDate}" var="parsedDate" pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
