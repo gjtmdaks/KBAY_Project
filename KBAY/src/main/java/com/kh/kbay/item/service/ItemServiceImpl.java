@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,10 +62,43 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public Item selectItemDetail(int itemNo) {
+	public Item selectItemDetail(int itemNo, HttpServletRequest request, HttpServletResponse response) {
 		Item item = id.selectItemDetail(itemNo);
 		List<ItemImg> imgList = id.selectItemImgList(itemNo);
+		
+		// --- [조회수 증가 로직 (쿠키 활용)] ---
+        Cookie[] cookies = request.getCookies();
+        boolean hasVisited = false;
 
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("viewedItems") && c.getValue().contains("[" + itemNo + "]")) {
+                    hasVisited = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasVisited) {
+            // 1. DB 조회수 1 증가
+            id.incrementViews(itemNo); 
+
+            // 2. 쿠키 업데이트
+            String cookieValue = "";
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals("viewedItems")) {
+                        cookieValue = c.getValue();
+                    }
+                }
+            }
+            
+            Cookie newCookie = new Cookie("viewedItems", cookieValue + "[" + itemNo + "]");
+            newCookie.setMaxAge(60 * 60 * 24); // 24시간 유지
+            newCookie.setPath(request.getContextPath()); // 해당 프로젝트 경로에서만 유효
+            response.addCookie(newCookie);
+        }
+        
 		// 정렬 보장 (혹시 몰라서)
 		imgList.sort((a,b) -> a.getItemImgNo() - b.getItemImgNo());
 
@@ -84,5 +121,10 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public int updateItemStatus() {
 		return id.updateItemStatus();
+	}
+	
+	@Override
+	public List<Item> selectBestItems(){
+		return id.selectBestItems();
 	}
 }

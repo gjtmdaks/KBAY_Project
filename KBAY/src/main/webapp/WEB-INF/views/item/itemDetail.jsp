@@ -84,6 +84,11 @@
 			        <th>경매번호</th>
 			        <td>${item.itemNo}</td>
 			    </tr>
+			    
+			      <tr>
+                <th>조회수</th>
+                <td>${item.views}회</td>
+                </tr>
 			
 			    <!-- 입찰수 -->
 			    <tr>

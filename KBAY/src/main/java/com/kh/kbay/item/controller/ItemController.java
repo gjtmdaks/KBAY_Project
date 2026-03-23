@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.Authentication;
@@ -126,9 +128,17 @@ item.setUserNo(loginUser.getUserNo());
 	@GetMapping("/detail/{itemNo}")
 	public String itemDetail(
 	        @PathVariable("itemNo") int itemNo,
-	        Model model) {
+	        Model model,
+	        HttpServletRequest request,
+	        HttpServletResponse response
+	        ) {
 		
-		Item item = is.selectItemDetail(itemNo);
+		Item item = is.selectItemDetail(itemNo, request, response);
+		
+		if(item == null) {
+			return "common/errorPage"; 
+		}
+		
 		ItemCategory itemCategory = is.selectItemCategory(item.getItemCdNo());
 
 	    model.addAttribute("item", item);
