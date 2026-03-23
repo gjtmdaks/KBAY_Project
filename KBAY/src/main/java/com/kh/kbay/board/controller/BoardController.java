@@ -164,8 +164,8 @@ public class BoardController {
 		
 		// 🌟 2. 로컬 테스트용 파일 저장 경로 세팅!
 		String savePath = "C:/upload/board/"; // 내 PC의 C드라이브에 저장!
-		// String serverIp = "localhost:8081"; // 나중에 전체 URL이 필요하다면 사용하세요!
-		// String webPath = "/kbay/upload/board/";
+		 String serverIp = "192.168.10.25:8081"; // 나중에 전체 URL이 필요하다면 사용하세요!
+		 String webPath = "/kbay/upload/board/";
 		
 		File dir = new File(savePath);
 		if (!dir.exists()) {
@@ -195,7 +195,7 @@ public class BoardController {
 					
 					// DB에 넣을 정보 세팅
 					BoardImg bi = new BoardImg();
-					bi.setChangeName(changeName); // 랜덤으로 바뀐 이름
+					bi.setChangeName("http://" + serverIp + webPath + changeName); // 랜덤으로 바뀐 이름
 					bi.setOriginName(originName); // 사용자가 올린 원래 이름
 					bi.setImgLevel(imgLevel);
 					imgList.add(bi);
@@ -236,6 +236,7 @@ public class BoardController {
 	    
 	    // DB에서 데이터 가져오기
 	    BoardPost b = bs.selectBoardDetail(boardNo);
+	    List<BoardImg> bList = bs.selectBoardImg(boardNo);
 	    
 	    if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
 	    	
@@ -245,6 +246,7 @@ public class BoardController {
 	    }
 	    
 	    model.addAttribute("b", b);
+	    model.addAttribute("bList", bList);
 	    
 	    return "board/boardDetail";
 	}

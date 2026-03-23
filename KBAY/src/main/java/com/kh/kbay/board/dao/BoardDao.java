@@ -18,4 +18,6 @@ public interface BoardDao {
 
 	BoardPost selectBoardDetail(int boardNo);
 
+	List<BoardImg> selectBoardImg(int boardNo);
+
 }

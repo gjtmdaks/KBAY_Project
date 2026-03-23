@@ -16,5 +16,7 @@ public interface BoardService {
 
 	BoardPost selectBoardDetail(int boardNo);
 
+	List<BoardImg> selectBoardImg(int boardNo);
+
 	
 }

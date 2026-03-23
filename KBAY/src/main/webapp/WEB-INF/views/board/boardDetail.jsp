@@ -40,14 +40,14 @@
         </c:if>
     </div>
 
-    <c:if test="${not empty b.originalFileName}">
+    <c:if test="${not empty b.boardCdNo}">
         <c:set var="fileName" value="${b.originalFileName}" />
-        <%-- 아직은 내용물을 저장할 수 없기에 주석으로 처리 --%>
-        <%-- <c:if test="${fn:endsWith(fileName, '.jpg') || fn:endsWith(fileName, '.jpeg') || fn:endsWith(fileName, '.png') || fn:endsWith(fileName, '.gif')}">
-            <div class="image-preview-block">
-                <img src="${contextPath}/resources/uploadFiles/${b.renamedFileName}" alt="첨부 이미지 미리보기" class="image-preview">
-            </div>
-        </c:if> --%>
+		<div class="image-preview-block">
+			<img src="${bi.changeName}" alt="첨부 이미지 미리보기" class="image-preview">
+		</div>
+		<c:forEach var="bi" items="${bList}">
+			<img src="${bi.changeName}" alt="첨부 이미지 미리보기" class="image-preview">
+		</c:forEach>
     </c:if>
 
     <div class="content-block">

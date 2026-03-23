@@ -116,4 +116,10 @@ ORDER BY BOARD_NO DESC
     WHERE B.BOARD_NO = #{boardNo} 
       AND B.BOARD_DELETE = 'N'
 </select>
+
+<select id="selectBoardImg" resultType="boardImg">
+	SELECT *
+	FROM BOARD_IMG
+	WHERE BOARD_NO = #{boardNo}
+</select>
 </mapper>

@@ -61,5 +61,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.selectBoardDetail(boardNo);
 	}
 
+	@Override
+	public List<BoardImg> selectBoardImg(int boardNo) {
+		// TODO Auto-generated method stub
+		return boardDao.selectBoardImg(boardNo);
+	}
+
 	
 }
