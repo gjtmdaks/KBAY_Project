@@ -15,7 +15,7 @@
 	            <when test="type == 'yetDeal'">
 	                STATUS = 'Y'
 	            </when>
-	            <when test="type == 'search'">
+	            <when test="type == 'search' and keyword != null and keyword != ''">
 	                ITEM_TITLE LIKE '%' || #{keyword} || '%'
 	            </when>
 	        </choose>
@@ -83,8 +83,12 @@
 		#{directBuy},
 		#{buyNowPrice}, #{startPrice}, #{endTime},
 		#{itemCdNo},
-		#{userNo}, #{countryNo}, 'N',
-		SYSDATE,
+		#{userNo}, #{countryNo}, 
+		CASE
+			WHEN #{startTime} > SYSDATE THEN 'Y'
+			ELSE 'N'
+			END,
+		#{startTime},
 		SYSDATE
 		)
 	</insert>

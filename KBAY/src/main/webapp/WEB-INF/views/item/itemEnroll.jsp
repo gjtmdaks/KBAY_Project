@@ -106,6 +106,11 @@
 			</div>
 
 			<div class="form-group">
+				<label for="startTime">경매 시작 일시</label> <input type="datetime-local"
+					id="startTime" name="startTime" required>
+			</div>
+			
+			<div class="form-group">
 				<label for="endTime">경매 종료 일시 (최대 10일)</label> <input
 					type="datetime-local" id="endTime" name="endTime" required>
 			</div>
@@ -157,7 +162,33 @@
 			const itemContent = document.getElementById('itemContent');
 		    const nowByte = document.getElementById('nowByte');
 		    const byteCounterArea = document.getElementById('byte-counter-area');
+		    const startTimeInput = document.getElementById('startTime');
+		    const endTimeInput = document.getElementById('endTime');
 		    
+		    function formatDate(date){
+		    	const tzOffset  = date.getTimezoneOffset() * 60000;
+		    	return new Date(date - tzOffset).toISOString().slice(0,16);
+		    }
+		    
+		    const now = new Date;
+		    const twoWeeksLater = new Date();
+		    twoWeeksLater.setDate(now.getDate() + 14);
+		    
+		    startTimeInput.min = formatDate(now);
+		    startTimeInput.max = formatDate(twoWeeksLater);
+		    
+		    startTimeInput.addEventListener('change',function(){
+		    	const selectedStart = new Date(this.value);
+		    	endTimeInput.min = formatDate(selectedStart);
+		    	
+		    	const maxEnd = new Date(selectedStart);
+		    	maxEnd.setDate(selectedStart.getDate() + 10);
+		    	endTimeInput.max = formatDate(maxEnd);
+		    	
+		    	if(endTimeInput.value && (new Date(endTimeInput.value)< selectedStart || new Date(endTimeInput.value) > maxEnd)){
+		    		endTimeInput.value = "";
+		    	}
+		    });
 		    
 	        buyNowPrice.addEventListener('click', function() {
 	            if (this.readOnly) {
@@ -171,9 +202,9 @@
 	            const currentByte = getByteLength(this.value);
 	            nowByte.innerText = currentByte;
 
-	            // 200바이트를 초과하면 빨간색으로 강조
+	            // 200바이트를 초과하면
 	            if (currentByte > 200) {
-	                byteCounterArea.style.color = "#E74C3C"; // 경고색 (빨간색)
+	                byteCounterArea.style.color = "#E74C3C"; // 경고색
 	                nowByte.style.fontWeight = "bold";
 	            } else {
 	                byteCounterArea.style.color = "#666"; // 기본색
@@ -238,25 +269,7 @@
 				    });
 				});
 
-			sizeUnit.addEventListener('change', function() {
-				itemSize.placeholder = this.value + "를 입력하세요";
-			});
-
-			directBuy.addEventListener('change', function() {
-				if (this.value === 'Y') {
-					buyNowPrice.readOnly = false;
-					buyNowPrice.style.backgroundColor = "#fff";
-					buyNowPrice.style.cursor = "text";
-					buyNowPrice.value = "";
-					priceGuide.style.display = "block";
-				} else {
-					buyNowPrice.readOnly = true;
-					buyNowPrice.style.backgroundColor = "#f1f1f1";
-					buyNowPrice.style.cursor = "not-allowed";
-					buyNowPrice.value = "0";
-					priceGuide.style.display = "none";
-				}
-			});
+		
 
 			document.getElementById('enrollForm').addEventListener('submit', function(e) {
 			    // 1. 값 가져오기
@@ -265,10 +278,13 @@
 			    const sPrice = parseInt(startPriceInput.value);
 			    const bPrice = parseInt(buyNowPrice.value);
 			    const iSize = parseInt(document.getElementById('itemSize').value); // 물품 크기
+			    const start = new Date(startTimeInput.value);
+			    const end = new Date(endTimeInput.value);
+			    const diffDays = (end - start) / (1000 * 60 * 60 * 24);
 			    
 
-			    // 2. 물품명 제한 (25글자 & 50byte)
-			    if (itemTitle.length > 20 || getByteLength(itemTitle) > 50) {
+			    // 2. 물품명 제한 (50byte)
+			    if (itemTitle.length > 15 || getByteLength(itemTitle) > 50) {
 			        alert("물품명은 15글자 이내로 입력해주세요.");
 			        document.getElementById('itemTitle').focus();
 			        e.preventDefault();
@@ -290,7 +306,7 @@
 			        return;
 			    }
 
-			    // 4. 물품 크기/수량 제한 (최대 10,000)
+			    // 4. 물품 크기 제한 (최대 10,000)
 			    if (iSize > 10000) {
 			        alert("물품 크기 수치는 최대 10,000까지만 입력 가능합니다.");
 			        document.getElementById('itemSize').focus();
@@ -300,7 +316,7 @@
 
 			    // 5. 상세 설명 제한 (100글자 & 200byte)
 			    if (itemContent.length > 100 || getByteLength(itemContent) > 200) {
-			        alert("물품에 대한 상세 설명은 100글자 이내(200byte)로 입력해주세요.");
+			        alert("물품에 대한 상세 설명은 200byte 이내로 입력해주세요.");
 			        document.getElementById('itemContent').focus();
 			        e.preventDefault();
 			        return;
@@ -323,29 +339,49 @@
 			            return;
 			        }
 			    }
+			    
+				// 8. 이미지 파일 개수 확인
+				const fileInput = document.getElementById('upfiles');
+	    		if (fileInput.files.length > 5) {
+	    	     alert("이미지는 최대 5장까지만 등록 가능합니다.");
+	   		     e.preventDefault();
+	   		     return;
+	 	    	}
+				
+	    		 // 9. 경매 종료 시간 유효성
+		        if (start >= end) {
+		            alert("경매 종료 시간은 시작 시간보다 이후여야 합니다.");
+		            e.preventDefault(); return;
+		        }
+	    		 
+		        // 10. 경매 진행 기간 유효성
+		        if (diffDays > 10) {
+		            alert("경매 기간은 시작 시간으로부터 최대 10일 이내여야 합니다.");
+		            e.preventDefault(); return;
+		        }
 			});
 			 
-			// 8. 이미지 파일 개수 확인
-			const fileInput = document.getElementById('upfiles');
-    		if (fileInput.files.length > 5) {
-    	     alert("이미지는 최대 5장까지만 등록 가능합니다.");
-   		     e.preventDefault();
-   		     return;
- 	    	}
-	
-			// 날짜 제한 설정
-			const now = new Date();
-			const tenDaysLater = new Date();
-			tenDaysLater.setDate(now.getDate() + 10);
+		
 
-			function formatDate(date) {
-				const tzOffset = date.getTimezoneOffset() * 60000;
-				return new Date(date - tzOffset).toISOString().slice(0, 16);
-			}
+			sizeUnit.addEventListener('change', function() {
+				itemSize.placeholder = this.value + "를 입력하세요";
+			});
 
-			const endTimeInput = document.getElementById('endTime');
-			endTimeInput.min = formatDate(now);
-			endTimeInput.max = formatDate(tenDaysLater);
+			directBuy.addEventListener('change', function() {
+				if (this.value === 'Y') {
+					buyNowPrice.readOnly = false;
+					buyNowPrice.style.backgroundColor = "#fff";
+					buyNowPrice.style.cursor = "text";
+					buyNowPrice.value = "";
+					priceGuide.style.display = "block";
+				} else {
+					buyNowPrice.readOnly = true;
+					buyNowPrice.style.backgroundColor = "#f1f1f1";
+					buyNowPrice.style.cursor = "not-allowed";
+					buyNowPrice.value = "0";
+					priceGuide.style.display = "none";
+				}
+			});
 		});
 	</script>
 
