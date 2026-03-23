@@ -10,3 +10,37 @@ function deletePost(boardNo, boardCdNo) {
         location.href = url;
     }
 }
+
+// 댓글 등록
+function insertReply(boardNo) {
+    // 적은 글자가져오기
+    let content = $("#replyContent").val();
+
+    // 2. 빈칸 검사
+    if (content.trim() === "") {
+        alert("댓글 내용을 입력해주세요!");
+        $("#replyContent").focus();
+        return;
+    }
+
+    $.ajax({
+        url: "/kbay/board/insertReply",
+        type: "POST",
+        data: {
+            boardNo: boardNo,
+            commentContent: content
+        },
+        success: function(result) {
+            if (result === "success") {
+                alert("댓글이 성공적으로 등록되었습니다!");
+                $("#replyContent").val("")
+                location.reload(); 
+            } else {
+                alert("댓글 등록에 실패했습니다. 다시 시도해 주세요.");
+            }
+        },
+        error: function() {
+            alert("통신 에러");
+        }
+    });
+}

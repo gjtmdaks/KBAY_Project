@@ -60,5 +60,11 @@ public class BoardDaoImpl implements BoardDao {
 		// TODO Auto-generated method stub
 		return session.delete("boardPost.deleteBoard", boardNo);
 	}
+
+	@Override
+	public int insertReply(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.insert("boardPost.insertReply", paramMap);
+	}
 	
 }

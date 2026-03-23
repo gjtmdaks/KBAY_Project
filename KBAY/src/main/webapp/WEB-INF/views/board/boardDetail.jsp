@@ -8,6 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 <link rel="stylesheet"
@@ -101,12 +102,14 @@
     </div>
 
     <div class="comment-section">
+    <!-- 댓글 기능 -->
         <div class="comment-input-form">
             <c:choose>
                 <c:when test="${not empty loginUser}">
-                    <span class="comment-writer-input-label">${loginUser.userName}</span> <textarea rows="2" placeholder="댓글 내용"></textarea>
-                    <button type="button">댓글 등록</button>
-                </c:when>
+		            <span class="comment-writer-input-label">${loginUser.userName}</span>
+		            <textarea id="replyContent" rows="2" placeholder="댓글 내용"></textarea>
+		            <button type="button" onclick="insertReply(${b.boardNo})">댓글 등록</button>
+		        </c:when>
                 <c:otherwise>
                     <span class="comment-writer-input-label">손님</span>
                     <textarea rows="2" placeholder="로그인 후 이용 가능합니다." readonly></textarea>

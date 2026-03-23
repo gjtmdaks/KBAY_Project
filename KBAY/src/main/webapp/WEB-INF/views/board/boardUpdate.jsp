@@ -43,9 +43,10 @@
                     <ul style="list-style:none; padding:10px; border:1px solid #ddd; border-radius:5px; background-color:#f9f9f9;">
                         <c:forEach var="bi" items="${bList}">
                             <li style="margin-bottom: 8px;">
-                                📎 ${bi.originName}
+                                📎 ${bi.changeName}
+                                <!-- 내가 작성한 게시글에 이미지가 들어가 있다면 오류가 발생 나중에 확인하기 -->
                                 <label style="color:red; font-size:13px; margin-left:15px; cursor:pointer;">
-                                    <input type="checkbox" name="deleteImgs" value="${bi.imgNo}"> ❌ 이 파일 삭제하기
+                                    <input type="checkbox" name="deleteImgs" value="${bi.boardImgNo}"> ❌ 이 파일 삭제하기
                                 </label>
                             </li>
                         </c:forEach>

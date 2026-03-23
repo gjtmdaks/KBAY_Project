@@ -70,5 +70,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.deleteBoard(boardNo);
 	}
 
+	@Override
+	public int insertReply(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return boardDao.insertReply(paramMap);
+	}
+
 	
 }
