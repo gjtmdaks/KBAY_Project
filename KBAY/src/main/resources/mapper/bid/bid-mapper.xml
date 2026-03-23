@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="bid">
+	<select id="itemLock" resultType="int">
+		SELECT 1
+		FROM ITEM
+		WHERE ITEM_NO = #{itemNo}
+		FOR UPDATE
+	</select>
+	<select id="selectCurrentPrice" resultType="int">
+	    SELECT CASE
+	        WHEN bidCount <![CDATA[<=]]> 1 THEN
+	            (SELECT START_PRICE FROM ITEM WHERE ITEM_NO = #{itemNo})
+	        ELSE
+	            (
+	            	SELECT BID_PRICE
+					FROM (
+					    SELECT ROWNUM AS rn, BID_PRICE
+					    FROM (
+					        SELECT BID_PRICE
+					        FROM BID
+					        WHERE ITEM_NO = #{itemNo}
+					        ORDER BY BID_PRICE DESC
+					    )
+					)
+					WHERE rn = 2
+	            )
+	    END AS CURRENT_PRICE
+	    FROM (
+	        SELECT COUNT(*) AS bidCount
+	        FROM BID
+	        WHERE ITEM_NO = #{itemNo}
+	    )
+	</select>
+	<select id="selectMaxPrice" resultType="int">
+	    SELECT NVL(MAX(BID_PRICE), 0)
+	    FROM BID
+	    WHERE ITEM_NO = #{itemNo}
+	</select>
+	<insert id="insertBid">
+	    INSERT INTO BID (
+	        BID_NO,
+	        ITEM_NO,
+	        USER_NO,
+	        BID_PRICE,
+	        BID_TIME
+	    ) VALUES (
+	        SEQ_BID_NO.NEXTVAL,
+	        #{itemNo},
+	        #{userNo},
+	        #{bidPrice},
+	        SYSDATE
+	    )
+	</insert>
+	<select id="selectRanking" resultType="int">
+	    SELECT COUNT(*) + 1
+	    FROM BID
+	    WHERE ITEM_NO = #{itemNo}
+	    AND BID_PRICE >= #{bidPrice}
+	</select>
+</mapper>

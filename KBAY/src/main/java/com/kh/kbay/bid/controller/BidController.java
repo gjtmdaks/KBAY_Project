@@ -1,18 +1,71 @@
 package com.kh.kbay.bid.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.service.BidService;
+import com.kh.kbay.member.model.vo.Member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
 @Slf4j
 @RequestMapping("/bid")
 @RequiredArgsConstructor
 public class BidController {
-//	private final BidService bs;
+	private final BidService bs;
 	
+	@PostMapping
+	public Map<String, Object> bid(
+	        @RequestBody Bid req,
+	        Authentication auth){
+
+	    Map<String, Object> result = new HashMap<>();
+
+	    // 1. 로그인 체크
+	    if(auth == null || !auth.isAuthenticated()) {
+	        result.put("result", "FAIL");
+	        result.put("message", "LOGIN_REQUIRED");
+	        return result;
+	    }
+
+	    try {
+	        Member user = (Member) auth.getPrincipal();
+	        req.setUserNo(user.getUserNo());
+
+	        int ranking = bs.placeBid(req);
+
+	        System.out.println(ranking);
+	        
+	        result.put("result", "SUCCESS");
+	        result.put("ranking", ranking);
+
+	    } catch (IllegalArgumentException e) {
+	        // 👉 입찰 금액 문제
+	        result.put("result", "FAIL");
+	        result.put("message", e.getMessage());
+
+	    } catch (IllegalStateException e) {
+	        // 👉 상태 문제 (종료 등)
+	        result.put("result", "FAIL");
+	        result.put("message", e.getMessage());
+
+	    } catch (Exception e) {
+	        // 👉 기타 에러
+	        log.error("입찰 오류", e);
+	        result.put("result", "FAIL");
+	        result.put("message", "서버 오류");
+	    }
+
+	    return result;
+	}
 }
