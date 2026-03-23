@@ -20,4 +20,6 @@ public interface BoardDao {
 
 	List<BoardImg> selectBoardImg(int boardNo);
 
+	int deleteBoard(int boardNo);
+
 }

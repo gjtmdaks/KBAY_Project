@@ -49,7 +49,7 @@
         </div>
 
         <div class="button-group">
-        	<button type="button" class="btn-list" onclick="location.href='${contextPath}/board/community.me/${boardCdNo}'">목록으로</button>
+        	<button type="button" class="btn-list" onclick="location.href='${contextPath}/kbay/board/community.me/${boardCdNo}'">목록으로</button>
             
             <button type="submit" class="btn-submit">게시글 작성</button>
         </div>

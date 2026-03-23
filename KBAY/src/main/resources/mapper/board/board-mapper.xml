@@ -122,4 +122,13 @@ ORDER BY BOARD_NO DESC
 	FROM BOARD_IMG
 	WHERE BOARD_NO = #{boardNo}
 </select>
+
+<!-- 보드 삭제 -->
+<delete id="deleteBoard" parameterType="_int">
+	UPDATE BOARD_POST
+		SET BOARD_DELETE = 'Y'
+	WHERE BOARD_NO = #{boardNo}
+</delete>
+
+
 </mapper>

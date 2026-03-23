@@ -46,12 +46,9 @@ public class BoardServiceImpl implements BoardService {
 				bi.setBoardNo(b.getBoardNo());
 			}
 			
-			// 🌟 핵심 수정!! result에 덮어씌우지 말고 그냥 실행만 하세요! 🌟
-			// result = boardDao.insertBoardImgList(imgList); (❌ 지우세요!)
-			boardDao.insertBoardImgList(imgList); // (⭕ 그냥 실행만!)
+			boardDao.insertBoardImgList(imgList);
 		}
 		
-		// 3. 처음에 게시글 등록 성공했던 '1'을 그대로 컨트롤러에 돌려줍니다!
 		return result; 
 	}
 
@@ -65,6 +62,12 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardImg> selectBoardImg(int boardNo) {
 		// TODO Auto-generated method stub
 		return boardDao.selectBoardImg(boardNo);
+	}
+
+	@Override
+	public int deleteBoard(int boardNo) {
+		// TODO Auto-generated method stub
+		return boardDao.deleteBoard(boardNo);
 	}
 
 	

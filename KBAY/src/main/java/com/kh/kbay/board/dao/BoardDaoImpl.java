@@ -54,5 +54,11 @@ public class BoardDaoImpl implements BoardDao {
 		// TODO Auto-generated method stub
 		return session.selectList("boardPost.selectBoardImg", boardNo);
 	}
+
+	@Override
+	public int deleteBoard(int boardNo) {
+		// TODO Auto-generated method stub
+		return session.delete("boardPost.deleteBoard", boardNo);
+	}
 	
 }
