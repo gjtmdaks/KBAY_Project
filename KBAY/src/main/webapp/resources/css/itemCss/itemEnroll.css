@@ -73,6 +73,7 @@
 .form-group textarea {
     resize: vertical;
     min-height: 150px;
+    resize: none;
 }
 
 /* 입력창 화살표 스피너*/
