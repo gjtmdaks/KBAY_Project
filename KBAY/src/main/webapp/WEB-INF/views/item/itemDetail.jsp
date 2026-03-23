@@ -20,6 +20,8 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/paging.css">
 <link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/bidCss/bid.css">
+<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 </head>
 <body>
@@ -140,6 +142,7 @@
 	    <p>${item.itemContent}</p>
 	</div>
 	
+	<jsp:include page="/WEB-INF/views/bid/bid.jsp" />
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 	
 	<script>
@@ -186,14 +189,104 @@
 	
 	// 입찰
 	function submitBid(itemNo){
-	    const price = document.getElementById("bidPrice").value;
+		const bidPrice = parseInt(document.getElementById("bidPrice").value, 10);
 	
-	    if(!price){
-	        alert("금액 입력");
+	    if(!bidPrice){
+	        alert("금액을 입력하세요.");
 	        return;
 	    }
 	
-	    location.href = "${pageContext.request.contextPath}/auction/bid?itemNo=" + itemNo + "&price=" + price;
+	    // 1차 확인 팝업
+	    openConfirmModal(bidPrice, function() {
+	
+	        // 확인 눌렀을 때 실행
+	        fetch(`${pageContext.request.contextPath}/bid`, {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json"
+	            },
+	            body: JSON.stringify({
+	                itemNo: itemNo,
+	                bidPrice: bidPrice
+	            })
+	        })
+	        .then(res => {
+	            if(res.status === 401){
+	                alert("로그인이 필요합니다.");
+	                location.href = "/kbay/member/login";
+	                return;
+	            }
+	            return res.json();
+	        })
+	        .then(data => {
+			
+			    if(!data) return;
+			
+			    if(data.result === "SUCCESS"){
+			
+			        if(data.ranking === 1){
+			            openFirstBidderModal();
+			        } else {
+			            openSecondBidderModal();
+			        }
+			
+			    } else {
+			
+			        // 🔥 메시지 기반 처리
+			        if(data.message === "LOGIN_REQUIRED"){
+			            alert("로그인이 필요합니다.");
+			            location.href = "/kbay/member/login";
+			
+			        } else {
+			            alert(data.message || "입찰 실패");
+			        }
+			    }
+			})
+	        .catch(err => {
+	            console.error(err);
+	            alert("에러 발생");
+	        });
+	
+	    });
+	}
+	
+	function openConfirmModal(bidPrice, onConfirm){
+
+	    const modal = document.getElementById("confirmModal");
+
+	    if(!modal){
+	        console.error("confirmModal 없음");
+	        return;
+	    }
+	    modal.style.display = "block";
+
+	    document.getElementById("confirmPrice").innerText = bidPrice.toLocaleString();
+
+	    // 입찰하기 버튼
+	    const confirmBtn = document.getElementById("confirmBtn");
+
+	    confirmBtn.onclick = null; // 초기화
+	    confirmBtn.onclick = function(){
+	        modal.style.display = "none";
+	        onConfirm();
+	    };
+
+	    // 취소 버튼
+	    document.getElementById("cancelBtn").onclick = function(){
+	        modal.style.display = "none";
+	    };
+	}
+	
+	function openFirstBidderModal(){
+	    document.getElementById("firstModal").style.display = "block";
+	}
+
+	function openSecondBidderModal(){
+	    document.getElementById("secondModal").style.display = "block";
+	}
+	
+	function closeModal(id){
+	    document.getElementById(id).style.display = "none";
 	}
 	
 	const thumbList = document.getElementById("thumbList");
