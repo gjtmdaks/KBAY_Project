@@ -14,5 +14,7 @@ public interface BoardService {
 
 	int insertBoard(BoardPost b, List<BoardImg> imgList);
 
+	BoardPost selectBoardDetail(int boardNo);
+
 	
 }

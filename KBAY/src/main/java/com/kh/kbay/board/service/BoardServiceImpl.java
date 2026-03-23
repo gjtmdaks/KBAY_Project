@@ -33,6 +33,8 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public int insertBoard(BoardPost b, List<BoardImg> imgList) {
+		
+		// 1. 게시글 등록! (성공하면 result에 1이 들어감)
 		int result = boardDao.insertBoard(b);
 		if(result == 0) {
 			throw new RuntimeException("게시글 등록 실패");
@@ -42,17 +44,21 @@ public class BoardServiceImpl implements BoardService {
 		if(!imgList.isEmpty()) {
 			for(BoardImg bi : imgList) {
 				bi.setBoardNo(b.getBoardNo());
-				
-				
-				
 			}
-			result = boardDao.insertBoardImgList(imgList);
 			
-			if(result != imgList.size()) {
-				throw new RuntimeException("첨부파일 등록 에러 발생");
-			}
+			// 🌟 핵심 수정!! result에 덮어씌우지 말고 그냥 실행만 하세요! 🌟
+			// result = boardDao.insertBoardImgList(imgList); (❌ 지우세요!)
+			boardDao.insertBoardImgList(imgList); // (⭕ 그냥 실행만!)
 		}
-		return result;
+		
+		// 3. 처음에 게시글 등록 성공했던 '1'을 그대로 컨트롤러에 돌려줍니다!
+		return result; 
+	}
+
+	@Override
+	public BoardPost selectBoardDetail(int boardNo) {
+		// TODO Auto-generated method stub
+		return boardDao.selectBoardDetail(boardNo);
 	}
 
 	
