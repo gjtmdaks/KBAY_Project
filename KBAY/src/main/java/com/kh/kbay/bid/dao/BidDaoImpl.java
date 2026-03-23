@@ -1,5 +1,8 @@
 package com.kh.kbay.bid.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +22,8 @@ public class BidDaoImpl implements BidDao {
 	@Transactional
 	@Override
 	public int placeBid(Bid req) {
-		// 1. lock
+
+	    // 1. lock
 	    session.selectOne("bid.itemLock", req.getItemNo());
 
 	    // 2. 현재가 조회
@@ -36,14 +40,24 @@ public class BidDaoImpl implements BidDao {
 	        throw new IllegalArgumentException("현재가보다 높은 금액을 입력하세요.");
 	    }
 
-	    // 6. ranking
-	    int ranking = session.selectOne("bid.selectRanking", req);
-
-	    // 5. insert
+	    // 🔥 5. INSERT 먼저
 	    session.insert("bid.insertBid", req);
 
+	    // 🔥 6. ranking (INSERT 이후)
+	    int ranking = session.selectOne("bid.selectRanking", req);
+
+	    // 🔥 7. 현재가 재계산
+	    int newCurrentPrice = session.selectOne("bid.selectCurrentPrice", req.getItemNo());
+
+	    // 🔥 8. ITEM 업데이트
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("itemNo", req.getItemNo());
+	    param.put("currentPrice", newCurrentPrice);
+
+	    session.update("bid.updateCurrentPrice", param);
+
 	    return ranking;
-    }
+	}
 
 	@Override
 	public int selectBidCount(int itemNo) {

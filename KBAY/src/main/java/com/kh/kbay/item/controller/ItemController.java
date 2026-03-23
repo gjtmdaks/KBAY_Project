@@ -52,6 +52,11 @@ public class ItemController {
 
 	    List<Item> list = is.selectItemList(type, keyword, pi);
 
+	    for(Item i : list) {
+	    	int bidCount = bs.selectBidCount(i.getItemNo());
+	    	i.setBidCount(bidCount);
+	    }
+	    
 	    model.addAttribute("itemList", list);
 	    model.addAttribute("pi", pi);
 

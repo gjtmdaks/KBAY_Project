@@ -25,23 +25,37 @@
 	        <h4>${item.itemTitle}</h4>
 	        
 	        <!-- 가격 or 상태 -->
-	        <c:choose>
-	            <c:when test="${type eq 'nowDeal'}">
-	                현재가 ${item.currentPrice}
-	            </c:when>
-	
-	            <c:when test="${type eq 'endDeal'}">
-	                낙찰가 ${item.currentPrice}
-	            </c:when>
-	
-	            <c:when test="${type eq 'yetDeal'}">
-	                시작가 ${item.startPrice}
-	            </c:when>
-	        </c:choose>
+		    <p class="price">
+		        <c:choose>
+		            <c:when test="${type eq 'nowDeal'}">
+		                현재가 
+		                <strong>
+		                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
+		                </strong>
+		            </c:when>
+		
+		            <c:when test="${type eq 'endDeal'}">
+		                낙찰가 
+		                <strong>
+		                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
+		                </strong>
+		            </c:when>
+		
+		            <c:when test="${type eq 'yetDeal'}">
+		                시작가 
+		                <strong>
+		                    <fmt:formatNumber value="${item.startPrice}" pattern="#,###"/>원
+		                </strong>
+		            </c:when>
+		        </c:choose>
+		    </p>
 	
 	        <div class="item-meta">
 	            <span>판매자 ${item.userNo}</span>
-	
+	            <span>조회수 ${item.views}회</span>
+	            <span>입찰수 ${item.bidCount}회</span>
+	        </div>
+				
 	            <!-- 타이머 -->
 				<span class="timer">
 				    <c:choose>
@@ -91,7 +105,6 @@
 				        </c:otherwise>
 				    </c:choose>
 				</span>
-	        </div>
 	    </div>
 	</div>
 </a>
