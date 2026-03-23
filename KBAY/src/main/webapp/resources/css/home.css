@@ -9,7 +9,7 @@
 .item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .item-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; transition: transform 0.3s; }
 .item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.item-img { height: 200px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: #ccc; font-weight: bold; }
+.item-img { height: 200px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: #ccc; font-weight: bold; overflow: hidden;}
 .item-info { padding: 15px; }
 .item-info h4 { font-size: 16px; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .price { font-size: 14px; color: #666; }

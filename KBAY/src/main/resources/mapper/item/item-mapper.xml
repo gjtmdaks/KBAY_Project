@@ -119,6 +119,27 @@
 	    ORDER BY ITEM_IMG_NO ASC
 	</select>
 	
+	<update id="incrementViews">
+    UPDATE ITEM
+       SET VIEWS = VIEWS + 1
+     WHERE ITEM_NO = #{itemNo}
+	</update>
+	
+	<select id="selectBestItems" resultType="item">
+    SELECT *
+    FROM (
+        SELECT i.*,
+               (SELECT img_url 
+                FROM ITEM_IMG 
+                WHERE ITEM_NO = i.ITEM_NO 
+                AND ROWNUM = 1) AS MAIN_IMG
+        FROM ITEM i
+        WHERE STATUS = 'N'
+        ORDER BY VIEWS DESC, ITEM_NO DESC
+    )
+    WHERE ROWNUM <![CDATA[<=]]> 4
+</select>
+
 	<update id="updateItemStatus">
 		UPDATE ITEM
 		SET STATUS = CASE

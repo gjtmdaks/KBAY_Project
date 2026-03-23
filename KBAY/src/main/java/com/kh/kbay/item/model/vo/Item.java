@@ -31,7 +31,7 @@ public class Item {
 	private Date createAt;
 	private String countryNo;
 	private int deliveryNo;
-	
+	private int views;
 	private List<ItemImg> imgList;
     private String thumbnail;
     

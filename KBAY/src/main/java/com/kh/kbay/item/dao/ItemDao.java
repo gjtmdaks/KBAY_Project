@@ -25,4 +25,8 @@ public interface ItemDao {
 
 	int updateItemStatus();
 
+	int  incrementViews(int itemNo);
+	
+	List<Item> selectBestItems();
+
 }

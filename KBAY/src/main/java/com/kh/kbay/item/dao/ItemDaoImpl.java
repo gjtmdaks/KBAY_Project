@@ -58,5 +58,15 @@ public class ItemDaoImpl implements ItemDao {
 	public int updateItemStatus() {
 		return session.update("item.updateItemStatus");
 	}
+
+	@Override
+	public int incrementViews(int itemNo) {
+		return session.update("item.incrementViews", itemNo);
+	}
+	
+	@Override
+	public List<Item> selectBestItems(){
+		return session.selectList("item.selectBestItems");
+	}
 	
 }
