@@ -80,4 +80,9 @@ public class ItemServiceImpl implements ItemService {
 	public ItemCategory selectItemCategory(int itemCdNo) {
 		return id.selectItemCategory(itemCdNo);
 	}
+
+	@Override
+	public int updateItemStatus() {
+		return id.updateItemStatus();
+	}
 }

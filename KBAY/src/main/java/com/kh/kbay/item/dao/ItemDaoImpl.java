@@ -53,5 +53,10 @@ public class ItemDaoImpl implements ItemDao {
 	public List<ItemImg> selectItemImgList(int itemNo) {
 		return session.selectList("item.selectItemImgList", itemNo);
 	}
+
+	@Override
+	public int updateItemStatus() {
+		return session.update("item.updateItemStatus");
+	}
 	
 }

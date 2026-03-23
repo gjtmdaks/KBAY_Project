@@ -114,4 +114,19 @@
 	    WHERE ITEM_NO = #{itemNo}
 	    ORDER BY ITEM_IMG_NO ASC
 	</select>
+	
+	<update id="updateItemStatus">
+		UPDATE ITEM
+		SET STATUS = CASE
+		    WHEN SYSDATE >= END_TIME THEN 'E'
+		    WHEN SYSDATE >= START_TIME THEN 'N'
+		    ELSE 'Y'
+		END
+		WHERE STATUS != 'E'
+		AND STATUS != CASE
+		    WHEN SYSDATE >= END_TIME THEN 'E'
+		    WHEN SYSDATE >= START_TIME THEN 'N'
+		    ELSE 'Y'
+		END
+	</update>
 </mapper>
