@@ -23,4 +23,6 @@ public interface ItemDao {
 
 	List<ItemImg> selectItemImgList(int itemNo);
 
+	int updateItemStatus();
+
 }

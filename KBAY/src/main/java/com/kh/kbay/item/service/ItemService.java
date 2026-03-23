@@ -18,4 +18,6 @@ public interface ItemService {
 
 	ItemCategory selectItemCategory(int itemCdNo);
 
+	int updateItemStatus();
+
 }
