@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,32 +25,63 @@
         
         <div class="post-meta-row">
             <span>등록일: <fmt:formatDate value="${b.boardDate}" pattern="yyyy.MM.dd HH:mm" /></span>
-            
             <span class="post-writer-badge">${b.boardWriter}</span>
-            <div>
-                <span class="attachments-tab">첨부파일</span>
-                <a href="${contextPath}/board/download?boardNo=${b.boardNo}">${b.originalFileName}</a> 
+            
+            <!-- 첨부파일 등록 버튼?부분 -->
+            <div class="attachments-area" style="margin-top: 10px;">
+            <span class="attachments-tab" style="font-weight: bold; margin-right: 10px;">첨부파일</span>
+	            <c:choose>
+	                <c:when test="${not empty bList}">
+	                    <c:forEach var="bi" items="${bList}">
+	                        <a href="${contextPath}/kbay/board/download?changeName=${bi.changeName}&originName=${bi.originName}" 
+	                           style="margin-right: 15px; color: #555; text-decoration: none;">
+	                            📎 ${bi.originName}
+	                        </a>
+	                    </c:forEach>
+	                </c:when>
+	                <c:otherwise>
+	                    <span style="font-size: 13px; color: #888;">첨부파일 없음</span>
+	                </c:otherwise>
+	            </c:choose>
             </div>
         </div>
         
+        
         <c:if test="${not empty loginUser and loginUser.userNo == b.userNo}">
             <div class="top-buttons">
-                <button type="button" onclick="location.href='updateForm.bo?bno=${b.boardNo}'">게시글 편집</button>
+                <button type="button" onclick="location.href='/kbay/board/updateBoard/${b.boardNo}'">게시글 편집</button>
                 <button type="button" onclick="deletePost(${b.boardNo})">게시글 삭제</button>
             </div>
         </c:if>
     </div>
-
-    <c:if test="${not empty b.boardCdNo}">
-        <c:set var="fileName" value="${b.originalFileName}" />
-		<div class="image-preview-block">
-			<img src="${bi.changeName}" alt="첨부 이미지 미리보기" class="image-preview">
-		</div>
+	
+	<!-- 이미지 미리 보기부분 -->
+    
+	<c:if test="${not empty bList}">
+	    <div class="image-preview-block">
+	        <c:forEach var="bi" items="${bList}">
+	            <c:set var="ext" value="${fn:toLowerCase(bi.changeName)}" />
+	            
+	            <c:if test="${fn:endsWith(ext, '.jpg') || fn:endsWith(ext, '.jpeg') || fn:endsWith(ext, '.png') || fn:endsWith(ext, '.gif')}">
+	                <!-- ${bi.changeName}
+	                ${pageContext.request.contextPath}/upload/board/${bi.changeName} -->
+	                <img src="${bi.changeName}" 
+	                     alt="첨부 이미지 미리보기" 
+	                     class="image-preview">
+	            </c:if>
+	        </c:forEach>
+	    </div>
+	</c:if>
+    <!-- 윗줄이 안되면 아래줄로 -->
+    <%-- <div class="image-preview-block">
+	<c:if test="${not empty b.boardCdNo}">
+	     <c:set var="fileName" value="${b.originalFileName}" />
 		<c:forEach var="bi" items="${bList}">
 			<img src="${bi.changeName}" alt="첨부 이미지 미리보기" class="image-preview">
 		</c:forEach>
-    </c:if>
-
+	</c:if>
+	</div> --%>
+	<!-- 게시글 내용 출력 부분 -->
     <div class="content-block">
         ${b.boardContent}
         
@@ -63,8 +95,8 @@
     <div class="nav-buttons">
         <button type="button" onclick="location.href='list.bo'">목록으로</button>
         <div>
-            <button type="button">이전 글</button>
-            <button type="button">다음 글</button>
+            <button type="button" onclick="">이전 글</button>
+            <button type="button" onclick="">다음 글</button>
         </div>
     </div>
 

@@ -18,5 +18,7 @@ public interface BoardService {
 
 	List<BoardImg> selectBoardImg(int boardNo);
 
+	int deleteBoard(int boardNo);
+
 	
 }

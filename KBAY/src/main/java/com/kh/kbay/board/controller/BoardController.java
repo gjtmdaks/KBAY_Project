@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class BoardController {
 	private final BoardService bs;
-	private final ServletContext application;
+//	private final ServletContext application;
 	
 	//커뮤니티 목록 불류 및 목록을 보여주기
 	@GetMapping("/community.me/{boardCdNo}")
@@ -90,60 +90,6 @@ public class BoardController {
 	    return "board/boardWriting";
 	}
 	// 게시판 등록버튼
-//	@PostMapping("/insert")
-//	public String insertBoard(
-//			@ModelAttribute BoardPost b,
-//			@RequestParam("boardCdNo") int boardCdNo,
-//			Model model,
-//			RedirectAttributes ra,
-//			@RequestParam(value = "upfile", required = false) List<MultipartFile> upfiles,
-//			Authentication auth
-//			) {
-//		if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
-//			ra.addFlashAttribute("alertMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
-//			return "redirect:/member/login";
-//		}
-//		
-//		Member loginUser = (Member) auth.getPrincipal();
-//		
-//		List<BoardImg> imgList = new ArrayList<>();
-//		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
-//		
-//		if(upfiles != null) {
-//			for(MultipartFile upfile : upfiles) {
-//				if(upfile.isEmpty()) {
-//					continue;
-//				}
-//				// 첨부파일이 존재한다면 WEB서버 상에 첨부파일 저장
-//				// Utils.saveFile이 boardCdNo를 String으로 받는다면 String.valueOf()로 변환!
-//				String changeName = Utils.saveFile(upfile, application, boardCdNo);
-//				
-//				// 첨부파일 관리를 위해 DB에 첨부파일 위치정보 저장
-//				BoardImg bi = new BoardImg();
-//				bi.setChangeName(changeName);
-//				bi.setOriginName(upfile.getOriginalFilename());
-//				bi.setImgLevel(imgLevel);
-//				imgList.add(bi);
-//			}
-//		}
-//		
-//		b.setBoardCdNo(boardCdNo);
-//	    b.setUserNo(loginUser.getUserNo());
-//		
-//		log.debug("board : {}", b);
-//		log.debug("imgList : {}", imgList);
-//		
-//		int result = bs.insertBoard(b, imgList);
-//		
-//		if(result<=0) {
-//			throw new RuntimeException("게시즐 작성 실패");
-//		}
-//		
-//		ra.addFlashAttribute("alertMsg","게시글 등록 성공");
-//		
-//		return "redirect:/board/community.me/" + boardCdNo;
-//	}
-	// 게시판 등록버튼
 	@PostMapping("/insert")
 	public String insertBoard(
 			@ModelAttribute BoardPost b,
@@ -162,20 +108,20 @@ public class BoardController {
 		
 		Member loginUser = (Member) auth.getPrincipal();
 		
-		// 🌟 2. 로컬 테스트용 파일 저장 경로 세팅!
-		String savePath = "C:/upload/board/"; // 내 PC의 C드라이브에 저장!
-		 String serverIp = "192.168.10.25:8081"; // 나중에 전체 URL이 필요하다면 사용하세요!
-		 String webPath = "/kbay/upload/board/";
+		// 2. 로컬 테스트용 파일 저장 경로
+		String savePath = "C:/upload/board/"; 
+		String serverIp = "192.168.10.25:8081";
+		String webPath = "/kbay/upload/board/";
 		
 		File dir = new File(savePath);
 		if (!dir.exists()) {
-			dir.mkdirs(); // C드라이브에 upload/board 폴더가 없으면 알아서 만들어줍니다!
+			dir.mkdirs();
 		}
 		
 		List<BoardImg> imgList = new ArrayList<>();
 		char imgLevel = 'N'; // 첨부파일 삭제 여부(n이 살아있는거)
 		
-		// 🌟 3. 파일 업로드 로직 (경매 쪽 UUID 방식 적용)
+		// 3. 파일 업로드 로직 (경매 쪽 UUID 방식 적용)
 		if(upfiles != null) {
 			for(MultipartFile file : upfiles) {
 				if(file.isEmpty()) {
@@ -190,12 +136,12 @@ public class BoardController {
 				String changeName = UUID.randomUUID().toString() + ext;
 				
 				try {
-					// 물리적인 C드라이브 경로에 파일 쾅! 저장
+					// 물리적인 C드라이브 경로에 저장
 					file.transferTo(new File(savePath + changeName));
 					
 					// DB에 넣을 정보 세팅
 					BoardImg bi = new BoardImg();
-					bi.setChangeName("http://" + serverIp + webPath + changeName); // 랜덤으로 바뀐 이름
+					bi.setChangeName("http://" + serverIp + webPath + changeName); // 이미지 이름에 경로가 추가 된 이름
 					bi.setOriginName(originName); // 사용자가 올린 원래 이름
 					bi.setImgLevel(imgLevel);
 					imgList.add(bi);
@@ -250,5 +196,52 @@ public class BoardController {
 	    
 	    return "board/boardDetail";
 	}
-
+	
+	// 게시글 삭제
+	@GetMapping("/deletePost")
+	public String deleteBoard(
+			@RequestParam("boardNo") int boardNo,
+			@RequestParam(value = "boardCdNo", defaultValue = "1") int boardCdNo,
+			RedirectAttributes ra
+			) {
+		int result = bs.deleteBoard(boardNo);
+		
+		if(!(result > 0)) {
+			ra.addFlashAttribute("alertMsg", "게시글 삭제에 실패했습니다.");
+			return "redirect:/board/detail?boardNo=" + boardNo;
+		}
+		ra.addFlashAttribute("alertMsg", "게시글이 성공적으로 삭제되었습니다.");
+		return "redirect:/board/community.me/" + boardCdNo;
+	}
+	
+	// 게시글 업데이트
+	@GetMapping("/updateBoard/{boardNo}")
+	public String updateBoard(
+			@PathVariable("boardNo") int boardNo, 
+	        Model model,
+	        Authentication auth,
+	        RedirectAttributes ra
+			) {
+		
+		// 혹시 모를 방어 요소
+		if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+			ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+			return "redirect:/member/login";
+		}
+		
+		BoardPost b = bs.selectBoardDetail(boardNo);
+		List<BoardImg> bList = bs.selectBoardImg(boardNo);
+		
+		// 게시글 유저 방어
+		Member loginUser = (Member) auth.getPrincipal();
+		if (b.getUserNo() != loginUser.getUserNo()) {
+			ra.addFlashAttribute("alertMsg", "본인의 게시글만 수정할 수 있습니다.");
+			return "redirect:/board/boardDetail/" + boardNo;
+		}
+		
+		model.addAttribute("b", b);
+		model.addAttribute("bList", bList);
+		
+		return "board/boardUpdate";
+	}
 }
