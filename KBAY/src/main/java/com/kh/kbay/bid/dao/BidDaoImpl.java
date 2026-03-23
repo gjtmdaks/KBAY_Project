@@ -44,4 +44,19 @@ public class BidDaoImpl implements BidDao {
 
 	    return ranking;
     }
+
+	@Override
+	public int selectBidCount(int itemNo) {
+		return session.selectOne("bid.selectBidCount", itemNo);
+	}
+
+	@Override
+	public int selectCurrentPrice(int itemNo) {
+		return session.selectOne("bid.selectCurrentPrice", itemNo);
+	}
+
+	@Override
+	public int selectMaxPrice(int itemNo) {
+		return session.selectOne("bid.selectMaxPrice", itemNo);
+	}
 }

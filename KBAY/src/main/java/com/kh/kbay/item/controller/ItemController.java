@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.kh.kbay.bid.service.BidService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.model.vo.ItemCategory;
@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ItemController {
 	private final ItemService is;
+	private final BidService bs;
 	
 	@GetMapping("{type}")
 	public String itemList(
@@ -134,6 +135,10 @@ item.setUserNo(loginUser.getUserNo());
 	        ) {
 		
 		Item item = is.selectItemDetail(itemNo, request, response);
+
+	    int bidCount = bs.selectBidCount(itemNo);
+	    int currentPrice = bs.selectCurrentPrice(itemNo);
+	    int maxPrice = bs.selectMaxPrice(itemNo);
 		
 		if(item == null) {
 			return "common/errorPage"; 
@@ -143,6 +148,9 @@ item.setUserNo(loginUser.getUserNo());
 
 	    model.addAttribute("item", item);
 	    model.addAttribute("itemCategory", itemCategory);
+	    model.addAttribute("bidCount", bidCount);
+	    model.addAttribute("currentPrice", currentPrice);
+	    model.addAttribute("maxPrice", maxPrice);
 	    model.addAttribute("now", new Date());
 		
 		return "item/itemDetail";

@@ -58,4 +58,9 @@
 	    WHERE ITEM_NO = #{itemNo}
 	    AND BID_PRICE >= #{bidPrice}
 	</select>
+	<select id="selectBidCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM BID
+	    WHERE ITEM_NO = #{itemNo}
+	</select>
 </mapper>

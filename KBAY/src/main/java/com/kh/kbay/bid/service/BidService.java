@@ -6,4 +6,10 @@ public interface BidService {
 
 	int placeBid(Bid req);
 
+	int selectBidCount(int itemNo);
+
+	int selectCurrentPrice(int itemNo);
+
+	int selectMaxPrice(int itemNo);
+
 }

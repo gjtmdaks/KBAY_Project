@@ -18,5 +18,20 @@ public class BidServiceImpl implements BidService {
 	public int placeBid(Bid req) {
 		return bd.placeBid(req);
 	}
+
+	@Override
+	public int selectBidCount(int itemNo) {
+		return bd.selectBidCount(itemNo);
+	}
+
+	@Override
+	public int selectCurrentPrice(int itemNo) {
+		return bd.selectCurrentPrice(itemNo);
+	}
+
+	@Override
+	public int selectMaxPrice(int itemNo) {
+		return bd.selectMaxPrice(itemNo);
+	}
 	
 }
