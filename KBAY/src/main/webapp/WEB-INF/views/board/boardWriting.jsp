@@ -37,9 +37,9 @@
         <div class="form-group">
             <label>첨부파일</label>
             <div id="dropZone" class="drop-zone">
-                <span class="drop-zone-text">여기로 파일을 드래그하거나 클릭하여 업로드하세요.</span>
-                <input type="file" id="fileInput" multiple style="display: none;">
-            </div>
+			    <span class="drop-zone-text">여기로 파일을 드래그하거나 클릭하여 업로드하세요.</span>
+			    <input type="file" id="fileInput" name="upfile" multiple style="display: none;">
+			</div>
             <ul id="fileList" class="file-list"></ul>
         </div>
 

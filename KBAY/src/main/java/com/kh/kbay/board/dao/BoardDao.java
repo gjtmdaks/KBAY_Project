@@ -16,4 +16,6 @@ public interface BoardDao {
 
 	int insertBoardImgList(List<BoardImg> imgList);
 
+	BoardPost selectBoardDetail(int boardNo);
+
 }

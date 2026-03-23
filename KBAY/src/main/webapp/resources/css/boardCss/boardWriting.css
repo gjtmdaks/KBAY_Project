@@ -99,3 +99,83 @@
 
 .btn-list:hover { background-color: #ccc; }
 .btn-submit:hover { background-color: #660000; }
+
+/* 첨부파일 디자인 영역 */
+/* 파일 목록 전체 영역 (ul) */
+.file-list {
+    margin-top: 15px;
+    padding: 0;
+}
+
+/* 파일 목록 한 줄(li) 디자인 */
+.file-item {
+    display: flex;
+    align-items: center; /* 세로 중앙 정렬 */
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    border: 1px solid #eee; /* 아주 연한 테두리 */
+}
+
+/* 1. 미리보기/아이콘 영역 디자인 (썸네일 박스) */
+.file-preview-wrapper {
+    width: 50px; 
+    height: 50px;
+    margin-right: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 박스 밖으로 튀어나온 이미지 자르기 */
+    background-color: #e9ecef; 
+    border-radius: 4px;
+    flex-shrink: 0; /* 박스 크기 축소 방지 */
+}
+
+/* 2. 실제 미리보기 이미지(img) 태그 스타일 */
+.file-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 찌그러지지 않게 꽉 채우기 */
+}
+
+/* 3. 이미지가 아닐 때 클립 아이콘 스타일 */
+.file-preview-icon {
+    font-size: 24px;
+    color: #888;
+}
+
+/* 4. 파일 정보(이름, 용량) 영역 */
+.file-info-text {
+    flex-grow: 1; /* 남은 공간 다 차지하기 */
+    display: flex;
+    flex-direction: column; /* 위아래로 배치 */
+}
+
+.file-name {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.file-size {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* 5. 첨부파일 삭제(X) 버튼 디자인 */
+.btn-delete-file {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    transition: transform 0.2s;
+    color: #555;
+}
+
+.btn-delete-file:hover {
+    transform: scale(1.3); /* 마우스 올리면 커짐 */
+    color: #dc3545; /* 빨간색으로 변경 */
+}

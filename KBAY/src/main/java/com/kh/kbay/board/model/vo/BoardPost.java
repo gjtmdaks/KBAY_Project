@@ -18,6 +18,7 @@ public class BoardPost {
 	private int viewCount;
 	private int boardCdNo; // board_Cd_No = boardCategoryNo
 	
+	// db에는 없는 것들
 	private String boardWriter;
 	private String originalFileName; 
     private String renamedFileName;

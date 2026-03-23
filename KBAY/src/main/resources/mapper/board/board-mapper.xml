@@ -88,17 +88,32 @@ ORDER BY BOARD_NO DESC
     )
 </insert>
 	<insert id="insertBoardImgList" parameterType="list">
-		<foreach collection="list" item="img" open="DECLARE BEGIN" separator=";" close="; END;">
-        
+	    <foreach collection="list" item="img" open="DECLARE BEGIN" separator=";" close="; END;">
 	        INSERT INTO BOARD_IMG (
-	            IMG_NO,ORIGIN_NAME,CHANGE_NAME,REF_BNO,IMG_LEVEL) VALUES (
-	            SEQ_IMG_NO.NEXTVAL, 
+	            BOARD_IMG_NO, BOARD_NO, IMG_LEVEL, ORIGIN_NAME, CHANGE_NAME
+	        ) VALUES (
+	            SEQ_BOARD_IMG_NO.NEXTVAL,
+	            #{img.boardNo},
+	            #{img.imgLevel}, 
 	            #{img.originName}, 
-	            #{img.changeName}, 
-	            #{img.refBno}, 
-	            #{img.imgLevel}
+	            #{img.changeName}
 	        )
-	        
 	    </foreach>
 	</insert>
+	
+	<!-- 보드 상세보기 -->
+	<select id="selectBoardDetail" resultType="boardPost">
+    SELECT 
+        B.BOARD_NO AS boardNo, 
+        B.BOARD_TITLE AS boardTitle, 
+        B.BOARD_CONTENT AS boardContent, 
+        B.USER_NO AS userNo,
+        M.USER_NAME AS boardWriter, B.VIEW_COUNT AS viewCount, 
+        B.BOARD_DATE AS boardDate,
+        B.BOARD_CD_NO AS boardCdNo
+    FROM BOARD_POST B
+    LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+    WHERE B.BOARD_NO = #{boardNo} 
+      AND B.BOARD_DELETE = 'N'
+</select>
 </mapper>
