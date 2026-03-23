@@ -118,11 +118,11 @@
 	                </c:when>
 	
 	                <c:when test="${now.time > item.endTime.time}">
-	                    <div>낙찰가 <strong>${item.currentPrice}</strong></div>
+	                    <div>낙찰가 <strong>${currentPrice}</strong></div>
 	                </c:when>
 	
 	                <c:otherwise>
-	                    <div>현재가 <strong>${item.currentPrice}</strong></div>
+	                    <div>현재가 <strong>${currentPrice}</strong></div>
 	                </c:otherwise>
 	            </c:choose>
 	
