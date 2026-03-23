@@ -3,6 +3,7 @@ package com.kh.kbay.board.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -243,5 +245,38 @@ public class BoardController {
 		model.addAttribute("bList", bList);
 		
 		return "board/boardUpdate";
+	}
+	
+	@ResponseBody
+	@PostMapping("/insertReply")
+	public String insertReply(
+			@RequestParam("boardNo") int boardNo,
+			@RequestParam("commentContent") String commentContent,
+			Authentication auth
+			) {
+		
+		// 1. 로그인 안 한 사람이 AJAX를 쏘면 컷! (보안)
+		if (auth == null || !auth.isAuthenticated()) {
+			return "fail";
+		}
+		
+		Member loginUser = (Member) auth.getPrincipal();
+		
+		// 2. 파라미터로 받은 내용들을 댓글 객체나 Map에 담기.
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("boardNo", boardNo);
+		paramMap.put("commentContent", commentContent);
+		paramMap.put("userNo", loginUser.getUserNo());
+		
+		// 3. DB에 INSERT
+		int result = bs.insertReply(paramMap); 
+        
+//		int result = 1; // 테스트를 위해 임시로 무조건 성공하게 만듭니다.
+		
+		if(result > 0) {
+			return "success"; // JS의 if(result === "success") 부분으로 쏙 들어갑니다!
+		} else {
+			return "fail";
+		}
 	}
 }

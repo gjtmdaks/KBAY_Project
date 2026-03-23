@@ -20,5 +20,7 @@ public interface BoardService {
 
 	int deleteBoard(int boardNo);
 
+	int insertReply(Map<String, Object> paramMap);
+
 	
 }

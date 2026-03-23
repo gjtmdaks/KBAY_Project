@@ -130,5 +130,23 @@ ORDER BY BOARD_NO DESC
 	WHERE BOARD_NO = #{boardNo}
 </delete>
 
+<!-- 댓글 등록 -->
+<insert id="insertReply" parameterType="map">
+    INSERT INTO REPLY ( /* 본인의 댓글 테이블 이름으로 변경! */
+        REPLY_NO,
+		BOARD_NO,
+		USER_NO,
+		REPLY_CONTENT,
+		REPLY_DATE,
+		REPLY_DELETE
+    ) VALUES (
+		SEQ_REPLY_NO.NEXTVAL,
+		#{boardNo},
+		#{userNo},
+		#{commentContent},
+		SYSDATE,
+		'N'                
+	)
+</insert>
 
 </mapper>
