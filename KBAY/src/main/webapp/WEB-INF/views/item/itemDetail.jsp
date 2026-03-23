@@ -93,7 +93,7 @@
 			    <!-- 입찰수 -->
 			    <tr>
 			        <th>입찰수</th>
-			        <td>
+			        <td id="bidCount">
 			            <c:choose>
 			                <c:when test="${empty bidCount}">0회</c:when>
 			                <c:otherwise>${bidCount}회</c:otherwise>
@@ -114,20 +114,20 @@
 	        <div class="price-box">
 	            <c:choose>
 	                <c:when test="${now.time < item.startTime.time}">
-	                    <div>시작가 <strong>${item.startPrice}</strong></div>
+	                    <div>시작가 <strong><fmt:formatNumber value="${item.startPrice}" pattern="#,###" /></strong></div>
 	                </c:when>
 	
 	                <c:when test="${now.time > item.endTime.time}">
-	                    <div>낙찰가 <strong>${currentPrice}</strong></div>
+	                    <div>낙찰가 <strong><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
 	                </c:when>
 	
 	                <c:otherwise>
-	                    <div>현재가 <strong>${currentPrice}</strong></div>
+	                    <div>현재가 <strong id="currentPrice"><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
 	                </c:otherwise>
 	            </c:choose>
 	
 	            <c:if test="${item.directBuy eq 'Y'}">
-	                <div class="buy-now">즉시구매가 ${item.buyNowPrice}</div>
+	                <div class="buy-now">즉시구매가 <fmt:formatNumber value="${item.buyNowPrice}" pattern="#,###" /></div>
 	            </c:if>
 	        </div>
 	
@@ -324,6 +324,31 @@
 	    const walk = (x - startX) * 2;
 	    thumbList.scrollLeft = scrollLeft - walk;
 	});
+	
+	function updatePrice(itemNo){
+
+	    fetch(`/kbay/bid/price/${itemNo}`)
+	    .then(res => res.json())
+	    .then(data => {
+
+	        if(!data) return;
+
+	        // 현재가 갱신
+	        document.getElementById("currentPrice").innerText =
+	            data.currentPrice.toLocaleString();
+
+	        // 입찰수 갱신
+	        document.getElementById("bidCount").innerText =
+	            data.bidCount + "회";
+
+	    })
+	    .catch(err => console.error(err));
+	}
+
+	// 3초마다 갱신
+	setInterval(() => {
+	    updatePrice(${item.itemNo});
+	}, 3000);
 	</script>
 </body>
 </html>

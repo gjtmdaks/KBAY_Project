@@ -20,7 +20,7 @@
 					        SELECT BID_PRICE
 					        FROM BID
 					        WHERE ITEM_NO = #{itemNo}
-					        ORDER BY BID_PRICE DESC
+					        ORDER BY BID_PRICE DESC, BID_TIME ASC
 					    )
 					)
 					WHERE rn = 2
@@ -38,6 +38,10 @@
 	    WHERE ITEM_NO = #{itemNo}
 	</select>
 	<insert id="insertBid">
+		<selectKey keyProperty="bidNo" resultType="int" order="BEFORE">
+	        SELECT SEQ_BID_NO.NEXTVAL FROM DUAL
+	    </selectKey>
+	    
 	    INSERT INTO BID (
 	        BID_NO,
 	        ITEM_NO,
@@ -45,7 +49,7 @@
 	        BID_PRICE,
 	        BID_TIME
 	    ) VALUES (
-	        SEQ_BID_NO.NEXTVAL,
+	        #{bidNo},
 	        #{itemNo},
 	        #{userNo},
 	        #{bidPrice},
@@ -53,14 +57,23 @@
 	    )
 	</insert>
 	<select id="selectRanking" resultType="int">
-	    SELECT COUNT(*) + 1
-	    FROM BID
-	    WHERE ITEM_NO = #{itemNo}
-	    AND BID_PRICE >= #{bidPrice}
+	    SELECT RN
+	    FROM (
+	        SELECT BID_NO,
+	               ROW_NUMBER() OVER (ORDER BY BID_PRICE DESC, BID_TIME ASC) AS RN
+	        FROM BID
+	        WHERE ITEM_NO = #{itemNo}
+	    )
+	    WHERE BID_NO = #{bidNo}
 	</select>
 	<select id="selectBidCount" resultType="int">
 	    SELECT COUNT(*)
 	    FROM BID
 	    WHERE ITEM_NO = #{itemNo}
 	</select>
+	<update id="updateCurrentPrice">
+	    UPDATE ITEM
+	    SET CURRENT_PRICE = #{currentPrice}
+	    WHERE ITEM_NO = #{itemNo}
+	</update>
 </mapper>
