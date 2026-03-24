@@ -121,6 +121,7 @@ ORDER BY BOARD_NO DESC
 	SELECT *
 	FROM BOARD_IMG
 	WHERE BOARD_NO = #{boardNo}
+	AND IMG_LEVEL = 'N'
 </select>
 
 <!-- 보드 삭제 -->
