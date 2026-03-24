@@ -14,4 +14,9 @@ public interface MemberService {
 
 	void updateAuth(int userNo);
 
+	String sendAuthEmail(String email);
+
+	int emailCheck(String email);
+
+	boolean verifyCode(String email, String inputCode);
 }

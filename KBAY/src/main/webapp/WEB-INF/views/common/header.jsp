@@ -56,3 +56,37 @@
 		</ul>
 	</div>
 </nav>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const msg = "${alertMsg}";
+        
+        if (msg !== "") {
+            Swal.fire({
+                icon: 'success',
+                title: '성공!',
+                text: msg,
+                showCancelButton: true,    
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#4e73df',  
+                confirmButtonText: '확인',   
+                cancelButtonText: '로그인하기'   
+            }).then((result) => {
+                if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                    location.href = "${contextPath}/member/login";
+                }
+            });
+        }
+        const error = "${errorMsg}";
+        if (error !== "") {
+            Swal.fire({
+                icon: 'error',
+                title: '오류 발생',
+                text: error,
+                confirmButtonColor: '#d33'
+            });
+        }
+    });
+</script>

@@ -78,7 +78,22 @@
 		 -->
 		<property name="maxUploadSize" value="10000000" />
 		<property name="maxInMemorySize" value="2000000" />
+		
+		<!--  GMAIL 인증 BEAN 객체  -->
 	</bean>
-	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    <property name="host" value="smtp.gmail.com" />
+    <property name="port" value="587" />
+    <property name="username" value="dustkd1693@gmail.com" />
+    <property name="password" value="ojinpnitbkicdavf"/>
+    <property name="javaMailProperties">
+        <props>
+            <prop key="mail.transport.protocol">smtp</prop>
+            <prop key="mail.smtp.auth">true</prop>
+            <prop key="mail.smtp.starttls.enable">true</prop>
+            <prop key="mail.debug">true</prop>
+        </props>
+    </property>
+</bean>
 	
 </beans>

@@ -49,4 +49,31 @@
 	    SET AUTHORITY = 2
 	    WHERE USER_NO = #{userNo}
 	</update>
+	
+	<select id="emailCheck" parameterType="string" resultType="_int">
+    SELECT COUNT(*) FROM MEMBER WHERE USER_EMAIL = #{email}
+</select>
+
+<update id="saveAuthCode" parameterType="map">
+    MERGE INTO MAIL_AUTH a
+    USING DUAL ON (a.USER_EMAIL = #{email})
+    WHEN MATCHED THEN
+        UPDATE SET AUTH_CODE = #{authCode}, CREATE_TIME = SYSDATE, EXPIRE_TIME = SYSDATE + 3/1440
+    WHEN NOT MATCHED THEN
+        INSERT (USER_EMAIL, AUTH_CODE, EXPIRE_TIME)
+        VALUES (#{email}, #{authCode}, SYSDATE + 3/1440)
+</update>
+
+<select id="verifyCode" parameterType="map" resultType="_int">
+    SELECT COUNT(*) 
+    FROM MAIL_AUTH 
+    WHERE USER_EMAIL = #{email} 
+      AND AUTH_CODE = #{inputCode} 
+      AND EXPIRE_TIME > SYSDATE
+</select>
+
+<delete id="deleteAuthCode" parameterType="string">
+    DELETE FROM MAIL_AUTH 
+    WHERE USER_EMAIL = #{email}
+</delete>
 </mapper>
