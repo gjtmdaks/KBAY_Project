@@ -13,6 +13,8 @@
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/boardWriting.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/boardCss/boardUpdate.css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -37,26 +39,51 @@
         </div>
 
         <div class="form-group">
-            <label>기존 첨부파일</label>
-            <c:choose>
-                <c:when test="${not empty bList}">
-                    <ul style="list-style:none; padding:10px; border:1px solid #ddd; border-radius:5px; background-color:#f9f9f9;">
-                        <c:forEach var="bi" items="${bList}">
-                            <li style="margin-bottom: 8px;">
-                                📎 ${bi.changeName}
-                                <!-- 내가 작성한 게시글에 이미지가 들어가 있다면 오류가 발생 나중에 확인하기 -->
-                                <label style="color:red; font-size:13px; margin-left:15px; cursor:pointer;">
-                                    <input type="checkbox" name="deleteImgs" value="${bi.boardImgNo}"> ❌ 이 파일 삭제하기
-                                </label>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </c:when>
-                <c:otherwise>
-                    <div style="padding:10px; color:#888; font-size:14px;">기존에 등록된 파일이 없습니다.</div>
-                </c:otherwise>
-            </c:choose>
-        </div>
+		    <label>기존 첨부파일</label>
+		    <c:choose>
+		        <c:when test="${not empty bList}">
+		            <ul class="existing-file-list">
+		                <c:forEach var="bi" items="${bList}">
+		                    
+		                    <c:set var="lowerName" value="${fn:toLowerCase(bi.changeName)}" />
+		                    
+		                    <li class="existing-file-item">
+		                        <div class="file-info-wrapper">
+		                            
+		                            <div class="file-thumbnail">
+		                                <c:choose>
+		                                    <c:when test="${fn:endsWith(lowerName, '.jpg') or fn:endsWith(lowerName, '.jpeg') or fn:endsWith(lowerName, '.png') or fn:endsWith(lowerName, '.gif')}">
+		                                        <img src="${bi.changeName}" alt="첨부이미지">
+		                                    </c:when>
+		                                    <c:otherwise>
+		                                        <span class="file-icon">📄</span>
+		                                    </c:otherwise>
+		                                </c:choose>
+		                            </div>
+		
+		                            <div class="file-name">
+		                                ${not empty bi.originName ? bi.originName : '첨부 파일'}
+		                            </div>
+		                        </div>
+		
+		                        <div class="file-delete-wrapper">
+		                            <label class="delete-btn-label" title="이 파일 삭제">
+		                                <input type="checkbox" name="deleteImgs" value="${bi.boardImgNo}" onchange="toggleDelete(this)">
+		                                <span class="delete-mark">✖</span>
+		                            </label>
+		                        </div>
+		                        
+		                    </li>
+		                </c:forEach>
+		            </ul>
+		        </c:when>
+		        <c:otherwise>
+		            <div class="no-file-msg">
+		                기존에 등록된 파일이 없습니다.
+		            </div>
+		        </c:otherwise>
+		    </c:choose>
+		</div>
 
         <div class="form-group">
             <label>새 첨부파일 추가</label>
@@ -80,5 +107,6 @@
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 <script src="${pageContext.request.contextPath}/resources/js/boardJs/boardWriting.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/boardJs/boardUpdate.js"></script>
 </body>
 </html>

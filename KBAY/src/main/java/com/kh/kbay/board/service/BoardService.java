@@ -29,6 +29,8 @@ public interface BoardService {
 
 	int selectReplyCount(int boardNo);
 
+	int updateBoard(BoardPost b, List<Integer> deleteImgs, List<BoardImg> newImgList);
+
 
 	
 }

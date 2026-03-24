@@ -96,6 +96,36 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.selectReplyCount(boardNo);
 	}
 
+	@Override
+	public int updateBoard(BoardPost b, List<Integer> deleteImgs, List<BoardImg> newImgList) {
+		// TODO Auto-generated method stub
+		
+		int result = boardDao.updateBoard(b);
+		if(result == 0) {
+			throw new RuntimeException("게시글 변경 실패");
+		}
+		
+		if(deleteImgs != null && !deleteImgs.isEmpty()) {
+			// 삭제할 파일 번호 리스트를 DAO에 통째로 넘겨서 삭제 (또는 상태 'Y' 변경)
+			int deleteResult = boardDao.deleteBoardImgList(deleteImgs);
+			if(deleteResult == 0) {
+				throw new RuntimeException("기존 첨부파일 삭제 실패");
+			}
+		}
+		
+		if(newImgList != null && !newImgList.isEmpty()) {
+			for(BoardImg bi : newImgList) {
+				bi.setBoardNo(b.getBoardNo());
+			}
+			
+			int insertResult = boardDao.insertBoardImgList(newImgList);
+			if(insertResult == 0) {
+				throw new RuntimeException("새 첨부파일 추가 실패");
+			}
+		}
+		return result;
+	}
+
 	
 
 

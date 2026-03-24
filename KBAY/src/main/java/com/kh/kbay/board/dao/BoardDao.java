@@ -31,5 +31,9 @@ public interface BoardDao {
 
 	int selectReplyCount(int boardNo);
 
+	int updateBoard(BoardPost b);
+
+	int deleteBoardImgList(List<Integer> deleteImgs);
+
 
 }
