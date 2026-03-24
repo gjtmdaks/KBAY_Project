@@ -13,8 +13,7 @@
     <result column="USER_DELETE_YN" property="userDeleteYn" />
 </resultMap>
 	<select id="loginUserById" resultMap="memberResultSet">
-	SELECT USER_NO, USER_ID,
-		USER_PWD, USER_NAME, AUTHORITY, USER_DELETE_YN
+	SELECT *
 	FROM MEMBER
 	WHERE USER_ID = #{userId} AND USER_DELETE_YN = 'N'
 	</select>
