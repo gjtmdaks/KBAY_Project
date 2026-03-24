@@ -1,10 +1,16 @@
 package com.kh.kbay.member.controller;
 
+import java.util.Map;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -77,7 +83,54 @@ public class MemberController {
         return "member/login";
     }
 
-
+	@GetMapping("mypage.me")
+	public String myPageForm() {
+		return "mypage/mypageHome";
+	}
 	
+	@GetMapping("verify")
+	public String verifyPage() {
+	    return "member/verify";
+	}
+	
+	@PostMapping("verify")
+	@ResponseBody
+	public String verifySuccess(
+			@RequestBody Map<String, String> param,
+            Authentication auth) {
+		String name = param.get("name");
+	    String rrn1 = param.get("rrn1");
+	    String rrn2 = param.get("rrn2");
 
+	    // ✅ 여기서 실제로는 외부 API (PASS / 아임포트) 써야됨
+	    // 지금은 테스트용으로 단순 체크
+
+	    System.out.println(rrn1.length());
+	    System.out.println(rrn2.length());
+	    
+	    if(rrn1.length() == 6 && rrn2.length() == 7) {
+
+	        Member loginUser = (Member) auth.getPrincipal();
+
+	        // 1️. DB 업데이트
+	        ms.updateAuth(loginUser.getUserNo());
+
+	        // 2️. 최신 사용자 정보 다시 조회
+	        Member updatedUser = ms.loadUserByUsername(loginUser.getUserId());
+
+	        // 3️. 새로운 Authentication 생성
+	        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+	                updatedUser,
+	                auth.getCredentials(),
+	                updatedUser.getAuthorities()
+	        );
+
+	        // 4️. SecurityContext 갱신
+	        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+	        return "success";
+	    }
+
+	    return "fail";
+	}
 }

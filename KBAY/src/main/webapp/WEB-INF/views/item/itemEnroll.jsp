@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -386,5 +387,47 @@
 	</script>
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+	
+	<c:if test="${needVerification}">
+	
+	<script>
+	    // 🔥 전역으로 선언 (핵심)
+	    window.isVerified = false;
+	
+	    alert("물품등록을 하시려면 최초 1회 본인인증을 하셔야 합니다.");
+	
+	    const popup = window.open(
+	        '${pageContext.request.contextPath}/member/verify',
+	        'verifyPopup',
+	        'width=500,height=600'
+	    );
+	
+	    const checkPopup = setInterval(function() {
+	
+	        if(popup.closed) {
+	            clearInterval(checkPopup);
+	
+	            // 🔥 최신 상태 반영됨
+	            if(!window.isVerified) {
+	
+	                alert("본인인증이 완료되지 않았습니다. 3초 후 홈으로 이동합니다.");
+	
+	                setTimeout(function() {
+	                    location.href = "${pageContext.request.contextPath}/";
+	                }, 3000);
+	            }
+	        }
+	
+	    }, 500);
+	</script>
+	
+	<style>
+	    form input, form textarea, form select, form button {
+	        pointer-events: none;
+	        opacity: 0.5;
+	    }
+	</style>
+	
+	</c:if>
 </body>
 </html>

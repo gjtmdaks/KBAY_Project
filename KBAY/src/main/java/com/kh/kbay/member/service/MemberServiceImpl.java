@@ -1,6 +1,5 @@
 package com.kh.kbay.member.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +19,10 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member loginUser = md.loginUserById(username);
+    public Member loadUserByUsername(String userId) throws UsernameNotFoundException {
+        Member loginUser = md.loginUserById(userId);
         if (loginUser == null) {
-            throw new UsernameNotFoundException(username + "을 찾을 수 없습니다.");
+            throw new UsernameNotFoundException(userId + "을 찾을 수 없습니다.");
         }
         return loginUser;
     }
@@ -46,6 +45,11 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
 	@Override
 	public int idCheck(String userId) {
 		return md.idCheck(userId);
+	}
+
+	@Override
+	public void updateAuth(int userNo) {
+		md.updateAuth(userNo);
 	}
 }
 

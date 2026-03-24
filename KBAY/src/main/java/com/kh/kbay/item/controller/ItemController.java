@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,6 +31,7 @@ import com.kh.kbay.item.model.vo.ItemCategory;
 import com.kh.kbay.item.model.vo.ItemImg;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemController {
 	private final ItemService is;
 	private final BidService bs;
+	private final MemberService ms;
 	
 	@GetMapping("{type}")
 	public String itemList(
@@ -69,15 +74,23 @@ public class ItemController {
 	    return "item/" + type;
 	}
 	
-	@GetMapping("enroll")
-    public String itemEnrollForm(Authentication auth, RedirectAttributes ra) {
+	@GetMapping("itemEnroll")
+    public String itemEnrollForm(Authentication auth, RedirectAttributes ra, Model model) {
         if(auth == null || !auth.isAuthenticated()) {
             ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
             return "redirect:/member/login"; 
         }
+        
+        boolean isAuth1 = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("1"));
+        
+        if(isAuth1) {
+            model.addAttribute("needVerification", true);
+        }
+        
         return "item/itemEnroll";
     }
-
+	
     @PostMapping("insert")
     public String insertItem(Item item, MultipartFile[] upfiles, Authentication auth, RedirectAttributes ra) {
         if (auth == null || !auth.isAuthenticated()) {
@@ -87,7 +100,12 @@ public class ItemController {
 
         Member loginUser = (Member) auth.getPrincipal();
         
-item.setUserNo(loginUser.getUserNo());
+        if(loginUser.getAuthority() == 1) {
+            ra.addFlashAttribute("alertMsg", "본인인증 후 등록 가능합니다.");
+            return "redirect:/item/enroll";
+        }
+        
+        item.setUserNo(loginUser.getUserNo());
 		
 		String savePath = "C:/upload/item/";
 		String serverIp = "192.168.10.25:8081";
