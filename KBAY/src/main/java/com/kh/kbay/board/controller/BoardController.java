@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.board.service.BoardService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
@@ -186,6 +187,7 @@ public class BoardController {
 	    BoardPost b = bs.selectBoardDetail(boardNo);
 	    List<BoardImg> bList = bs.selectBoardImg(boardNo);
 	    
+	    // 로그인한 유저인지 아닌지
 	    if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
 	    	
 	        Member loginUser = (Member) auth.getPrincipal(); 
@@ -195,6 +197,10 @@ public class BoardController {
 	    
 	    model.addAttribute("b", b);
 	    model.addAttribute("bList", bList);
+	    
+	    // 댓글 목록 불러오기
+	    List<Reply> rList = bs.selectReplyList(boardNo);
+	    model.addAttribute("replyList", rList);
 	    
 	    return "board/boardDetail";
 	}
@@ -247,11 +253,12 @@ public class BoardController {
 		return "board/boardUpdate";
 	}
 	
+	// 댓글 등록
 	@ResponseBody
 	@PostMapping("/insertReply")
 	public String insertReply(
 			@RequestParam("boardNo") int boardNo,
-			@RequestParam("commentContent") String commentContent,
+			@RequestParam("replyContent") String replyContent,
 			Authentication auth
 			) {
 		
@@ -265,13 +272,12 @@ public class BoardController {
 		// 2. 파라미터로 받은 내용들을 댓글 객체나 Map에 담기.
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("boardNo", boardNo);
-		paramMap.put("commentContent", commentContent);
+		paramMap.put("replyContent", replyContent);
 		paramMap.put("userNo", loginUser.getUserNo());
 		
 		// 3. DB에 INSERT
 		int result = bs.insertReply(paramMap); 
         
-//		int result = 1; // 테스트를 위해 임시로 무조건 성공하게 만듭니다.
 		
 		if(result > 0) {
 			return "success"; // JS의 if(result === "success") 부분으로 쏙 들어갑니다!
@@ -279,4 +285,33 @@ public class BoardController {
 			return "fail";
 		}
 	}
+	
+	// 댓글 불러오기
+	@ResponseBody
+	@GetMapping(value = "/pullOutReply", produces = "application/json; charset=UTF-8")// 한글 깨짐 방지
+	public List<Reply> pullOutReply(
+			@RequestParam("boardNo") int boardNo,
+			@RequestParam("replyContent") String replyContent,
+			Authentication auth
+			) {
+		List<Reply> rList = bs.selectReplyList(boardNo);
+		return rList;
+	}
+	
+	// 댓글 삭제 
+	@ResponseBody
+	@PostMapping("/deleteReply")
+	public String deleteReply(@RequestParam("replyNo") int replyNo) {
+		
+		// 1. 서비스에게 "이 댓글 번호(replyNo) 좀 지워줘(Y로 바꿔줘)!" 라고 시킵니다.
+		int result = bs.deleteReply(replyNo);
+		
+		// 2. 결과에 따라 암호 전달
+		if(result > 0) {
+			return "success";
+		} else {
+			return "fail";
+		}
+	}
+	
 }

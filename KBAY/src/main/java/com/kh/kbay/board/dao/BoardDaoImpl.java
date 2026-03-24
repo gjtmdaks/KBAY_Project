@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,10 +62,23 @@ public class BoardDaoImpl implements BoardDao {
 		return session.delete("boardPost.deleteBoard", boardNo);
 	}
 
+	// 댓글
 	@Override
 	public int insertReply(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return session.insert("boardPost.insertReply", paramMap);
+	}
+
+	@Override
+	public List<Reply> selectReplyList(int boardNo) {
+		// TODO Auto-generated method stub
+		return session.selectList("boardPost.selectReplyList", boardNo);
+	}
+
+	@Override
+	public int deleteReply(int replyNo) {
+		// TODO Auto-generated method stub
+		return session.delete("boardPost.deleteReply" , replyNo);
 	}
 	
 }

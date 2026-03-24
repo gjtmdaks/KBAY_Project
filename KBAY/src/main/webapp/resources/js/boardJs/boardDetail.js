@@ -28,7 +28,7 @@ function insertReply(boardNo) {
         type: "POST",
         data: {
             boardNo: boardNo,
-            commentContent: content
+            replyContent: content
         },
         success: function(result) {
             if (result === "success") {
@@ -43,4 +43,26 @@ function insertReply(boardNo) {
             alert("통신 에러");
         }
     });
+}
+
+// 댓글 삭제
+function deleteReply(replyNo) {
+    if (confirm("정말 이 댓글을 삭제하시겠습니까?")) {
+        $.ajax({
+            url: "/kbay/board/deleteReply", 
+            type: "POST", 
+            data: { replyNo: replyNo },
+            success: function(result) {
+                if (result === "success") {
+                    alert("댓글이 삭제되었습니다.");
+                    location.reload();
+                } else {
+                    alert("삭제 실패 다시 시도해 주세요.");
+                }
+            },
+            error: function() {
+                alert("삭제 중 통신 에러 발생");
+            }
+        });
+    }
 }

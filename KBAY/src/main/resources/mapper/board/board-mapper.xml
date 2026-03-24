@@ -143,10 +143,27 @@ ORDER BY BOARD_NO DESC
 		SEQ_REPLY_NO.NEXTVAL,
 		#{boardNo},
 		#{userNo},
-		#{commentContent},
+		#{replyContent},
 		SYSDATE,
 		'N'                
 	)
 </insert>
-
+<!-- 댓글 꺼내오기 -->
+<select id="selectReplyList" parameterType="_int" resultType="Reply">
+	SELECT R.REPLY_NO,
+        R.BOARD_NO,
+        R.USER_NO,
+        R.REPLY_CONTENT,
+        R.REPLY_DATE,
+        M.USER_NAME
+	FROM REPLY R JOIN MEMBER M ON (R.USER_NO = M.USER_NO)
+	WHERE R.BOARD_NO = #{boardNo}
+	AND R.REPLY_DELETE = 'N'
+	ORDER BY R.REPLY_NO DESC
+</select>
+<update id="deleteReply" parameterType="_int">
+	UPDATE REPLY
+	SET REPLY_DELETE = 'Y' 
+	WHERE REPLY_NO = #{replyNo}
+</update>
 </mapper>

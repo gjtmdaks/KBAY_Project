@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 
 public interface BoardService {
 	
@@ -21,6 +22,10 @@ public interface BoardService {
 	int deleteBoard(int boardNo);
 
 	int insertReply(Map<String, Object> paramMap);
+
+	List<Reply> selectReplyList(int boardNo);
+
+	int deleteReply(int replyNo);
 
 	
 }
