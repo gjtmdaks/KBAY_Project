@@ -33,5 +33,10 @@ public class MemberDaoImpl implements MemberDao {
 	public Member loginUserById(String userId) {
 		return session.selectOne("member.loginUserById", userId);
 	}
+
+	@Override
+	public void updateAuth(int userNo) {
+		session.update("member.updateAuth", userNo);
+	}
 	
 }

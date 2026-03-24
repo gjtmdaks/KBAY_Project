@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+.mypage-container {
+    display: flex;
+    width: 1200px;
+    margin: auto;
+    gap: 20px;
+}
+
+.mypage-sidebar {
+    width: 200px;
+}
+
+.mypage-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.mypage-menu li {
+    margin: 10px 0;
+}
+
+.mypage-menu li.active a {
+    font-weight: bold;
+    color: #E74C3C;
+}
+
+.mypage-main {
+    flex: 1;
+}
+
+.mypage-greeting {
+    margin-bottom: 30px;
+}
+
+.mypage-greeting strong {
+    font-size: 18px;
+    color: #2C3E50;
+}
+
+.mypage-actions button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.mypage-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.mypage-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.mypage-card h4 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.mypage-card .card-buttons button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}

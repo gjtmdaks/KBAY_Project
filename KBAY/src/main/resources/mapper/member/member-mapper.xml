@@ -12,9 +12,12 @@
     <result column="USER_ENROLL_DATE" property="userEnrollDate" />
     <result column="USER_DELETE_YN" property="userDeleteYn" />
 </resultMap>
-	<select id="loginUserById" resultMap="memberResultSet"> SELECT USER_NO, USER_ID,
-		USER_PWD, USER_NAME, AUTHORITY, USER_DELETE_YN FROM MEMBER WHERE
-		USER_ID = #{userId} AND USER_DELETE_YN = 'N' </select>
+	<select id="loginUserById" resultMap="memberResultSet">
+	SELECT USER_NO, USER_ID,
+		USER_PWD, USER_NAME, AUTHORITY, USER_DELETE_YN
+	FROM MEMBER
+	WHERE USER_ID = #{userId} AND USER_DELETE_YN = 'N'
+	</select>
 
 	<insert id="insertMember">
 		INSERT INTO MEMBER VALUES(
@@ -40,4 +43,10 @@
 		WHERE
 		USER_ID = #{userId}
 	</select>
+	
+	<update id="updateAuth">
+		UPDATE MEMBER
+	    SET AUTHORITY = 2
+	    WHERE USER_NO = #{userNo}
+	</update>
 </mapper>

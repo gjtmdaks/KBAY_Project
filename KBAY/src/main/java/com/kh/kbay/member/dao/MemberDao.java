@@ -10,6 +10,8 @@ public interface MemberDao {
 
 	int idCheck(String userId);
 	
-	Member loginUserById(String username);
+	Member loginUserById(String userId);
+
+	void updateAuth(int userNo);
 
 }
