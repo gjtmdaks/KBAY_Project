@@ -184,4 +184,22 @@ ORDER BY BOARD_NO DESC
     SET REPLY_DELETE = 'Y' 
     WHERE REPLY_NO = #{replyNo}
 </update>
+
+<update id="updateBoard" parameterType="BoardPost">
+	UPDATE BOARD_POST
+    SET BOARD_TITLE = #{boardTitle},
+        BOARD_CONTENT = #{boardContent}
+    WHERE BOARD_NO = #{boardNo}
+</update>
+
+<update id="deleteBoardImgList" parameterType="list">
+	UPDATE BOARD_IMG
+    SET IMG_LEVEL = 'Y'
+    WHERE BOARD_IMG_NO IN
+    <foreach collection="list" item="imgNo" open="(" separator="," close=")">
+        #{imgNo}
+    </foreach>
+</update>
+
+
 </mapper>

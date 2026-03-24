@@ -281,6 +281,82 @@ public class BoardController {
 		return "board/boardUpdate";
 	}
 	
+	// 수정한 게시글 넘겨 주기
+	@PostMapping("/update")
+	public String updateBoardiInput(
+			@ModelAttribute BoardPost b, // 수정된 글 제목, 내용, 글 번호
+			@RequestParam(value = "deleteImgs", required = false) List<Integer> deleteImgs, // ✖ 누른 기존 파일 번호들
+			@RequestParam(value = "upfile", required = false) List<MultipartFile> upfiles,  // 새로 추가한 파일들
+			Authentication auth,
+			RedirectAttributes ra
+			) {
+		// 혹시 모를 방어 요소
+		if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+			ra.addFlashAttribute("alertMsg", "로그인이 필요한 서비스입니다.");
+			return "redirect:/member/login";
+		}
+		
+		Member loginUser = (Member) auth.getPrincipal();
+		b.setUserNo(loginUser.getUserNo());
+		
+		String savePath = "C:/upload/board/"; 
+		String serverIp = "192.168.10.25:8081";
+		String webPath = "/kbay/upload/board/";
+		
+		File dir = new File(savePath);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		List<BoardImg> newImgList = new ArrayList<>();
+		char imgLevel = 'N'; 
+		
+		// 3. 새 첨부파일이 있다면 UUID로 저장 로직 실행
+		if(upfiles != null && !upfiles.isEmpty()) {
+			for(MultipartFile file : upfiles) {
+				if(file.isEmpty()) {
+					continue;
+				}
+				
+				// 원본 파일명 추출 및 확장자 추출
+				String originName = file.getOriginalFilename();
+				String ext = originName.substring(originName.lastIndexOf("."));
+				// 절대 겹치지 않는 랜덤 이름 생성 (UUID)
+				String changeName = UUID.randomUUID().toString() + ext;
+				
+				try {
+					// 물리적인 C드라이브 경로에 저장
+					file.transferTo(new File(savePath + changeName));
+					
+					// DB에 넣을 새 이미지 정보 세팅
+					BoardImg bi = new BoardImg();
+					bi.setBoardNo(b.getBoardNo());
+					bi.setChangeName("http://" + serverIp + webPath + changeName); 
+					bi.setOriginName(originName);
+					bi.setImgLevel(imgLevel);
+					
+					newImgList.add(bi); // 리스트에 추가
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new RuntimeException("파일 업로드 중 에러 발생!");
+				}
+			}
+		}
+		
+		int result = bs.updateBoard(b, deleteImgs, newImgList);
+		
+		if (result > 0) {
+			ra.addFlashAttribute("alertMsg", "게시글이 성공적으로 수정되었습니다");
+			return "redirect:/board/boardDetail/" + b.getBoardNo(); 
+		} else {
+			ra.addFlashAttribute("alertMsg", "게시글 수정에 실패했습니다.");
+			return "redirect:/board/updateBoard/" + b.getBoardNo(); 
+		}
+		
+	}
+	
+	
 	// 댓글 등록
 	@ResponseBody
 	@PostMapping("/insertReply")

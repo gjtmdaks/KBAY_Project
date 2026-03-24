@@ -88,6 +88,18 @@ public class BoardDaoImpl implements BoardDao {
 		return session.selectOne("boardPost.selectReplyCount" , boardNo);
 	}
 
+	@Override
+	public int updateBoard(BoardPost b) {
+		// TODO Auto-generated method stub
+		return session.update("boardPost.updateBoard", b);
+	}
+
+	@Override
+	public int deleteBoardImgList(List<Integer> deleteImgs) {
+		// TODO Auto-generated method stub
+		return session.update("boardPost.deleteBoardImgList", deleteImgs);
+	}
+
 	
 	
 }
