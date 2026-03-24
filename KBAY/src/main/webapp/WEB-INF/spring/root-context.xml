@@ -13,7 +13,7 @@
 		 - 서버구동과 동시에 세팅해야하는 내용들을 작성하며, 이 내용들은 어플리케이션 전역에서
 		   사용된다.
 	 -->
-	<context:property-placeholder location="classpath:driver.properties" />
+	<context:property-placeholder location="classpath:driver.properties, classpath:email.properties"/>
 	
 	<!-- DB연결설정 -->
 	<!-- 1단계 : DB연결을 위한 도구 설정
@@ -84,8 +84,8 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
     <property name="host" value="smtp.gmail.com" />
     <property name="port" value="587" />
-    <property name="username" value="dustkd1693@gmail.com" />
-    <property name="password" value="ojinpnitbkicdavf"/>
+    <property name="username" value="${mail.username}" />
+    <property name="password" value="${mail.password}"/>
     <property name="javaMailProperties">
         <props>
             <prop key="mail.transport.protocol">smtp</prop>
@@ -95,5 +95,6 @@
         </props>
     </property>
 </bean>
+
 	
 </beans>
