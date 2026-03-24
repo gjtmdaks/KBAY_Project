@@ -61,14 +61,16 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // 1. 성공 메시지 처리 (alertMsg)
         const msg = "${alertMsg}";
+        const isAnonymous = <sec:authorize access="isAnonymous()">true</sec:authorize><sec:authorize access="isAuthenticated()">false</sec:authorize>;
         
-        if (msg !== "") {
+        if (msg && msg !== "") {
             Swal.fire({
                 icon: 'success',
                 title: '성공!',
                 text: msg,
-                showCancelButton: true,    
+                showCancelButton: isAnonymous, 
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#4e73df',  
                 confirmButtonText: '확인',   
@@ -79,13 +81,16 @@
                 }
             });
         }
+
+        // 2. 오류 메시지 처리 (errorMsg)
         const error = "${errorMsg}";
-        if (error !== "") {
+        if (error && error !== "") {
             Swal.fire({
                 icon: 'error',
                 title: '오류 발생',
                 text: error,
-                confirmButtonColor: '#d33'
+                confirmButtonColor: '#d33',
+                confirmButtonText: '확인'
             });
         }
     });
