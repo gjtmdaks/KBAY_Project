@@ -65,7 +65,7 @@ public class MemberController {
 		int result = ms.insertMember(m);
 	    
 	    if(result > 0) {
-	        ra.addFlashAttribute("alertMsg", "회원가입 성공");
+	        ra.addFlashAttribute("alertMsg", "회원가입에 성공했습니다!");
 	        return "redirect:/";
 	    } else {
 	        model.addAttribute("errorMsg", "회원가입 실패");
@@ -130,7 +130,30 @@ public class MemberController {
 
 	        return "success";
 	    }
-
 	    return "fail";
 	}
+	    
+	@ResponseBody
+	@GetMapping("sendMail.me")
+	public String sendMail(String email) {
+	    int count = ms.emailCheck(email);
+	    
+	    if (count > 0) {
+	        return "duplicated"; 
+	    }
+	    
+	    return ms.sendAuthEmail(email); 
+	}
+
+	    @ResponseBody
+	    @PostMapping("checkCode.me")
+	    public String checkCode(String email, String inputCode) {
+	        // 사용자가 입력한 코드와 DB에 저장된 코드를 비교하는 로직
+	         boolean isMatch = ms.verifyCode(email, inputCode);
+	        
+	        return isMatch ? "success" : "fail";
+	        
+	    }
+
+	
 }

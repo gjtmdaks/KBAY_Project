@@ -1,5 +1,7 @@
 package com.kh.kbay.member.dao;
 
+import java.util.Map;
+
 import com.kh.kbay.member.model.vo.Member;
 
 public interface MemberDao {
@@ -13,5 +15,13 @@ public interface MemberDao {
 	Member loginUserById(String userId);
 
 	void updateAuth(int userNo);
+
+	int emailCheck(String email);
+
+	int verifyCode(Map<String, String> map);
+
+	void saveAuthCode(Map<String, String> map);
+	
+	int deleteAuthCode(String email);
 
 }

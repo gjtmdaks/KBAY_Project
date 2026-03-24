@@ -1,5 +1,7 @@
 package com.kh.kbay.member.dao;
 
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -39,4 +41,23 @@ public class MemberDaoImpl implements MemberDao {
 		session.update("member.updateAuth", userNo);
 	}
 	
+	@Override
+    public int emailCheck(String email) {
+        return session.selectOne("member.emailCheck", email);
+    }
+
+    @Override
+    public void saveAuthCode(Map<String, String> map) {
+    	session.update("member.saveAuthCode", map);
+    }
+
+    @Override
+    public int verifyCode(Map<String, String> map) {
+        return session.selectOne("member.verifyCode", map);
+    }
+    
+    @Override
+    public int deleteAuthCode(String email) {
+        return session.delete("member.deleteAuthCode", email);
+    }
 }
