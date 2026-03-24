@@ -179,6 +179,7 @@ public class BoardController {
 	@GetMapping("/boardDetail/{boardNo}") 
 	public String boardDetail(
 	        @PathVariable("boardNo") int boardNo, 
+	        @RequestParam(value="rPage", defaultValue="1") int rPage,
 	        Model model,
 	        Authentication auth
 	        ) {
@@ -197,9 +198,36 @@ public class BoardController {
 	    
 	    model.addAttribute("b", b);
 	    model.addAttribute("bList", bList);
+	    // 댓글 페이징
+	    int listCount = bs.selectReplyCount(boardNo); // 전체 댓글 수
+	    int replyBoardLimit = 10; // 한 페이지에 10개씩
+	    int pageLimit = 5;
+	    
+	    int maxPage = (int) Math.ceil((double) listCount / replyBoardLimit);
+	   
+	    int startPage = (rPage - 1) / pageLimit * pageLimit + 1;
+	    
+	    int endPage = startPage + pageLimit - 1;
+	    
+	    if (endPage > maxPage) {
+	        endPage = maxPage;
+	    }
+	    
+	    Map<String, Object> pi = new HashMap<>();
+	    pi.put("currentPage", rPage);
+	    pi.put("maxPage", maxPage);
+	    pi.put("startPage", startPage);
+	    pi.put("endPage", endPage);
+	    
+	    model.addAttribute("pi", pi);
+	    
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("boardNo", boardNo);
+	    map.put("offset", (rPage - 1) * replyBoardLimit); // 건너뛸 개수 계산
+	    map.put("limit", replyBoardLimit);
 	    
 	    // 댓글 목록 불러오기
-	    List<Reply> rList = bs.selectReplyList(boardNo);
+	    List<Reply> rList = bs.selectReplyList(map);
 	    model.addAttribute("replyList", rList);
 	    
 	    return "board/boardDetail";
@@ -291,11 +319,19 @@ public class BoardController {
 	@GetMapping(value = "/pullOutReply", produces = "application/json; charset=UTF-8")// 한글 깨짐 방지
 	public List<Reply> pullOutReply(
 			@RequestParam("boardNo") int boardNo,
-			@RequestParam("replyContent") String replyContent,
+			@RequestParam(value="rPage", defaultValue="1") int rPage,
 			Authentication auth
 			) {
-		List<Reply> rList = bs.selectReplyList(boardNo);
-		return rList;
+		
+	    int replyBoardLimit = 10;
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("boardNo", boardNo);
+	    map.put("offset", (rPage - 1) * replyBoardLimit);
+	    map.put("limit", replyBoardLimit);
+
+	    List<Reply> rList = bs.selectReplyList(map); 
+	    
+		return rList;	
 	}
 	
 	// 댓글 삭제 

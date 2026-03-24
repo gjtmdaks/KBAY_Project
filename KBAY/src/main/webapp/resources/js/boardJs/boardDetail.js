@@ -32,7 +32,6 @@ function insertReply(boardNo) {
         },
         success: function(result) {
             if (result === "success") {
-                alert("댓글이 성공적으로 등록되었습니다!");
                 $("#replyContent").val("")
                 location.reload(); 
             } else {

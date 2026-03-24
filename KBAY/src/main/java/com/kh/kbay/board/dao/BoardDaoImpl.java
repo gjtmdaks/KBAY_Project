@@ -68,11 +68,12 @@ public class BoardDaoImpl implements BoardDao {
 		// TODO Auto-generated method stub
 		return session.insert("boardPost.insertReply", paramMap);
 	}
-
+	
+	
 	@Override
-	public List<Reply> selectReplyList(int boardNo) {
+	public List<Reply> selectReplyList(Map<String, Object> map) {
 		// TODO Auto-generated method stub
-		return session.selectList("boardPost.selectReplyList", boardNo);
+		return session.selectList("boardPost.selectReplyList", map);
 	}
 
 	@Override
@@ -80,5 +81,13 @@ public class BoardDaoImpl implements BoardDao {
 		// TODO Auto-generated method stub
 		return session.delete("boardPost.deleteReply" , replyNo);
 	}
+
+	@Override
+	public int selectReplyCount(int boardNo) {
+		// TODO Auto-generated method stub
+		return session.selectOne("boardPost.selectReplyCount" , boardNo);
+	}
+
+	
 	
 }

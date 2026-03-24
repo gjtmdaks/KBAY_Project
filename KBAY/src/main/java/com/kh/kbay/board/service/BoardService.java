@@ -23,9 +23,12 @@ public interface BoardService {
 
 	int insertReply(Map<String, Object> paramMap);
 
-	List<Reply> selectReplyList(int boardNo);
+	List<Reply> selectReplyList(Map<String, Object> map);
 
 	int deleteReply(int replyNo);
+
+	int selectReplyCount(int boardNo);
+
 
 	
 }

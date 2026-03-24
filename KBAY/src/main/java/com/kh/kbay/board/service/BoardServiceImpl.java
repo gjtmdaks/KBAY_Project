@@ -76,18 +76,32 @@ public class BoardServiceImpl implements BoardService {
 		// TODO Auto-generated method stub
 		return boardDao.insertReply(paramMap);
 	}
-
+	
 	@Override
-	public List<Reply> selectReplyList(int boardNo) {
+	public List<Reply> selectReplyList(Map<String, Object> map) {
 		// TODO Auto-generated method stub
-		return boardDao.selectReplyList(boardNo);
+		return boardDao.selectReplyList(map);
 	}
-
+	
+	
 	@Override
 	public int deleteReply(int replyNo) {
 		// TODO Auto-generated method stub
 		return boardDao.deleteReply(replyNo);
 	}
+
+	@Override
+	public int selectReplyCount(int boardNo) {
+		// TODO Auto-generated method stub
+		return boardDao.selectReplyCount(boardNo);
+	}
+
+	
+
+
+	
+
+	
 
 	
 }
