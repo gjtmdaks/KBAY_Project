@@ -15,4 +15,6 @@ public class Reply {
 	private char replyDelete; // 삭제여부
 	private Date replyDate;
 	private int userNo;
+	
+	private String userName; // 유저 이름 가져오기용
 }

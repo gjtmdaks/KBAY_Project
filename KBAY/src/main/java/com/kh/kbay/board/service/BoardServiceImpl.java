@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.kh.kbay.board.dao.BoardDao;
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +75,18 @@ public class BoardServiceImpl implements BoardService {
 	public int insertReply(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return boardDao.insertReply(paramMap);
+	}
+
+	@Override
+	public List<Reply> selectReplyList(int boardNo) {
+		// TODO Auto-generated method stub
+		return boardDao.selectReplyList(boardNo);
+	}
+
+	@Override
+	public int deleteReply(int replyNo) {
+		// TODO Auto-generated method stub
+		return boardDao.deleteReply(replyNo);
 	}
 
 	

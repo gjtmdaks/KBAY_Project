@@ -101,32 +101,34 @@
         </div>
     </div>
 
-    <div class="comment-section">
-    <!-- 댓글 기능 -->
-        <div class="comment-input-form">
+    <!-- 댓글 기능 등록(여기서는  )-->
+    <div class="reply-section">
+    <div class="reply-input-form">
             <c:choose>
                 <c:when test="${not empty loginUser}">
-		            <span class="comment-writer-input-label">${loginUser.userName}</span>
-		            <textarea id="replyContent" rows="2" placeholder="댓글 내용"></textarea>
-		            <button type="button" onclick="insertReply(${b.boardNo})">댓글 등록</button>
-		        </c:when>
+                    <span class="reply-writer-input-label">${loginUser.userName}</span>
+                    <textarea id="replyContent" rows="2" placeholder="댓글 내용"></textarea>
+                    <button type="button" onclick="insertReply(${b.boardNo})">댓글 등록</button>
+                </c:when>
                 <c:otherwise>
-                    <span class="comment-writer-input-label">손님</span>
+                    <span class="reply-writer-input-label">손님</span>
                     <textarea rows="2" placeholder="로그인 후 이용 가능합니다." readonly></textarea>
                 </c:otherwise>
             </c:choose>
         </div>
-
-        <div class="comment-list">
-            <c:forEach var="comment" items="${commentList}">
-                <div class="comment-item">
-                    <span class="post-writer-badge">${comment.commentWriter}</span>
-                    <span class="comment-content">${comment.commentContent}</span>
+		<!-- 댓글 목록? -->
+        <div class="reply-list">
+            <c:forEach var="reply" items="${replyList}">
+                <div class="reply-item">
                     
-                    <div class="comment-meta">
-                        <span>${comment.createDate}</span>
-                        <c:if test="${not empty loginUser and loginUser.userNo == comment.userNo}">
-                            <button type="button" class="btn-delete-comment comment-delete-btn">댓글 삭제</button>
+                    <span class="post-writer-badge">${reply.userName}</span>
+                    <span class="reply-content">${reply.replyContent}</span>
+                    
+                    <div class="reply-meta">
+                        <span><fmt:formatDate value="${reply.replyDate}" pattern="yyyy.MM.dd HH:mm" /></span>
+                        
+                        <c:if test="${not empty loginUser and loginUser.userNo == reply.userNo}">
+                            <button type="button" class="btn-delete-reply reply-delete-btn" onclick="deleteReply(${reply.replyNo})">댓글 삭제</button>
                         </c:if>
                     </div>
                 </div>
