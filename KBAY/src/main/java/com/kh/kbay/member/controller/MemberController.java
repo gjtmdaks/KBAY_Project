@@ -1,5 +1,10 @@
 package com.kh.kbay.member.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.member.service.MemberService;
 
@@ -96,41 +102,164 @@ public class MemberController {
 	@PostMapping("verify")
 	@ResponseBody
 	public String verifySuccess(
-			@RequestBody Map<String, String> param,
-            Authentication auth) {
-		String name = param.get("name");
-	    String rrn1 = param.get("rrn1");
-	    String rrn2 = param.get("rrn2");
+	        @RequestBody Map<String, String> param,
+	        Authentication auth) {
 
-	    // ✅ 여기서 실제로는 외부 API (PASS / 아임포트) 써야됨
-	    // 지금은 테스트용으로 단순 체크
+	    String impUid = param.get("imp_uid");
 
-	    System.out.println(rrn1.length());
-	    System.out.println(rrn2.length());
-	    
-	    if(rrn1.length() == 6 && rrn2.length() == 7) {
+	    try {
+	        // 1️. 아임포트 토큰 발급
+	        String accessToken = getAccessToken();
 
-	        Member loginUser = (Member) auth.getPrincipal();
+	        // 2️. imp_uid로 인증 정보 조회
+	        Map<String, Object> certInfo = getCertificationInfo(impUid, accessToken);
 
-	        // 1️. DB 업데이트
-	        ms.updateAuth(loginUser.getUserNo());
+	        if(certInfo != null) {
 
-	        // 2️. 최신 사용자 정보 다시 조회
-	        Member updatedUser = ms.loadUserByUsername(loginUser.getUserId());
+	        	Member loginUser = (Member) auth.getPrincipal();
 
-	        // 3️. 새로운 Authentication 생성
-	        Authentication newAuth = new UsernamePasswordAuthenticationToken(
-	                updatedUser,
-	                auth.getCredentials(),
-	                updatedUser.getAuthorities()
-	        );
+	        	String certName = certInfo.get("name") != null 
+	        		    ? ((String) certInfo.get("name")).trim() 
+	        		    : "";
 
-	        // 4️. SecurityContext 갱신
-	        SecurityContextHolder.getContext().setAuthentication(newAuth);
+	        	String certPhone = certInfo.get("phone") != null 
+	        		    ? ((String) certInfo.get("phone")).replaceAll("-", "") 
+	        		    : "";
 
-	        return "success";
+	            String dbName = loginUser.getUserName().trim();
+	            String dbPhone = loginUser.getUserPhone().replaceAll("-", "");
+	        	
+
+	            if(dbName.equals(certName) && dbPhone.equals(certPhone)) {
+
+	                // 인증 성공
+	                ms.updateAuth(loginUser.getUserNo());
+
+	            } else {
+	                return "mismatch"; // 불일치
+	            }
+
+	            // 4️. SecurityContext 갱신
+	            Member updatedUser = ms.loadUserByUsername(loginUser.getUserId());
+
+	            Authentication newAuth =
+	                new UsernamePasswordAuthenticationToken(
+	                    updatedUser,
+	                    auth.getCredentials(),
+	                    updatedUser.getAuthorities()
+	                );
+
+	        	System.out.println("newAuth : "+newAuth);
+
+	            SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+	            return "success";
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
 	    }
+
 	    return "fail";
+	}
+	
+	private String getAccessToken() throws Exception {
+
+	    URL url = new URL("https://api.iamport.kr/users/getToken");
+
+	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	    conn.setRequestMethod("POST");
+	    conn.setRequestProperty("Content-Type", "application/json");
+	    conn.setDoOutput(true);
+
+	    String body = "{"
+	    	    + "\"imp_key\":\"6004241332626301\","
+	    	    + "\"imp_secret\":\"pk4V18nJwVfp4aLZ8zj4Kza4pddCGw2NObUIKBXAnAB9cxnoXVpbw2QQZGItzRYVrPqgcaBmkOWDvSp0\""
+	    	    + "}";
+	    // 1. 먼저 body 작성
+	    try (OutputStream os = conn.getOutputStream()) {
+	        os.write(body.getBytes("UTF-8"));
+	        os.flush();
+	    }
+
+	    // 2. 그 다음 응답 코드 확인
+	    int responseCode = conn.getResponseCode();
+
+	    BufferedReader br;
+
+	    if (responseCode == 200) {
+	        br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	    } else {
+	        br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+	    }
+
+	    StringBuilder sb = new StringBuilder();
+	    String line;
+
+	    while ((line = br.readLine()) != null) {
+	        sb.append(line);
+	    }
+
+	    String response = sb.toString();
+
+	    // JSON 파싱해서 access_token 추출 (Jackson 추천)
+	    return extractToken(response);
+	}
+	
+	private Map<String, Object> getCertificationInfo(String impUid, String token) throws Exception {
+
+	    URL url = new URL("https://api.iamport.kr/certifications/" + impUid);
+
+	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	    conn.setRequestMethod("GET");
+	    conn.setRequestProperty("Authorization", token);
+
+	    BufferedReader br = new BufferedReader(
+	        new InputStreamReader(conn.getInputStream()));
+
+	    StringBuilder sb = new StringBuilder();
+	    String line;
+
+	    while ((line = br.readLine()) != null) {
+	        sb.append(line);
+	    }
+
+	    String response = sb.toString();
+
+	    // JSON 파싱 (name, phone 등 확인 가능)
+	    return parseCertification(response);
+	}
+	
+	private String extractToken(String response) throws Exception {
+
+	    ObjectMapper mapper = new ObjectMapper();
+
+	    Map<String, Object> map = mapper.readValue(response, Map.class);
+
+	    Object responseObj = map.get("response");
+
+	    if (responseObj == null) {
+	        throw new RuntimeException("response null: " + response);
+	    }
+
+	    Map<String, Object> res = (Map<String, Object>) responseObj;
+
+	    Object tokenObj = res.get("access_token");
+
+	    if (tokenObj == null) {
+	        throw new RuntimeException("access_token 없음: " + response);
+	    }
+
+	    return tokenObj.toString();
+	}
+	
+	private Map<String, Object> parseCertification(String response) throws Exception {
+
+	    ObjectMapper mapper = new ObjectMapper();
+
+	    Map<String, Object> map = mapper.readValue(response, Map.class);
+
+	    return (Map<String, Object>) map.get("response");
 	}
 	    
 	@ResponseBody
@@ -145,15 +274,12 @@ public class MemberController {
 	    return ms.sendAuthEmail(email); 
 	}
 
-	    @ResponseBody
-	    @PostMapping("checkCode.me")
-	    public String checkCode(String email, String inputCode) {
-	        // 사용자가 입력한 코드와 DB에 저장된 코드를 비교하는 로직
-	         boolean isMatch = ms.verifyCode(email, inputCode);
-	        
-	        return isMatch ? "success" : "fail";
-	        
-	    }
-
-	
+	@ResponseBody
+	@PostMapping("checkCode.me")
+	public String checkCode(String email, String inputCode) {
+		// 사용자가 입력한 코드와 DB에 저장된 코드를 비교하는 로직
+		boolean isMatch = ms.verifyCode(email, inputCode);
+		
+		return isMatch ? "success" : "fail";
+	}
 }

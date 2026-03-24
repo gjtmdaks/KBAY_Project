@@ -58,8 +58,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td>휴대폰</td>
-					<td><input type="text" name="userPhone"></td>
+					<td>휴대폰 *</td>
+					<td><input type="text" name="userPhone"  required></td>
 				</tr>
 				<tr>
 					<td>자택 연락처</td>
