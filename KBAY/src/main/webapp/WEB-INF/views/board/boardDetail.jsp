@@ -116,7 +116,7 @@
                 </c:otherwise>
             </c:choose>
         </div>
-		<!-- 댓글 목록? -->
+		<!-- 댓글 목록 -->
         <div class="reply-list">
             <c:forEach var="reply" items="${replyList}">
                 <div class="reply-item">
@@ -134,6 +134,23 @@
                 </div>
             </c:forEach>
         </div>
+        <div class="reply-pagination">
+		    <ul class="pagination-list">
+		        <c:if test="${pi.currentPage > 1}">
+		            <li><a href="?rPage=${pi.currentPage - 1}">&lt;</a></li>
+		        </c:if>
+		
+		        <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+		            <li class="${p == pi.currentPage ? 'active' : ''}">
+		                <a href="?rPage=${p}">${p}</a>
+		            </li>
+		        </c:forEach>
+		
+		        <c:if test="${pi.currentPage < pi.maxPage}">
+		            <li><a href="?rPage=${pi.currentPage + 1}">&gt;</a></li>
+		        </c:if>
+		    </ul>
+		</div>
     </div>
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
