@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -180,10 +182,45 @@ public class BoardController {
 	public String boardDetail(
 	        @PathVariable("boardNo") int boardNo, 
 	        @RequestParam(value="rPage", defaultValue="1") int rPage,
+	        HttpServletRequest request,
+	        HttpServletResponse response,
 	        Model model,
 	        Authentication auth
 	        ) {
-	    
+		Cookie[] cookies = request.getCookies();
+		boolean isVisited = false;
+		
+		if (cookies != null) {
+			for (Cookie c : cookies) {
+				// "readBoard"라는 이름의 쿠키가 있고, 그 값에 현재 게시글 번호가 들어있는지 확인
+				if (c.getName().equals("readBoard") && c.getValue().contains("[" + boardNo + "]")) {
+					isVisited = true;
+					break;
+				}
+			}
+		}
+		
+		if (!isVisited) {
+			// 방문한 적이 없을 때만 DB 조회수 증가 호출
+			bs.updateViewCount(boardNo); 
+			
+			// 기존 쿠키 가져오기 또는 새로 만들기
+			String oldCookie = "";
+			if (cookies != null) {
+				for (Cookie c : cookies) {
+					if (c.getName().equals("readBoard")) {
+						oldCookie = c.getValue();
+					}
+				}
+			}
+			
+			// 쿠키 값에 현재 번호 추가 (예: [1][5][10])
+			Cookie newCookie = new Cookie("readBoard", oldCookie + "[" + boardNo + "]");
+			newCookie.setPath("/");
+			newCookie.setMaxAge(60 * 60 * 24); // 24시간 유지
+			response.addCookie(newCookie);
+		}
+		
 	    // DB에서 데이터 가져오기
 	    BoardPost b = bs.selectBoardDetail(boardNo);
 	    List<BoardImg> bList = bs.selectBoardImg(boardNo);

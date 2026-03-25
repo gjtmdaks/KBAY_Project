@@ -201,6 +201,10 @@ ORDER BY BOARD_NO DESC
         #{imgNo}
     </foreach>
 </update>
-
+<update id="updateViewCoun" parameterType="_int">
+    UPDATE BOARD_POST
+       SET VIEW_COUNT = VIEW_COUNT + 1
+     WHERE BOARD_NO = #{boardNo}
+</update>
 
 </mapper>

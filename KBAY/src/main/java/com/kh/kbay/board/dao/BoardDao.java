@@ -35,5 +35,7 @@ public interface BoardDao {
 
 	int deleteBoardImgList(List<Integer> deleteImgs);
 
+	void updateViewCoun(int boardNo);
+
 
 }

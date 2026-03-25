@@ -126,6 +126,12 @@ public class BoardServiceImpl implements BoardService {
 		return result;
 	}
 
+	@Override
+	public void updateViewCount(int boardNo) {
+		// TODO Auto-generated method stub
+		boardDao.updateViewCoun(boardNo);
+	}
+
 	
 
 
