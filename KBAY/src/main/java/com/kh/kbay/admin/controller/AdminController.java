@@ -35,4 +35,9 @@ public class AdminController {
         
         return "admin/admin"; // manager.jsp 경로
     }
+    
+    @GetMapping("/memberList")
+    public String memberList() {
+    	return "admin/memberList";
+    }
 }
