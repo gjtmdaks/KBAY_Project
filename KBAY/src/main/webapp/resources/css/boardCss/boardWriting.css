@@ -93,12 +93,13 @@
 }
 
 .btn-submit {
-    background-color: #8b0000; /* K-Bay 메인 컬러(다크레드) 느낌으로 매칭 */
+    background-color: #e74c3c; /* K-Bay 메인 컬러(다크레드) 느낌으로 매칭 */
     color: #fff;
 }
 
 .btn-list:hover { background-color: #ccc; }
-.btn-submit:hover { background-color: #660000; }
+.btn-submit:hover { background-color: #8b0000; 
+transition: background-color 0.2s, border-color 0.2s;}
 
 /* 첨부파일 디자인 영역 */
 /* 파일 목록 전체 영역 (ul) */

@@ -58,3 +58,6 @@ nav { background: #fff; border-bottom: 2px solid #F4F4F4; sticky; top: 0; z-inde
 .nav-item:hover::after {
     width: 100%;
 }
+
+.btn-register:hover { background-color: #8b0000; 
+transition: background-color 0.2s, border-color 0.2s;}
