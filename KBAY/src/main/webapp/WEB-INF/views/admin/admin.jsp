@@ -20,17 +20,7 @@
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="admin-wrap">
-    <aside class="sidebar">
-        <h2 class="sidebar-title">관리자페이지</h2>
-        <ul class="sidebar-menu">
-            <li><a href="${contextPath}/admin/memberList">회원 조회/수정</a></li>
-            <li><a href="${contextPath}/admin/reportList">신고 내역 처리</a></li>
-            <li><a href="${contextPath}/admin/paymentList">회원 결제 내역 관리</a></li>
-            <li><a href="${contextPath}/admin/auctionCancel">경매 강제 종료 및 취소</a></li>
-            <li><a href="${contextPath}/admin/succession">낙찰 취하 신청 및 낙찰 승계관리</a></li>
-            <li><a href="${contextPath}/admin/bidLog">입찰 로그 확인</a></li>
-        </ul>
-    </aside>
+    <jsp:include page="/WEB-INF/views/admin/adminSidebar.jsp" />
 
     <main class="main-content">
         
@@ -53,7 +43,7 @@
                     </a>
                     <a href="${contextPath}/admin/reportList" class="square-btn">
                         <i class="fas fa-comment-dots"></i>
-                        <span>신고 내역 처리</span>
+                        <span>신고/문의 내역 처리</span>
                     </a>
                     <a href="${contextPath}/admin/paymentList" class="square-btn">
                         <i class="fas fa-shield-alt"></i>
