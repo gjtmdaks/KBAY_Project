@@ -131,6 +131,108 @@
     cursor: pointer;
 }
 
+/* 입찰 기록 모달*/
+.modal { 
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.5); 
+    align-items: center;      
+    justify-content: center;  
+}
+
+/* 모달 본체 */
+.modal-content { 
+    background-color: #fff; 
+    padding: 30px; 
+    border-radius: 12px; 
+    width: 800px !important;
+    max-height: 80vh; 
+    display: flex;
+    flex-direction: column;
+    position: relative;       
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    margin: 0;                 
+}
+
+
+
+/* 제목 영역 */
+.modal-header { 
+    text-align: center; 
+    padding-bottom: 20px;
+    border-bottom: 2px solid #333;
+}
+
+.modal-header h3 { margin: 0; font-size: 22px; }
+
+.close { 
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+}
+.close:hover { color: #000; }
+
+.modal-body { 
+    overflow-y: auto; 
+    margin-top: 20px;
+}
+
+.bid-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    table-layout: fixed; /
+}
+
+
+.bid-table th:nth-child(1) { width: 80px; }  /* 번호 */
+.bid-table th:nth-child(2) { width: 120px; } /* 입찰자 */
+.bid-table th:nth-child(3) { width: 120px; } /* 금액 */
+.bid-table th:nth-child(4) { width: 250px; } /* 일시 */
+.bid-table th:nth-child(5) { width: 180px; } /* IP */
+
+.bid-table th, .bid-table td { 
+    border: 1px solid #eee; 
+    padding: 15px 5px; 
+    text-align: center; 
+    white-space: nowrap; 
+    font-size: 14px;
+}
+
+.bid-table th { 
+    position: sticky; 
+    top: 0; 
+    background: #f8f9fa; 
+    z-index: 1; 
+    font-weight: bold;
+}
+.btn-bid-history-small {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    text-decoration: underline;
+    vertical-align: middle;
+}
+.btn-bid-history-small:hover {
+    color: #333;
+    font-weight: bold;
+}
+.my-bid-row td {
+    color: #e67e22; 
+}
+
+/* 모달 기능 끝 */
+
 /* 설명 */
 .description {
     width: 1200px;

@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <jsp:useBean id="now" class="java.util.Date" />
 <c:set var="now" value="${now}" scope="request"/>
@@ -112,24 +113,29 @@
 	
 	        <!-- 가격 -->
 	        <div class="price-box">
-	            <c:choose>
-	                <c:when test="${now.time < item.startTime.time}">
-	                    <div>시작가 <strong><fmt:formatNumber value="${item.startPrice}" pattern="#,###" /></strong></div>
-	                </c:when>
-	
-	                <c:when test="${now.time > item.endTime.time}">
-	                    <div>낙찰가 <strong><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
-	                </c:when>
-	
-	                <c:otherwise>
-	                    <div>현재가 <strong id="currentPrice"><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
-	                </c:otherwise>
-	            </c:choose>
-	
-	            <c:if test="${item.directBuy eq 'Y'}">
-	                <div class="buy-now">즉시구매가 <fmt:formatNumber value="${item.buyNowPrice}" pattern="#,###" /></div>
-	            </c:if>
-	        </div>
+    <c:choose>
+        <c:when test="${now.time < item.startTime.time}">
+            <div>시작가 <strong><fmt:formatNumber value="${item.startPrice}" pattern="#,###" /></strong></div>
+        </c:when>
+
+        <c:when test="${now.time > item.endTime.time}">
+            <div>낙찰가 <strong><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
+        </c:when>
+
+        <c:otherwise>
+            <div>
+                현재가 <strong id="currentPrice"><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong>
+                <button type="button" class="btn-bid-history-small" onclick="openBidModal(${item.itemNo})">
+                    [입찰기록]
+                </button>
+            </div>
+        </c:otherwise>
+    </c:choose>
+
+    		<c:if test="${item.directBuy eq 'Y'}">
+        <div class="buy-now">즉시구매가 <fmt:formatNumber value="${item.buyNowPrice}" pattern="#,###" /></div>
+  		  </c:if>
+		</div>
 	
 	        <!-- 입찰 -->
 	        <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
@@ -139,6 +145,33 @@
 	            </div>
 	        </c:if>
 	    </div>
+	    
+	    
+
+<div id="bidModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>입찰 기록</h3>
+            <span class="close" onclick="closeBidModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <table class="bid-table">
+                <thead>
+                    <tr>
+                        <th>입찰번호</th>
+                        <th>입찰자</th>
+                        <th>입찰금액</th>
+                        <th>입찰일시</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody id="bidHistoryBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 	</div>
 	
 	<!-- 상세 설명 -->
@@ -345,10 +378,80 @@
 	    .catch(err => console.error(err));
 	}
 
-	// 3초마다 갱신
+	// 3초마다 갱신하는 부분
 	setInterval(() => {
-	    updatePrice(${item.itemNo});
+	    updatePrice(${item.itemNo}); 
 	}, 3000);
 	</script>
+	
+	
+	<script>
+	// 입찰 기록 조회
+	const contextPath = "${pageContext.request.contextPath}";
+	const currentUserNo = '<sec:authorize access="isAuthenticated()"><sec:authentication property="principal.userNo" /></sec:authorize>';
+
+	function openBidModal(itemNo) {
+	    var modal = document.getElementById("bidModal");
+	    var tbody = document.getElementById("bidHistoryBody");
+	    
+	    tbody.innerHTML = '<tr><td colspan="5">데이터를 불러오는 중...</td></tr>';
+	    modal.style.display = "flex"; 
+
+	    fetch(contextPath + "/bid/history/" + itemNo)
+	        .then(function(res) { return res.json(); })
+	        .then(function(list) {
+	            tbody.innerHTML = "";
+	            
+	            // 입찰 기록 조회하는 유저와 동일한 정보가 있는지 확인
+	            list.forEach(function(b) {
+	                var isMine = (String(currentUserNo) === String(b.userNo));
+	                
+	                
+	                // 내가 입찰한 기록이 아니라면 마스킹
+	                var displayIp = "정보 없음";
+	                if (b.bidIp) {
+	                    if (isMine) {
+	                        displayIp = b.bidIp;
+	                    } else {
+	                        var parts = b.bidIp.split('.');
+	                        if (parts.length === 4) {
+	                            displayIp = parts[0] + "." + parts[1] + ".***." + parts[3];
+	                        } else {
+	                            displayIp = b.bidIp.substring(0, b.bidIp.lastIndexOf(":") + 1) + "***";
+	                        }
+	                    }
+	                }
+
+	                var d = new Date(b.bidTime);
+	                var bidDateFull = d.getFullYear() + "-" 
+	                    + String(d.getMonth() + 1).padStart(2, '0') + "-" 
+	                    + String(d.getDate()).padStart(2, '0') + " " 
+	                    + String(d.getHours()).padStart(2, '0') + ":" 
+	                    + String(d.getMinutes()).padStart(2, '0') + ":" 
+	                    + String(d.getSeconds()).padStart(2, '0');
+					
+	                    // 내 입찰기록은 강조해서 표시
+	                var row = "<tr class='" + (isMine ? "my-bid-row" : "") + "'>" +
+	                          "<td>" + b.ranking + "</td>" +
+	                          "<td>" + (isMine ? b.userId : b.ranking + "번 입찰자") + "</td>" +
+	                          "<td>" + (isMine ? b.bidPrice.toLocaleString() + "원" : "***원") + "</td>" +
+	                          "<td>" + bidDateFull + "</td>" +
+	                          "<td>" + displayIp + "</td>" +
+	                          "</tr>";
+	                
+	                tbody.innerHTML += row;
+	            });
+	        });
+	}
+
+function closeBidModal() {
+    document.getElementById("bidModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("bidModal");
+    if (event.target == modal) modal.style.display = "none";
+}
+</script>
 </body>
 </html>

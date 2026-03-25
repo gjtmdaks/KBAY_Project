@@ -1,7 +1,10 @@
 package com.kh.kbay.bid.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,7 @@ public class BidController {
 	@PostMapping
 	public Map<String, Object> bid(
 	        @RequestBody Bid req,
+	        HttpServletRequest request,
 	        Authentication auth){
 
 	    Map<String, Object> result = new HashMap<>();
@@ -42,7 +46,22 @@ public class BidController {
 	    try {
 	        Member user = (Member) auth.getPrincipal();
 	        req.setUserNo(user.getUserNo());
-
+	        
+	        //입찰 시점 IP 주소 추출
+	        String ip = request.getHeader("X-Forwarded-For");
+	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+	            ip = request.getHeader("Proxy-Client-IP");
+	        }
+	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+	            ip = request.getRemoteAddr();
+	        }
+	        
+	        // 로컬 테스트 IP 주소
+	        if("0:0:0:0:0:0:0:1".equals(ip)) {
+	            ip = "127.0.0.1";
+	        }
+	        
+	        req.setBidIp(ip);
 	        int ranking = bs.placeBid(req);
 	        
 	        result.put("result", "SUCCESS");
@@ -80,5 +99,10 @@ public class BidController {
 	    result.put("bidCount", bidCount);
 
 	    return result;
+	}
+	
+	@GetMapping("/history/{itemNo}")
+	public List<Bid> getBidHistory(@PathVariable int itemNo) {
+	    return bs.selectBidHistory(itemNo);
 	}
 }

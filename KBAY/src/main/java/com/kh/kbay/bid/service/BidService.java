@@ -1,5 +1,7 @@
 package com.kh.kbay.bid.service;
 
+import java.util.List;
+
 import com.kh.kbay.bid.model.vo.Bid;
 
 public interface BidService {
@@ -11,5 +13,7 @@ public interface BidService {
 	int selectCurrentPrice(int itemNo);
 
 	int selectMaxPrice(int itemNo);
+	
+	List<Bid> selectBidHistory(int itemNo);
 
 }
