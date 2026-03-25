@@ -31,6 +31,8 @@ public interface BoardService {
 
 	int updateBoard(BoardPost b, List<Integer> deleteImgs, List<BoardImg> newImgList);
 
+	void updateViewCount(int boardNo);
+
 
 	
 }

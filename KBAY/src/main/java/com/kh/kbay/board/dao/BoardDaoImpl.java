@@ -100,6 +100,12 @@ public class BoardDaoImpl implements BoardDao {
 		return session.update("boardPost.deleteBoardImgList", deleteImgs);
 	}
 
+	@Override
+	public void updateViewCoun(int boardNo) {
+		// TODO Auto-generated method stub
+		session.update("boardPost.updateViewCoun", boardNo);
+	}
+
 	
 	
 }

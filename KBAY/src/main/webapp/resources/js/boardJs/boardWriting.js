@@ -29,10 +29,17 @@ document.addEventListener('DOMContentLoaded', function() {
         dropZone.classList.remove('dragover');
         handleFiles(e.dataTransfer.files); // 드래그한 파일 데이터 넘기기
     });
-
+	
     function handleFiles(files) {
+        if (uploadedFiles.length + files.length > 5) {
+            
+            alert(`파일은 최대 5개까지만 업로드 가능합니다.`);
+            
+            return; // 5개가 넘어가면 함수 종료 (더 이상 추가 안 함)
+        }
+
         for (const file of files) {
-            uploadedFiles.push(file); // 배열에 새 파일 저장
+            uploadedFiles.push(file);
         }
         updateFileList(); 
     }
