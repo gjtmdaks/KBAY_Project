@@ -1,6 +1,7 @@
 package com.kh.kbay.bid.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -72,5 +73,10 @@ public class BidDaoImpl implements BidDao {
 	@Override
 	public int selectMaxPrice(int itemNo) {
 		return session.selectOne("bid.selectMaxPrice", itemNo);
+	}
+
+	@Override
+	public List<Bid> selectBidHistory(Object object, int itemNo) {
+		return session.selectList("bid.selectBidHistory", itemNo);
 	}
 }

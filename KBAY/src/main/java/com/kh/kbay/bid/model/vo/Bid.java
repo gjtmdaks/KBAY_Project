@@ -12,7 +12,9 @@ public class Bid {
 	private int bidNo; 
 	private int itemNo; 
 	private int userNo; 
+	private String userId;
 	private int bidPrice;
 	private Date bidTime;
 	private int ranking;
+	private String bidIp;
 }

@@ -1,5 +1,7 @@
 package com.kh.kbay.bid.dao;
 
+import java.util.List;
+
 import com.kh.kbay.bid.model.vo.Bid;
 
 public interface BidDao {
@@ -11,5 +13,7 @@ public interface BidDao {
 	int selectCurrentPrice(int itemNo);
 
 	int selectMaxPrice(int itemNo);
+
+	List<Bid> selectBidHistory(Object object, int itemNo);
 	
 }
