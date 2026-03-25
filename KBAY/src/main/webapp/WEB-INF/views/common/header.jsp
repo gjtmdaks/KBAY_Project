@@ -30,11 +30,9 @@
 				
 				<br>
 				
-				<sec:authorize access="hasAnyAuthority('1','2')">
-					<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a> | 
-				</sec:authorize>
+				<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a> | 
 				<sec:authorize access="hasAuthority('3')">
-					<a href="${contextPath}/member/adminpage.me" class="hover-link">관리자페이지</a>
+					<a href="${contextPath}/admin/adminpage.me" class="hover-link">관리자페이지</a> | 
 				</sec:authorize>
         		<a href="${contextPath}/member/logout" class="hover-link">로그아웃</a>
 			</sec:authorize>
