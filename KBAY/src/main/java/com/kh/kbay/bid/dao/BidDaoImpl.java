@@ -79,4 +79,24 @@ public class BidDaoImpl implements BidDao {
 	public List<Bid> selectBidHistory(Object object, int itemNo) {
 		return session.selectList("bid.selectBidHistory", itemNo);
 	}
+
+	@Override
+	public Bid findTopBid(int itemNo) {
+		return session.selectOne("bid.findTopBid", itemNo);
+	}
+
+	@Override
+	public Bid findSecondBid(int itemNo) {
+		return session.selectOne("bid.findSecondBid", itemNo);
+	}
+
+	@Override
+	public void updateRanking(int itemNo) {
+		session.update("bid.updateRanking", itemNo);
+	}
+
+	@Override
+	public void updateBidStatus(Map<String, Object> param) {
+		session.update("bid.updateBidStatus", param);
+	}
 }

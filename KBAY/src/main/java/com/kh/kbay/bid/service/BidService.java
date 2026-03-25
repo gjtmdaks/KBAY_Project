@@ -16,4 +16,12 @@ public interface BidService {
 	
 	List<Bid> selectBidHistory(int itemNo);
 
+	Bid findTopBid(int itemNo);
+
+	Bid findSecondBid(int itemNo);
+
+	void updateRanking(int itemNo);
+
+	void updateBidStatus(int bidNo, String status);
+
 }

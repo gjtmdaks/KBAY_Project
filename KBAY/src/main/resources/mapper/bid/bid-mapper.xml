@@ -80,23 +80,69 @@
 	</update>
 	
 	<select id="selectBidHistory" resultType="Bid">
-    SELECT 
-        B.USER_NO AS userNo, 
-        M.USER_ID AS userId, 
-        B.BID_PRICE AS bidPrice,
-        B.BID_TIME AS bidTime,
-        B.BID_IP AS bidIp,
-        D.BIDDER_NO AS ranking
-    FROM BID B
-    JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
-    JOIN (
-        SELECT USER_NO, BID_IP, 
-               ROW_NUMBER() OVER (ORDER BY MIN(BID_TIME) ASC) AS BIDDER_NO
-        FROM BID
-        WHERE ITEM_NO = #{itemNo}
-        GROUP BY USER_NO, BID_IP
-    ) D ON (B.USER_NO = D.USER_NO AND B.BID_IP = D.BID_IP)
-    WHERE B.ITEM_NO = #{itemNo}
-    ORDER BY B.BID_TIME DESC
-</select>
+	    SELECT 
+	        B.USER_NO AS userNo, 
+	        M.USER_ID AS userId, 
+	        B.BID_PRICE AS bidPrice,
+	        B.BID_TIME AS bidTime,
+	        B.BID_IP AS bidIp,
+	        D.BIDDER_NO AS ranking
+	    FROM BID B
+	    JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
+	    JOIN (
+	        SELECT USER_NO, BID_IP, 
+	               ROW_NUMBER() OVER (ORDER BY MIN(BID_TIME) ASC) AS BIDDER_NO
+	        FROM BID
+	        WHERE ITEM_NO = #{itemNo}
+	        GROUP BY USER_NO, BID_IP
+	    ) D ON (B.USER_NO = D.USER_NO AND B.BID_IP = D.BID_IP)
+	    WHERE B.ITEM_NO = #{itemNo}
+	    ORDER BY B.BID_TIME DESC
+	</select>
+	
+	<select id="findTopBid" resultType="bid">
+	    SELECT *
+	    FROM (
+	        SELECT *
+	        FROM BID
+	        WHERE ITEM_NO = #{itemNo}
+	        	AND BID_STATUS IS NULL
+	        ORDER BY BID_PRICE DESC, BID_TIME ASC
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+	<select id="findSecondBid" resultType="Bid">
+	    SELECT *
+	    FROM (
+	        SELECT B.*, ROW_NUMBER() OVER (ORDER BY BID_PRICE DESC, BID_TIME ASC) AS RN
+	        FROM BID B
+	        WHERE ITEM_NO = #{itemNo}
+	    )
+	    WHERE RN = 2
+	</select>
+	
+	<update id="updateRanking">
+	    MERGE INTO BID B
+	    USING (
+	        SELECT BID_NO,
+	               ROW_NUMBER() OVER (ORDER BY BID_PRICE DESC, BID_TIME ASC) AS RN
+	        FROM BID
+	        WHERE ITEM_NO = #{itemNo}
+	    ) R
+	    ON (B.BID_NO = R.BID_NO)
+	    WHEN MATCHED THEN
+	    UPDATE SET B.RANKING =
+	        CASE
+	            WHEN R.RN = 1 THEN 1
+	            WHEN R.RN = 2 THEN 2
+	            ELSE NULL
+	        END
+	</update>
+	
+	<update id="updateBidStatus">
+	    UPDATE BID
+	    SET BID_STATUS = #{status}
+	    WHERE BID_NO = #{bidNo}
+	    	AND BID_STATUS IS NULL
+	</update>
 </mapper>
