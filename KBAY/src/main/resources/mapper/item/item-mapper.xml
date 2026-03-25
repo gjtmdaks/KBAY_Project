@@ -126,34 +126,34 @@
 	</update>
 	
 	<select id="selectBestItems" resultType="item">
-    SELECT *
-    FROM (
-        SELECT i.*,
-               (SELECT img_url 
-                FROM ITEM_IMG 
-                WHERE ITEM_NO = i.ITEM_NO 
-                AND ROWNUM = 1) AS MAIN_IMG,
-               (SELECT COUNT(*) 
-                FROM BID 
-                WHERE ITEM_NO = i.ITEM_NO) AS BID_COUNT,
-               
-               NVL(
-                   (SELECT BID_PRICE
-                    FROM (
-                        SELECT ITEM_NO, BID_PRICE,
-                               ROW_NUMBER() OVER(PARTITION BY ITEM_NO ORDER BY BID_PRICE DESC) as rn
-                        FROM BID
-                    ) b_rank
-                    WHERE b_rank.ITEM_NO = i.ITEM_NO AND rn = 2), 
-                   i.START_PRICE
-               ) AS BID_PRICE
-               
-        FROM ITEM i
-        WHERE STATUS = 'N'
-        ORDER BY BID_COUNT DESC, ITEM_NO DESC
-    )
-    WHERE ROWNUM <![CDATA[<=]]> 4
-</select>
+	    SELECT *
+	    FROM (
+	        SELECT i.*,
+	               (SELECT img_url 
+	                FROM ITEM_IMG 
+	                WHERE ITEM_NO = i.ITEM_NO 
+	                AND ROWNUM = 1) AS MAIN_IMG,
+	               (SELECT COUNT(*) 
+	                FROM BID 
+	                WHERE ITEM_NO = i.ITEM_NO) AS BID_COUNT,
+	               
+	               NVL(
+	                   (SELECT BID_PRICE
+	                    FROM (
+	                        SELECT ITEM_NO, BID_PRICE,
+	                               ROW_NUMBER() OVER(PARTITION BY ITEM_NO ORDER BY BID_PRICE DESC) as rn
+	                        FROM BID
+	                    ) b_rank
+	                    WHERE b_rank.ITEM_NO = i.ITEM_NO AND rn = 2), 
+	                   i.START_PRICE
+	               ) AS BID_PRICE
+	               
+	        FROM ITEM i
+	        WHERE STATUS = 'N'
+	        ORDER BY BID_COUNT DESC, ITEM_NO DESC
+	    )
+	    WHERE ROWNUM <![CDATA[<=]]> 4
+	</select>
 
 	<update id="updateItemStatus">
 		UPDATE ITEM
@@ -168,5 +168,17 @@
 		    WHEN SYSDATE >= START_TIME THEN 'N'
 		    ELSE 'Y'
 		END
+	</update>
+	
+	<select id="findEndedItems" resultType="item">
+	    SELECT *
+	    FROM ITEM
+	    WHERE STATUS = 'N'
+	      AND WINNER_PROCESSED = 'N'
+	</select>
+	<update id="updateEndItemStatus">
+	    UPDATE ITEM
+	    SET WINNER_PROCESSED = 'Y'
+	    WHERE ITEM_NO = #{itemNo}
 	</update>
 </mapper>

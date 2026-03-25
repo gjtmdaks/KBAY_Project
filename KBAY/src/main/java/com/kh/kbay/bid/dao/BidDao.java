@@ -1,6 +1,7 @@
 package com.kh.kbay.bid.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kh.kbay.bid.model.vo.Bid;
 
@@ -15,5 +16,13 @@ public interface BidDao {
 	int selectMaxPrice(int itemNo);
 
 	List<Bid> selectBidHistory(Object object, int itemNo);
+
+	Bid findTopBid(int itemNo);
+
+	Bid findSecondBid(int itemNo);
+
+	void updateRanking(int itemNo);
+
+	void updateBidStatus(Map<String,Object> param);
 	
 }

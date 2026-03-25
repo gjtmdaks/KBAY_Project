@@ -127,4 +127,14 @@ public class ItemServiceImpl implements ItemService {
 	public List<Item> selectBestItems(){
 		return id.selectBestItems();
 	}
+
+	@Override
+	public List<Item> findEndedItems() {
+		return id.findEndedItems();
+	}
+
+	@Override
+	public void updateEndItemStatus(int itemNo) {
+		id.updateEndItemStatus(itemNo);
+	}
 }

@@ -129,7 +129,7 @@
 			    <label for="upfiles">이미지 첨부</label> 
 			    <input type="file" id="upfiles" name="upfiles" accept="image/*" multiple required>
 			</div>
-			<div id="image-preview-container" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;"></div>
+				<div id="image-preview-container" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;"></div>
 			
 
 			<button type="submit" class="submit-btn">물품 등록하기</button>

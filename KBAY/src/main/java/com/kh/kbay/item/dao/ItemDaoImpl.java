@@ -68,5 +68,15 @@ public class ItemDaoImpl implements ItemDao {
 	public List<Item> selectBestItems(){
 		return session.selectList("item.selectBestItems");
 	}
+
+	@Override
+	public List<Item> findEndedItems() {
+		return session.selectList("item.findEndedItems");
+	}
+
+	@Override
+	public void updateEndItemStatus(int itemNo) {
+		session.update("item.updateEndItemStatus", itemNo);
+	}
 	
 }

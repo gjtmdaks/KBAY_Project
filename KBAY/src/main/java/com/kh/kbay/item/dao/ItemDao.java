@@ -29,4 +29,8 @@ public interface ItemDao {
 	
 	List<Item> selectBestItems();
 
+	List<Item> findEndedItems();
+
+	void updateEndItemStatus(int itemNo);
+
 }
