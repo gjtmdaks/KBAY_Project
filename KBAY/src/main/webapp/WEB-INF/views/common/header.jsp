@@ -21,6 +21,7 @@
 
 		<div class="member-links">
 			<sec:authorize access="isAnonymous()">
+			
 				<a href="${contextPath}/member/login" class="hover-link">로그인</a> | 
         <a href="${contextPath}/member/agreeForm.me" class="hover-link">회원가입</a>
 			</sec:authorize>
@@ -52,7 +53,17 @@
 					예정인 경매</a></li>
 			<li><a href="${contextPath}/board/community.me/1"
 				class="nav-item">커뮤니티</a></li>
-			<li><a href="${contextPath}/auction/itemEnroll" class="btn-register">물품등록</a></li>
+			<li>
+    		<sec:authorize access="isAnonymous()">
+       	    	<%-- 비로그인이면 JS 함수 실행 --%>
+            	<a href="javascript:void(0);" onclick="needLoginAlert();" class="btn-register">물품등록</a>
+            </sec:authorize>
+            <sec:authorize access="isAuthenticated()">
+            	<%-- 로그인이면 정상 이동 --%>
+            	<a href="${contextPath}/auction/itemEnroll" class="btn-register">물품등록</a>
+            </sec:authorize>
+            </li>
+			
 		</ul>
 	</div>
 </nav>
@@ -60,21 +71,44 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // 비로그인 시 물품등록 클릭 시 실행될 함수
+    function needLoginAlert() {
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인 필요',
+            text: '물품 등록은 로그인 후 이용 가능합니다.',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: '로그인하러 가기',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = "${contextPath}/member/login";
+            }
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. 성공 메시지 처리 (alertMsg)
         const msg = "${alertMsg}";
+        const error = "${errorMsg}";
         const isAnonymous = <sec:authorize access="isAnonymous()">true</sec:authorize><sec:authorize access="isAuthenticated()">false</sec:authorize>;
-        
-        if (msg && msg !== "") {
+
+        // 1. 성공/알림 메시지 처리
+        if (msg) {
+            // 메시지 내용에 '성공'이나 '완료'가 포함되었을 때만 success 아이콘 사용
+            const isSuccess = msg.includes("성공") || msg.includes("완료");
+            
             Swal.fire({
-                icon: 'success',
-                title: '성공!',
+                icon: isSuccess ? 'success' : 'info',
+                title: isSuccess ? '완료!' : '알림',
                 text: msg,
+                // 비로그인(회원가입 직후 등)일 때만 로그인 버튼 노출
                 showCancelButton: isAnonymous, 
                 confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#4e73df',  
-                confirmButtonText: '확인',   
-                cancelButtonText: '로그인하기'   
+                cancelButtonColor: '#4e73df',
+                confirmButtonText: '확인',
+                cancelButtonText: '로그인하기'
             }).then((result) => {
                 if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
                     location.href = "${contextPath}/member/login";
@@ -82,12 +116,11 @@
             });
         }
 
-        // 2. 오류 메시지 처리 (errorMsg)
-        const error = "${errorMsg}";
-        if (error && error !== "") {
+        // 2. 오류 메시지 처리
+        if (error) {
             Swal.fire({
                 icon: 'error',
-                title: '오류 발생',
+                title: '오류발생',
                 text: error,
                 confirmButtonColor: '#d33',
                 confirmButtonText: '확인'
@@ -95,3 +128,4 @@
         }
     });
 </script>
+
