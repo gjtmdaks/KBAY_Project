@@ -127,9 +127,15 @@
                     <div class="reply-meta">
                         <span><fmt:formatDate value="${reply.replyDate}" pattern="yyyy.MM.dd HH:mm" /></span>
                         
-                        <c:if test="${not empty loginUser and loginUser.userNo == reply.userNo}">
-                            <button type="button" class="btn-delete-reply reply-delete-btn" onclick="deleteReply(${reply.replyNo})">댓글 삭제</button>
-                        </c:if>
+                        <c:choose>
+		                    <c:when test="${not empty loginUser and loginUser.userNo == reply.userNo}">
+		                        <button type="button" class="btn-delete-reply reply-delete-btn" onclick="deleteReply(${reply.replyNo})">댓글 삭제</button>
+		                    </c:when>
+		                    
+		                    <c:when test="${not empty loginUser and loginUser.userNo != reply.userNo}">
+		                        <button type="button" class="btn-delete-reply reply-delete-btn" onclick="reportReply(${reply.replyNo})" ">댓글 신고</button>
+		                    </c:when>
+		                </c:choose>
                     </div>
                 </div>
             </c:forEach>

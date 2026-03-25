@@ -13,11 +13,10 @@ body { background-color: white; font-family: 'Noto Sans KR', sans-serif; }
     overflow: hidden; /* 모서리 둥글게 자르기 */
 }
 
-/* 🌟 제목 영역에 핑크색 배경과 경계선을 줘서 완벽하게 분리! */
 .post-title-row { 
     background-color: #f8e4e4; /* 스케치 느낌의 부드러운 핑크 배경 */
     padding: 20px 25px; 
-    border-bottom: 2px solid #e5a5a5; /* 아래쪽 굵은 경계선 */
+    border-bottom: 2px solid #e74c3c; /* 아래쪽 굵은 경계선 */
     display: flex; 
     justify-content: space-between; 
     align-items: start; 

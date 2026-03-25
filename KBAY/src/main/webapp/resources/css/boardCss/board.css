@@ -63,7 +63,23 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 15px;
+    
 }
+
+.button-wrap a {
+    border-radius: 5px; /* 모서리 둥글게! */
+    padding: 8px 15px;  /* 버튼 안쪽 여백 (예쁘게) */
+    border: none;       /* 기본 테두리 없애기 */
+}
+.button-wrap a:hover {
+    padding: 8px 15px;  /* 버튼 안쪽 여백 (예쁘게) */
+    border: none;       /* 기본 테두리 없애기 */
+    background-color: #e74c3c;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
 .write-btn {
     display: none; /* 기본적으로 버튼을 숨김 */
     padding: 8px 15px;
@@ -118,3 +134,4 @@
     background-color: #fafafa;
     pointer-events: none; /* 클릭 방지 */
 }
+
