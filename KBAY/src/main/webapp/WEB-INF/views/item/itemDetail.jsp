@@ -112,14 +112,16 @@
 		    <hr>
 	
 			<div class="meta">
-                <span>카테고리: ${itemCategory.itemCategory}</span> <br> <span>판매자:
-                    ${item.userNo}</span>
-                <!-- 🔥 신고 버튼 -->
-                <div>
-                    <button type="button" class="report-btn"
-                        onclick="openReportPopup('item', ${item.itemNo})">🚨 신고하기
-                    </button>
-                </div>
+                <span>카테고리: ${itemCategory.itemCategory}</span>
+                <br>
+                <span>판매자: ${item.userNo}</span>
+                <br>
+                <c:if test="${not empty loginUser and loginUser.userNo != item.userNo}">
+				    <button type="button" class="report-btn"
+				        onclick="openReportPopup('item', ${item.itemNo})">
+				        🚨 신고하기
+				    </button>
+				</c:if>
             </div>
 			<jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
                 
