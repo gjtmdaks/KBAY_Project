@@ -228,8 +228,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         
-        if (uploadedFiles.length > 5) {
-             alert("이미지는 최대 5장까지만 등록 가능합니다.");
+        if (uploadedFiles.length > 15) {
+             alert("이미지는 최대 15장까지만 등록 가능합니다.");
              e.preventDefault(); return;
         }
 

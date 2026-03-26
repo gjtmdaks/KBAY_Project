@@ -16,15 +16,19 @@ function insertReply(boardNo) {
     // 적은 글자가져오기
     let content = $("#replyContent").val();
 
-    // 2. 빈칸 검사
+    // 2. 빈칸&크기 검사
     if (content.trim() === "") {
         alert("댓글 내용을 입력해주세요!");
         $("#replyContent").focus();
         return;
     }
+    if (content.length > 300) {
+	    alert("댓글은 300자 이하로 작성해주세요.");
+	    return;
+	}
 
     $.ajax({
-        url: "/kbay/board/insertReply",
+        url: "/kbay/reply/insertReply",
         type: "POST",
         data: {
             boardNo: boardNo,
@@ -44,11 +48,55 @@ function insertReply(boardNo) {
     });
 }
 
+// 댓글 수정
+function showEditBox(replyNo) {
+    $("#content-" + replyNo).hide();
+    $("#edit-" + replyNo).show();
+}
+
+function cancelEdit(replyNo) {
+    $("#edit-" + replyNo).hide();
+    $("#content-" + replyNo).show();
+}
+
+function updateReply(replyNo) {
+    let content = $("#editContent-" + replyNo).val();
+
+    if (content.trim() === "") {
+        alert("내용을 입력하세요");
+        return;
+    }
+    if (content.length > 300) {
+	    alert("댓글은 300자 이하로 작성해주세요.");
+	    return;
+	}
+    
+
+    $.ajax({
+        url: "/kbay/reply/update",
+        type: "POST",
+        data: {
+            replyNo: replyNo,
+            replyContent: content
+        },
+        success: function(result) {
+            if (result === "success") {
+                location.reload();
+            } else {
+                alert("수정 실패");
+            }
+        },
+        error: function() {
+            alert("통신 오류");
+        }
+    });
+}
+
 // 댓글 삭제
 function deleteReply(replyNo) {
     if (confirm("정말 이 댓글을 삭제하시겠습니까?")) {
         $.ajax({
-            url: "/kbay/board/deleteReply", 
+            url: "/kbay/reply/deleteReply", 
             type: "POST", 
             data: { replyNo: replyNo },
             success: function(result) {

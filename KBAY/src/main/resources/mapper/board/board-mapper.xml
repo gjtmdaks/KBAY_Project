@@ -8,32 +8,33 @@
 	
 	<!-- board.jsp에서 리스트 출력 -->
 	<select id="boardPost.selectList" resultType="boardPost">
-SELECT * FROM (
-SELECT ROWNUM AS RNUM, T1.* FROM (
-SELECT BOARD_NO, BOARD_TITLE, M.USER_NAME AS BOARD_WRITER, B.VIEW_COUNT, BOARD_DATE
-FROM BOARD_POST B LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
-WHERE B.BOARD_DELETE = 'N' 
-<choose>
-<when test="boardCdNo == 1">
-AND BOARD_CD_NO IN (2, 3)
-</when>
-<otherwise>
-AND BOARD_CD_NO = #{boardCdNo}
-</otherwise>
-</choose>
-<if test="keyword != null and keyword != ''">
-AND
-<choose>
-<when test="condition == 'title'">BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
-<when test="condition == 'writer'">USER_NAME LIKE '%' || #{keyword} || '%'</when>
-<when test="condition == 'content'">BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
-<otherwise>(BOARD_TITLE LIKE '%' || #{keyword} || '%' OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
-</choose>
-</if>
-ORDER BY BOARD_NO DESC
-) T1
-) WHERE RNUM BETWEEN #{offset} AND #{limit}
-</select>
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, T1.* FROM (
+				SELECT BOARD_NO, BOARD_TITLE, M.USER_NAME AS BOARD_WRITER, B.VIEW_COUNT, BOARD_DATE
+				FROM BOARD_POST B LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+				WHERE B.BOARD_DELETE = 'N' 
+				<choose>
+					<when test="boardCdNo == 1">
+						AND BOARD_CD_NO IN (2, 3)
+					</when>
+					<otherwise>
+						AND BOARD_CD_NO = #{boardCdNo}
+					</otherwise>
+				</choose>
+				<if test="keyword != null and keyword != ''">
+					AND
+					<choose>
+						<when test="condition == 'title'">BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
+						<when test="condition == 'writer'">USER_NAME LIKE '%' || #{keyword} || '%'</when>
+						<when test="condition == 'content'">BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
+						<otherwise>(BOARD_TITLE LIKE '%' || #{keyword} || '%' OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
+					</choose>
+				</if>
+				ORDER BY BOARD_NO DESC
+			) T1
+		)
+		WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
 	
 	<!-- 보드 리스트 숫자세기 -->
 	<select id="selectBoardListCount" resultType="_int">
@@ -41,7 +42,6 @@ ORDER BY BOARD_NO DESC
 	    FROM BOARD_POST B
 	    LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
 	    WHERE B.BOARD_DELETE = 'N' 
-	    
 	    <choose>
 	        <when test="boardCdNo == 1">
 	            AND B.BOARD_CD_NO IN (2, 3)
@@ -63,30 +63,31 @@ ORDER BY BOARD_NO DESC
 	</select>
 	
 	<insert id="insertBoard" parameterType="boardPost">
-    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
-        SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
-    </selectKey>
-
-    INSERT INTO BOARD_POST (
-        BOARD_NO, 
-        BOARD_TITLE, 
-        BOARD_CONTENT, 
-        BOARD_CD_NO, 
-        USER_NO,
-        VIEW_COUNT,
-        BOARD_DATE,
-        BOARD_DELETE
-    ) VALUES (
-        #{boardNo}, 
-        #{boardTitle}, 
-        #{boardContent}, 
-        #{boardCdNo}, 
-        #{userNo},
-        DEFAULT, 
-        DEFAULT, 
-        DEFAULT
-    )
-</insert>
+	    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+	        SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
+	    </selectKey>
+		
+	    INSERT INTO BOARD_POST (
+	        BOARD_NO, 
+	        BOARD_TITLE, 
+	        BOARD_CONTENT, 
+	        BOARD_CD_NO, 
+	        USER_NO,
+	        VIEW_COUNT,
+	        BOARD_DATE,
+	        BOARD_DELETE
+	    ) VALUES (
+	        #{boardNo}, 
+	        #{boardTitle}, 
+	        #{boardContent}, 
+	        #{boardCdNo}, 
+	        #{userNo},
+	        DEFAULT, 
+	        DEFAULT, 
+	        DEFAULT
+	    )
+	</insert>
+	
 	<insert id="insertBoardImgList" parameterType="list">
 	    <foreach collection="list" item="img" open="DECLARE BEGIN" separator=";" close="; END;">
 	        INSERT INTO BOARD_IMG (
@@ -103,108 +104,58 @@ ORDER BY BOARD_NO DESC
 	
 	<!-- 보드 상세보기 -->
 	<select id="selectBoardDetail" resultType="boardPost">
-    SELECT 
-        B.BOARD_NO AS boardNo, 
-        B.BOARD_TITLE AS boardTitle, 
-        B.BOARD_CONTENT AS boardContent, 
-        B.USER_NO AS userNo,
-        M.USER_NAME AS boardWriter, B.VIEW_COUNT AS viewCount, 
-        B.BOARD_DATE AS boardDate,
-        B.BOARD_CD_NO AS boardCdNo
-    FROM BOARD_POST B
-    LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
-    WHERE B.BOARD_NO = #{boardNo} 
-      AND B.BOARD_DELETE = 'N'
-</select>
+	    SELECT 
+	        B.BOARD_NO AS boardNo, 
+	        B.BOARD_TITLE AS boardTitle, 
+	        B.BOARD_CONTENT AS boardContent, 
+	        B.USER_NO AS userNo,
+	        M.USER_NAME AS boardWriter, B.VIEW_COUNT AS viewCount, 
+	        B.BOARD_DATE AS boardDate,
+	        B.BOARD_CD_NO AS boardCdNo
+	    FROM BOARD_POST B
+	    LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+	    WHERE B.BOARD_NO = #{boardNo} 
+	      AND B.BOARD_DELETE = 'N'
+	</select>
 
-<select id="selectBoardImg" resultType="boardImg">
-	SELECT *
-	FROM BOARD_IMG
-	WHERE BOARD_NO = #{boardNo}
-	AND IMG_LEVEL = 'N'
-</select>
+	<select id="selectBoardImg" resultType="boardImg">
+		SELECT *
+		FROM BOARD_IMG
+		WHERE BOARD_NO = #{boardNo}
+		AND IMG_LEVEL = 'N'
+	</select>
 
-<!-- 보드 삭제 -->
-<delete id="deleteBoard" parameterType="_int">
-	UPDATE BOARD_POST
-		SET BOARD_DELETE = 'Y'
-	WHERE BOARD_NO = #{boardNo}
-</delete>
+	<!-- 보드 삭제 -->
+	<delete id="deleteBoard" parameterType="_int">
+		UPDATE BOARD_POST
+			SET BOARD_DELETE = 'Y'
+		WHERE BOARD_NO = #{boardNo}
+	</delete>
 
-<!-- 댓글 등록 -->
-<insert id="insertReply" parameterType="map">
-    INSERT INTO REPLY (
-        REPLY_NO,
-        BOARD_NO,
-        USER_NO,
-        REPLY_CONTENT,
-        REPLY_DATE,
-        REPLY_DELETE
-    ) VALUES (
-        SEQ_REPLY_NO.NEXTVAL,
-        #{boardNo},
-        #{userNo},
-        #{replyContent},
-        SYSDATE,
-        'N'                
-    )
-</insert>
+	<update id="updateBoard" parameterType="BoardPost">
+		UPDATE BOARD_POST
+	    SET BOARD_TITLE = #{boardTitle},
+	        BOARD_CONTENT = #{boardContent}
+	    WHERE BOARD_NO = #{boardNo}
+	</update>
 
-<select id="selectReplyCount" parameterType="_int" resultType="_int">
-    SELECT COUNT(*)
-    FROM REPLY
-    WHERE BOARD_NO = #{boardNo}
-      AND REPLY_DELETE = 'N'
-</select>
+	<update id="deleteBoardImgList" parameterType="list">
+		UPDATE BOARD_IMG
+	    SET IMG_LEVEL = 'Y'
+	    WHERE BOARD_IMG_NO IN
+	    <foreach collection="list" item="imgNo" open="(" separator="," close=")">
+	        #{imgNo}
+	    </foreach>
+	</update>
 
-<select id="selectReplyList" parameterType="map" resultType="Reply">
-    SELECT *
-    FROM (
-        SELECT ROWNUM AS RNUM, A.*
-        FROM (
-            SELECT 
-                R.REPLY_NO,
-                R.BOARD_NO,
-                R.USER_NO,
-                R.REPLY_CONTENT,
-                R.REPLY_DATE,
-                M.USER_NAME
-            FROM REPLY R 
-            JOIN MEMBER M ON (R.USER_NO = M.USER_NO)
-            WHERE R.BOARD_NO = #{boardNo}
-              AND R.REPLY_DELETE = 'N'
-            ORDER BY R.REPLY_NO DESC
-        ) A
-        WHERE ROWNUM &lt;= #{offset} + #{limit}
-    )
-    WHERE RNUM &gt; #{offset}
-</select>
-
-<update id="deleteReply" parameterType="_int">
-    UPDATE REPLY
-    SET REPLY_DELETE = 'Y' 
-    WHERE REPLY_NO = #{replyNo}
-</update>
-
-<update id="updateBoard" parameterType="BoardPost">
-	UPDATE BOARD_POST
-    SET BOARD_TITLE = #{boardTitle},
-        BOARD_CONTENT = #{boardContent}
-    WHERE BOARD_NO = #{boardNo}
-</update>
-
-<update id="deleteBoardImgList" parameterType="list">
-	UPDATE BOARD_IMG
-    SET IMG_LEVEL = 'Y'
-    WHERE BOARD_IMG_NO IN
-    <foreach collection="list" item="imgNo" open="(" separator="," close=")">
-        #{imgNo}
-    </foreach>
-</update>
-<update id="updateViewCoun" parameterType="_int">
-    UPDATE BOARD_POST
-       SET VIEW_COUNT = VIEW_COUNT + 1
-     WHERE BOARD_NO = #{boardNo}
-</update>
-
+	<update id="updateViewCoun" parameterType="_int">
+	    UPDATE BOARD_POST
+	       SET VIEW_COUNT = VIEW_COUNT + 1
+	     WHERE BOARD_NO = #{boardNo}
+	</update>
+	
+	<select id="selectAllImageNames" resultType="string">
+	    SELECT CHANGE_NAME
+	    FROM BOARD_IMG
+	</select>
 </mapper>

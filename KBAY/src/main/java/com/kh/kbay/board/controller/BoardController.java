@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,6 +28,7 @@ import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.board.service.BoardService;
+import com.kh.kbay.board.service.ReplyService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
 import com.kh.kbay.member.model.vo.Member;
@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class BoardController {
 	private final BoardService bs;
-//	private final ServletContext application;
+	private final ReplyService rs;
 	
 	//커뮤니티 목록 불류 및 목록을 보여주기
 	@GetMapping("/community.me/{boardCdNo}")
@@ -236,7 +236,7 @@ public class BoardController {
 	    model.addAttribute("b", b);
 	    model.addAttribute("bList", bList);
 	    // 댓글 페이징
-	    int listCount = bs.selectReplyCount(boardNo); // 전체 댓글 수
+	    int listCount = rs.selectReplyCount(boardNo); // 전체 댓글 수
 	    int replyBoardLimit = 10; // 한 페이지에 10개씩
 	    int pageLimit = 5;
 	    
@@ -264,7 +264,7 @@ public class BoardController {
 	    map.put("limit", replyBoardLimit);
 	    
 	    // 댓글 목록 불러오기
-	    List<Reply> rList = bs.selectReplyList(map);
+	    List<Reply> rList = rs.selectReplyList(map);
 	    model.addAttribute("replyList", rList);
 	    
 	    return "board/boardDetail";
@@ -273,18 +273,32 @@ public class BoardController {
 	// 게시글 삭제
 	@GetMapping("/deletePost")
 	public String deleteBoard(
-			@RequestParam("boardNo") int boardNo,
-			@RequestParam(value = "boardCdNo", defaultValue = "1") int boardCdNo,
-			RedirectAttributes ra
-			) {
-		int result = bs.deleteBoard(boardNo);
-		
-		if(!(result > 0)) {
-			ra.addFlashAttribute("alertMsg", "게시글 삭제에 실패했습니다.");
-			return "redirect:/board/detail?boardNo=" + boardNo;
-		}
-		ra.addFlashAttribute("alertMsg", "게시글이 성공적으로 삭제되었습니다.");
-		return "redirect:/board/community.me/" + boardCdNo;
+	        @RequestParam("boardNo") int boardNo,
+	        @RequestParam(value = "boardCdNo", defaultValue = "1") int boardCdNo,
+	        Authentication auth,
+	        RedirectAttributes ra) {
+
+	    if (auth == null || !auth.isAuthenticated()) {
+	        return "redirect:/member/login";
+	    }
+
+	    Member loginUser = (Member) auth.getPrincipal();
+
+	    BoardPost b = bs.selectBoardDetail(boardNo);
+
+	    if (b == null || b.getUserNo() != loginUser.getUserNo()) {
+	        ra.addFlashAttribute("alertMsg", "권한이 없습니다.");
+	        return "redirect:/board/boardDetail/" + boardNo;
+	    }
+
+	    int result = bs.deleteBoard(boardNo);
+
+	    if (result <= 0) {
+	        ra.addFlashAttribute("alertMsg", "삭제 실패");
+	        return "redirect:/board/boardDetail/" + boardNo;
+	    }
+
+	    return "redirect:/board/community.me/" + boardCdNo;
 	}
 	
 	// 게시글 업데이트
@@ -391,76 +405,6 @@ public class BoardController {
 			return "redirect:/board/updateBoard/" + b.getBoardNo(); 
 		}
 		
-	}
-	
-	
-	// 댓글 등록
-	@ResponseBody
-	@PostMapping("/insertReply")
-	public String insertReply(
-			@RequestParam("boardNo") int boardNo,
-			@RequestParam("replyContent") String replyContent,
-			Authentication auth
-			) {
-		
-		// 1. 로그인 안 한 사람이 AJAX를 쏘면 컷! (보안)
-		if (auth == null || !auth.isAuthenticated()) {
-			return "fail";
-		}
-		
-		Member loginUser = (Member) auth.getPrincipal();
-		
-		// 2. 파라미터로 받은 내용들을 댓글 객체나 Map에 담기.
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("boardNo", boardNo);
-		paramMap.put("replyContent", replyContent);
-		paramMap.put("userNo", loginUser.getUserNo());
-		
-		// 3. DB에 INSERT
-		int result = bs.insertReply(paramMap); 
-        
-		
-		if(result > 0) {
-			return "success"; // JS의 if(result === "success") 부분으로 쏙 들어갑니다!
-		} else {
-			return "fail";
-		}
-	}
-	
-	// 댓글 불러오기
-	@ResponseBody
-	@GetMapping(value = "/pullOutReply", produces = "application/json; charset=UTF-8")// 한글 깨짐 방지
-	public List<Reply> pullOutReply(
-			@RequestParam("boardNo") int boardNo,
-			@RequestParam(value="rPage", defaultValue="1") int rPage,
-			Authentication auth
-			) {
-		
-	    int replyBoardLimit = 10;
-	    Map<String, Object> map = new HashMap<>();
-	    map.put("boardNo", boardNo);
-	    map.put("offset", (rPage - 1) * replyBoardLimit);
-	    map.put("limit", replyBoardLimit);
-
-	    List<Reply> rList = bs.selectReplyList(map); 
-	    
-		return rList;	
-	}
-	
-	// 댓글 삭제 
-	@ResponseBody
-	@PostMapping("/deleteReply")
-	public String deleteReply(@RequestParam("replyNo") int replyNo) {
-		
-		// 1. 서비스에게 "이 댓글 번호(replyNo) 좀 지워줘(Y로 바꿔줘)!" 라고 시킵니다.
-		int result = bs.deleteReply(replyNo);
-		
-		// 2. 결과에 따라 암호 전달
-		if(result > 0) {
-			return "success";
-		} else {
-			return "fail";
-		}
 	}
 	
 }
