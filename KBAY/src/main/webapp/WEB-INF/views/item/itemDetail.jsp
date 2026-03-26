@@ -111,11 +111,18 @@
 		    
 		    <hr>
 	
-	        <div class="meta">
-	            <span>카테고리: ${itemCategory.itemCategory}</span> <br>
-	            <span>판매자: ${item.userNo}</span>
-	        </div>
-	
+			<div class="meta">
+                <span>카테고리: ${itemCategory.itemCategory}</span> <br> <span>판매자:
+                    ${item.userNo}</span>
+                <!-- 🔥 신고 버튼 -->
+                <div>
+                    <button type="button" class="report-btn"
+                        onclick="openReportPopup('item', ${item.itemNo})">🚨 신고하기
+                    </button>
+                </div>
+            </div>
+			<jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
+                
 	        <!-- 가격 -->
 	        <div class="price-box">
     <c:choose>
@@ -516,5 +523,6 @@ window.onclick = function(event) {
     if (event.target == modal) modal.style.display = "none";
 }
 </script>
+<script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
 </body>
 </html>
