@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // 서브메뉴 토글 버튼(신고/문의 관리) 찾기
     const toggleBtn = document.querySelector('.submenu-toggle');
     // 그 버튼을 감싸고 있는 <li> 찾기
     const parentLi = document.querySelector('.has-submenu');
-    
+
     // 두 요소를 모두 화면에서 찾았을 때만 클릭 이벤트 달아주기!
     if (toggleBtn && parentLi) {
         toggleBtn.addEventListener('click', function(e) {
