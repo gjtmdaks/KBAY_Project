@@ -73,10 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 경매 내역 조회
-// 🌟 페이지 계산을 위한 전역 변수 추가 (맨 위에 추가하거나 기존 변수 밑에 두세요)
-let currentModalData = []; // 서버에서 받은 전체 데이터를 저장해둘 공간
-let currentModalPage = 1;  // 현재 보고 있는 페이지 번호
-const itemsPerPage = 5;    // 한 화면에 보여줄 개수 (5개가 모달창에 딱 예쁩니다!)
+// 페이지 계산을 위한 전역 변수 추가 (맨 위에 추가하거나 기존 변수 밑에 두세요)
+let originalModalBody = ""; 
+
+// (아까 추가했던 페이징 변수들도 여기 같이 두시면 좋습니다)
+let currentModalData = [];
+let currentModalPage = 1;
+const itemsPerPage = 5;
 
 // ==========================================
 // 1. 서버에서 경매 데이터 가져오기
