@@ -175,6 +175,14 @@ public class ItemController {
 	            isTopBidder = true;
 	        }
 	    }
+	    
+	    // 로그인한 유저인지 아닌지
+	    if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+	    	
+	        Member loginUser = (Member) auth.getPrincipal(); 
+	        
+	        model.addAttribute("loginUser", loginUser);
+	    }
 		
 		ItemCategory itemCategory = is.selectItemCategory(item.getItemCdNo());
 
