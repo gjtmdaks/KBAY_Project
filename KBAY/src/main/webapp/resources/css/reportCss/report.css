@@ -1,0 +1,12 @@
+.report-btn {
+    background-color: #e5a5a5;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.report-btn:hover {
+    background-color: #d48e8e;
+}

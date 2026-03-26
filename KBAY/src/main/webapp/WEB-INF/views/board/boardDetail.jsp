@@ -15,6 +15,8 @@
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/boardDetail.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/reportCss/report.css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -27,31 +29,12 @@
         <div class="post-meta-row">
             <span>등록일: <fmt:formatDate value="${b.boardDate}" pattern="yyyy.MM.dd HH:mm" /></span>
             <span class="post-writer-badge">${b.boardWriter}</span>
-            
-            <!-- 첨부파일 등록 버튼?부분 -->
-            <div class="attachments-area" style="margin-top: 10px;">
-            <span class="attachments-tab" style="font-weight: bold; margin-right: 10px;">첨부파일</span>
-	            <c:choose>
-	                <c:when test="${not empty bList}">
-	                    <c:forEach var="bi" items="${bList}">
-	                        <a href="${contextPath}/kbay/board/download?changeName=${bi.changeName}&originName=${bi.originName}" 
-	                           style="margin-right: 15px; color: #555; text-decoration: none;">
-	                            📎 ${bi.originName}
-	                        </a>
-	                    </c:forEach>
-	                </c:when>
-	                <c:otherwise>
-	                    <span style="font-size: 13px; color: #888;">첨부파일 없음</span>
-	                </c:otherwise>
-	            </c:choose>
-            </div>
         </div>
-        
         
         <c:if test="${not empty loginUser and loginUser.userNo == b.userNo}">
             <div class="top-buttons">
                 <button type="button" onclick="location.href='/kbay/board/updateBoard/${b.boardNo}'">게시글 편집</button>
-                <button type="button" onclick="deletePost(${b.boardNo})">게시글 삭제</button>
+                <button type="button" onclick="deletePost(${b.boardNo}, ${b.boardCdNo} })">게시글 삭제</button>
             </div>
         </c:if>
     </div>
@@ -62,33 +45,28 @@
 	    <div class="image-preview-block">
 	        <c:forEach var="bi" items="${bList}">
 	            <c:set var="ext" value="${fn:toLowerCase(bi.changeName)}" />
-	            
-	            <c:if test="${fn:endsWith(ext, '.jpg') || fn:endsWith(ext, '.jpeg') || fn:endsWith(ext, '.png') || fn:endsWith(ext, '.gif')}">
-	                <!-- ${bi.changeName}
-	                ${pageContext.request.contextPath}/upload/board/${bi.changeName} -->
+	
+	            <c:if test="${fn:endsWith(ext, '.jpg') 
+	                      || fn:endsWith(ext, '.jpeg') 
+	                      || fn:endsWith(ext, '.png') 
+	                      || fn:endsWith(ext, '.gif')}">
+	
 	                <img src="${bi.changeName}" 
-	                     alt="첨부 이미지 미리보기" 
+	                     alt="${bi.originName}"
+	                     title="${bi.originName}"
 	                     class="image-preview">
 	            </c:if>
 	        </c:forEach>
 	    </div>
 	</c:if>
-    <!-- 윗줄이 안되면 아래줄로 -->
-    <%-- <div class="image-preview-block">
-	<c:if test="${not empty b.boardCdNo}">
-	     <c:set var="fileName" value="${b.originalFileName}" />
-		<c:forEach var="bi" items="${bList}">
-			<img src="${bi.changeName}" alt="첨부 이미지 미리보기" class="image-preview">
-		</c:forEach>
-	</c:if>
-	</div> --%>
+
 	<!-- 게시글 내용 출력 부분 -->
     <div class="content-block">
         ${b.boardContent}
         
         <c:if test="${not empty loginUser and loginUser.userNo != b.userNo}">
             <div class="report-button-block">
-                <button type="button" class="btn-report">게시글 신고</button>
+                <button type="button" class="report-btn" onclick="openReportPopup('board', ${b.boardNo})">게시글 신고</button>
             </div>
         </c:if>
     </div>
@@ -103,7 +81,7 @@
 
     <!-- 댓글 기능 등록(여기서는  )-->
     <div class="reply-section">
-    <div class="reply-input-form">
+    	<div class="reply-input-form">
             <c:choose>
                 <c:when test="${not empty loginUser}">
                     <span class="reply-writer-input-label">${loginUser.userName}</span>
@@ -116,30 +94,42 @@
                 </c:otherwise>
             </c:choose>
         </div>
+        
 		<!-- 댓글 목록 -->
         <div class="reply-list">
             <c:forEach var="reply" items="${replyList}">
-                <div class="reply-item">
+                <div class="reply-item" id="reply-${reply.replyNo}">
                     
                     <span class="post-writer-badge">${reply.userName}</span>
-                    <span class="reply-content">${reply.replyContent}</span>
+                    <span class="reply-content" id="content-${reply.replyNo}">${reply.replyContent}</span>
+                    
+                    <!-- 수정 input (숨김 상태) -->
+				    <div class="reply-edit-box" id="edit-${reply.replyNo}" style="display:none;">
+				        <textarea id="editContent-${reply.replyNo}">${reply.replyContent}</textarea>
+				        <button onclick="updateReply(${reply.replyNo})">수정완료</button>
+				        <button onclick="cancelEdit(${reply.replyNo})">취소</button>
+				    </div>
                     
                     <div class="reply-meta">
-                        <span><fmt:formatDate value="${reply.replyDate}" pattern="yyyy.MM.dd HH:mm" /></span>
+                        <span>
+                        	<fmt:formatDate value="${reply.replyDate}" pattern="yyyy.MM.dd HH:mm" />
+                        </span>
                         
                         <c:choose>
 		                    <c:when test="${not empty loginUser and loginUser.userNo == reply.userNo}">
+		                        <button type="button" class="btn-delete-reply reply-delete-btn" onclick="showEditBox(${reply.replyNo})">댓글 수정</button>
 		                        <button type="button" class="btn-delete-reply reply-delete-btn" onclick="deleteReply(${reply.replyNo})">댓글 삭제</button>
 		                    </c:when>
 		                    
 		                    <c:when test="${not empty loginUser and loginUser.userNo != reply.userNo}">
-		                        <button type="button" class="btn-delete-reply reply-delete-btn" onclick="reportReply(${reply.replyNo})" ">댓글 신고</button>
+		                        <button type="button" class="report-btn" onclick="openReportPopup('reply', ${reply.replyNo})">신고</button>
 		                    </c:when>
 		                </c:choose>
                     </div>
                 </div>
             </c:forEach>
         </div>
+        <jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
         <div class="reply-pagination">
 		    <ul class="pagination-list">
 		        <c:if test="${pi.currentPage > 1}">
@@ -161,5 +151,6 @@
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 <script src="${pageContext.request.contextPath}/resources/js/boardJs/boardDetail.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
 </body>
 </html>

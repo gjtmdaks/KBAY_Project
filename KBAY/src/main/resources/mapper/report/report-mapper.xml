@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="report">
+	<select id="checkDuplicateReport" resultType="int">
+	    SELECT COUNT(*)
+	    FROM REPORT
+	    WHERE USER_NO = #{userNo}
+	      AND TARGET_TYPE = #{targetType}
+	      AND TARGET_NO = #{targetNo}
+	</select>
+	
+	<insert id="insertReport">
+	    INSERT INTO REPORT (
+	        REPORT_NO,
+	        USER_NO,
+	        REPORT_CD_NO,
+	        TARGET_TYPE,
+	        TARGET_NO,
+	        STATUS,
+	        CREATED_AT
+	    ) VALUES (
+	        SEQ_REPORT_NO.NEXTVAL,
+	        #{userNo},
+	        #{reportCdNo},
+	        #{targetType},
+	        #{targetNo},
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
+</mapper>

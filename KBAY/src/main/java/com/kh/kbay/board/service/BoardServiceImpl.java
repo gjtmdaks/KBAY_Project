@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.kh.kbay.board.dao.BoardDao;
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
-import com.kh.kbay.board.model.vo.Reply;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
-
 	private final BoardDao boardDao;
 	
 	@Override
 	public int selectBoardListCount(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
 		return boardDao.selectBoardListCount(paramMap);
 	}
 
 	@Override
 	public List<BoardPost> selectList(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
 		return boardDao.selectList(paramMap);
 	}
 
@@ -55,51 +51,21 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public BoardPost selectBoardDetail(int boardNo) {
-		// TODO Auto-generated method stub
 		return boardDao.selectBoardDetail(boardNo);
 	}
 
 	@Override
 	public List<BoardImg> selectBoardImg(int boardNo) {
-		// TODO Auto-generated method stub
 		return boardDao.selectBoardImg(boardNo);
 	}
 
 	@Override
 	public int deleteBoard(int boardNo) {
-		// TODO Auto-generated method stub
 		return boardDao.deleteBoard(boardNo);
 	}
 
 	@Override
-	public int insertReply(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
-		return boardDao.insertReply(paramMap);
-	}
-	
-	@Override
-	public List<Reply> selectReplyList(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return boardDao.selectReplyList(map);
-	}
-	
-	
-	@Override
-	public int deleteReply(int replyNo) {
-		// TODO Auto-generated method stub
-		return boardDao.deleteReply(replyNo);
-	}
-
-	@Override
-	public int selectReplyCount(int boardNo) {
-		// TODO Auto-generated method stub
-		return boardDao.selectReplyCount(boardNo);
-	}
-
-	@Override
 	public int updateBoard(BoardPost b, List<Integer> deleteImgs, List<BoardImg> newImgList) {
-		// TODO Auto-generated method stub
-		
 		int result = boardDao.updateBoard(b);
 		if(result == 0) {
 			throw new RuntimeException("게시글 변경 실패");
@@ -128,16 +94,12 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void updateViewCount(int boardNo) {
-		// TODO Auto-generated method stub
 		boardDao.updateViewCoun(boardNo);
 	}
 
-	
-
-
-	
-
-	
-
+	@Override
+	public List<String> getAllImageNames() {
+		return boardDao.getAllImageNames();
+	}
 	
 }

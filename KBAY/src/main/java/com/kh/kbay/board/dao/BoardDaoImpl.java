@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
-import com.kh.kbay.board.model.vo.Reply;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,95 +16,61 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class BoardDaoImpl implements BoardDao {
-	
 	private final SqlSessionTemplate session;
 	
 	@Override
 	public int selectBoardListCount(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
 		return session.selectOne("boardPost.selectBoardListCount",paramMap);
 	}
 
 	@Override
 	public List<BoardPost> selectList(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
 		return session.selectList("boardPost.selectList",paramMap);
 	}
 
 	@Override
 	public int insertBoard(BoardPost b) {
-		// TODO Auto-generated method stub
 		return session.insert("boardPost.insertBoard", b);
 	}
 
 	@Override
 	public int insertBoardImgList(List<BoardImg> imgList) {
-		// TODO Auto-generated method stub
 		return session.insert("boardPost.insertBoardImgList", imgList);
 	}
 
 	@Override
 	public BoardPost selectBoardDetail(int boardNo) {
-		// TODO Auto-generated method stub
 		return session.selectOne("boardPost.selectBoardDetail", boardNo);
 	}
 
 	@Override
 	public List<BoardImg> selectBoardImg(int boardNo) {
-		// TODO Auto-generated method stub
 		return session.selectList("boardPost.selectBoardImg", boardNo);
 	}
 
 	@Override
 	public int deleteBoard(int boardNo) {
-		// TODO Auto-generated method stub
 		return session.delete("boardPost.deleteBoard", boardNo);
-	}
-
-	// 댓글
-	@Override
-	public int insertReply(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
-		return session.insert("boardPost.insertReply", paramMap);
-	}
-	
-	
-	@Override
-	public List<Reply> selectReplyList(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return session.selectList("boardPost.selectReplyList", map);
-	}
-
-	@Override
-	public int deleteReply(int replyNo) {
-		// TODO Auto-generated method stub
-		return session.delete("boardPost.deleteReply" , replyNo);
-	}
-
-	@Override
-	public int selectReplyCount(int boardNo) {
-		// TODO Auto-generated method stub
-		return session.selectOne("boardPost.selectReplyCount" , boardNo);
 	}
 
 	@Override
 	public int updateBoard(BoardPost b) {
-		// TODO Auto-generated method stub
 		return session.update("boardPost.updateBoard", b);
 	}
 
 	@Override
 	public int deleteBoardImgList(List<Integer> deleteImgs) {
-		// TODO Auto-generated method stub
 		return session.update("boardPost.deleteBoardImgList", deleteImgs);
 	}
 
 	@Override
 	public void updateViewCoun(int boardNo) {
-		// TODO Auto-generated method stub
 		session.update("boardPost.updateViewCoun", boardNo);
 	}
 
-	
+	@Override
+	public List<String> getAllImageNames() {
+		return session.selectList("boardPost.getAllImageNames");
+	}
 	
 }

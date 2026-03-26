@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.kh.kbay.board.model.vo.BoardImg;
 import com.kh.kbay.board.model.vo.BoardPost;
-import com.kh.kbay.board.model.vo.Reply;
 
 public interface BoardDao {
 
@@ -23,19 +22,13 @@ public interface BoardDao {
 
 	int deleteBoard(int boardNo);
 
-	int insertReply(Map<String, Object> paramMap);
-
-	List<Reply> selectReplyList(Map<String, Object> map);
-
-	int deleteReply(int replyNo);
-
-	int selectReplyCount(int boardNo);
-
 	int updateBoard(BoardPost b);
 
 	int deleteBoardImgList(List<Integer> deleteImgs);
 
 	void updateViewCoun(int boardNo);
+
+	List<String> getAllImageNames();
 
 
 }
