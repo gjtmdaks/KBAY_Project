@@ -10,6 +10,11 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
+<!-- 웹소켓 통신을 위한 JS 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
 <meta charset="UTF-8">
 <title>K-Bay 경매 목록</title>
 <link rel="stylesheet"
@@ -138,12 +143,19 @@
 		</div>
 	
 	        <!-- 입찰 -->
-	        <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
-	            <div class="bid-box">
-	                <input type="number" id="bidPrice" placeholder="입찰 금액">
-	                <button onclick="submitBid(${item.itemNo})">입찰하기</button>
-	            </div>
-	        </c:if>
+	       <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
+    <div class="bid-section-wrapper">
+        <div class="bid-box">
+            <input type="number" id="bidPrice" placeholder="입찰 금액">
+            <button onclick="submitBid(event, ${item.itemNo})">입찰하기</button>
+        </div>
+        
+        <p id="topBidderMsg" class="top-bidder-msg" 
+           style="color: #2980b9; font-weight: bold; margin-top: 12px; ${isTopBidder ? '' : 'display: none;'}">
+            📢 귀하가 현재 최순위 입찰자입니다.
+        </p>
+  		  </div>
+		</c:if>
 	    </div>
 	    
 	    
@@ -226,18 +238,20 @@
 	
 	
 	// 입찰
-	function submitBid(itemNo){
-		const bidPrice = parseInt(document.getElementById("bidPrice").value, 10);
-	
-	    if(!bidPrice){
-	        alert("금액을 입력하세요.");
-	        return;
-	    }
+	function submitBid(e, itemNo){
+    const btn = event.target; // 클릭한 버튼
+    const bidPriceInput = document.getElementById("bidPrice");
+    const bidPrice = parseInt(bidPriceInput.value, 10);
+
+    if(!bidPrice || isNaN(bidPrice)){
+        alert("올바른 금액을 입력하세요.");
+        return;
+    }
 	
 	    // 1차 확인 팝업
-	    openConfirmModal(bidPrice, function() {
-	
-	        // 확인 눌렀을 때 실행
+  openConfirmModal(bidPrice, function() {
+	    	btn.disabled = true;
+
 	        fetch(`${pageContext.request.contextPath}/bid`, {
 	            method: "POST",
 	            headers: {
@@ -249,7 +263,7 @@
 	            })
 	        })
 	        .then(res => {
-	            if(res.status === 401){
+	            if (res.status === 401) {
 	                alert("로그인이 필요합니다.");
 	                location.href = "/kbay/member/login";
 	                return;
@@ -257,39 +271,34 @@
 	            return res.json();
 	        })
 	        .then(data => {
-			
-			    if(!data) return;
-			
-			    if(data.result === "SUCCESS"){
-			
-			        if(data.ranking === 1){
-			            openFirstBidderModal();
-			        } else {
-			            openSecondBidderModal();
-			        }
-			
-			    } else {
-			
-			        // 🔥 메시지 기반 처리
-			        if(data.message === "LOGIN_REQUIRED"){
-			            alert("로그인이 필요합니다.");
-			            location.href = "/kbay/member/login";
-			
-			        } else {
-			            alert(data.message || "입찰 실패");
-			        }
-			    }
-			})
+	            if (!data) return;
+
+	            if (data.result === "SUCCESS") {
+	                bidPriceInput.value = ""; // 입력창 비우기
+	                if (data.ranking === 1) {
+	                    openFirstBidderModal();
+	                } else {
+	                    openSecondBidderModal();
+	                }
+	            } else {
+	                // 서버에서 "현재가보다 높은 금액을 입력하세요" 등의 메시지를 그대로 전달
+	                alert(data.message || "입찰 실패");
+	            }
+	        })
 	        .catch(err => {
 	            console.error(err);
 	            alert("에러 발생");
+	        })
+	        .finally(() => {
+	            // [추가] 통신 완료 후 버튼 다시 활성화
+	            btn.disabled = false;
 	        });
-	
 	    });
 	}
 	
 	function openConfirmModal(bidPrice, onConfirm){
 
+		
 	    const modal = document.getElementById("confirmModal");
 
 	    if(!modal){
@@ -358,30 +367,74 @@
 	    thumbList.scrollLeft = scrollLeft - walk;
 	});
 	
-	function updatePrice(itemNo){
+	
+	let stompClient = null;
+	const itemNo = ${item.itemNo};
 
-	    fetch(`/kbay/bid/price/${itemNo}`)
-	    .then(res => res.json())
-	    .then(data => {
+	function connect() {
+	    // 1. WebSocket 연결 (WebSocketConfig에서 설정한 엔드포인트)
+	    const socket = new SockJS('${pageContext.request.contextPath}/ws');
+	    stompClient = Stomp.over(socket);
 
-	        if(!data) return;
+	    // 디버그 로그가 너무 많으면 아래 주석 해제
+	    // stompClient.debug = null; 
 
-	        // 현재가 갱신
-	        document.getElementById("currentPrice").innerText =
-	            data.currentPrice.toLocaleString();
+	    stompClient.connect({}, function (frame) {
+	        console.log('Connected: ' + frame);
 
-	        // 입찰수 갱신
-	        document.getElementById("bidCount").innerText =
-	            data.bidCount + "회";
-
-	    })
-	    .catch(err => console.error(err));
+	        // 2. 해당 상품의 채널 구독 (RedisSubscriber에서 보내는 경로)
+	        stompClient.subscribe('/topic/bid/' + itemNo, function (response) {
+	            const bidData = JSON.parse(response.body);
+	            
+	            // 3. 실시간 UI 업데이트 실행
+	            updateRealTimeUI(bidData);
+	        });
+	    }, function(error) {
+	        console.log('STOMP error: ' + error);
+	        // 연결 끊김 시 5초 후 재연결 시도
+	        setTimeout(connect, 5000);
+	    });
 	}
 
-	// 3초마다 갱신하는 부분
-	setInterval(() => {
-	    updatePrice(${item.itemNo}); 
-	}, 3000);
+	// 실시간 UI 갱신 함수
+	function updateRealTimeUI(data) {
+	    // 현재가 갱신 (애니메이션 효과 추가 권장)
+	    const priceEl = document.getElementById("currentPrice");
+	    const bidCountEl = document.getElementById("bidCount");
+	    const topMsg = document.getElementById("topBidderMsg");
+
+	    // 1. 현재가(2등 가격) 갱신
+	    const prevPrice = parseInt(priceEl.innerText.replace(/,/g, '')) || 0;
+	    priceEl.innerText = data.bidPrice.toLocaleString();
+	    
+	 // 2. 가격 상승 시 시각적 효과
+	    if(data.bidPrice > prevPrice) {
+	        priceEl.classList.add("price-up"); // CSS로 빨간색 깜빡임 효과
+	        setTimeout(() => priceEl.classList.remove("price-up"), 800);
+	    }
+	    
+
+	    // 입찰수 갱신 (data에 bidCount가 포함되어야 함, 없다면 기존처럼 fetch 호출 가능)
+	    // 여기서는 간단하게 기존 숫자에 +1을 하거나 최신 정보를 다시 가져옵니다.
+	    let count = parseInt(bidCountEl.innerText)|| 0 ;
+	    bidCountEl.innerText = (count + 1) + "회";
+	    
+	    if (String(data.userNo) === String(currentUserNo)) {
+	        if(topMsg) topMsg.style.display = "block";
+	    } else {
+	        if(topMsg) topMsg.style.display = "none";
+	    }
+	    
+	    // 만약 입찰 기록 모달이 열려있다면 즉시 새로고침
+	    if(document.getElementById("bidModal").style.display === "flex") {
+	        openBidModal(itemNo);
+	    }
+	}
+
+	// 기존 setInterval은 삭제하고 connect() 호출
+	document.addEventListener("DOMContentLoaded", function() {
+	    connect();
+	});
 	</script>
 	
 	
