@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adminMapper">
+
+    <select id="selectMemberListCount" parameterType="map" resultType="_int">
+        SELECT COUNT(*) 
+        FROM MEMBER
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchCondition == 'userId'">
+                        USER_ID LIKE '%' || #{searchKeyword} || '%'
+                    </when>
+                    <when test="searchCondition == 'userName'">
+                        USER_NAME LIKE '%' || #{searchKeyword} || '%'
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMemberList" parameterType="map" resultType="com.kh.kbay.member.model.vo.Member">
+        SELECT * FROM (
+            SELECT ROWNUM RNUM, A.* FROM (
+                SELECT 
+                    USER_NO as userNo, 
+                    USER_ID as userId, 
+                    USER_NAME as userName,
+                    USER_ADDRESS as userAddress, 
+                    USER_PHONE as userPhone,
+                    USER_ENROLL_DATE as userEnrollDate
+                FROM MEMBER
+                <where>
+                    <if test="searchKeyword != null and searchKeyword != ''">
+                        <choose>
+                            <when test="searchCondition == 'userId'">
+                                USER_ID LIKE '%' || #{searchKeyword} || '%'
+                            </when>
+                            <when test="searchCondition == 'userName'">
+                                USER_NAME LIKE '%' || #{searchKeyword} || '%'
+                            </when>
+                        </choose>
+                    </if>
+                </where>
+                ORDER BY USER_NO DESC
+            ) A
+        )
+        WHERE RNUM BETWEEN #{offset} AND #{limit}
+    </select>
+
+    <select id="selectMemberDetail" parameterType="_int" resultType="com.kh.kbay.member.model.vo.Member">
+        SELECT 
+            USER_NO as userNo, USER_ID as userId, USER_NAME as userName,
+            USER_ADDRESS as userAddress, USER_PHONE as userPhone,
+            USER_EMAIL as userEmail, USER_ENROLL_DATE as userEnrollDate
+        FROM MEMBER
+        WHERE USER_NO = #{userNo}
+    </select>
+
+    <select id="selectUserItemList" parameterType="_int" resultType="com.kh.kbay.item.model.vo.Item">
+        SELECT 
+            ITEM_NO as itemNo, ITEM_TITLE as itemTitle,
+            START_PRICE as startPrice, CURRENT_PRICE as currentPrice,
+            CREATE_AT as createAt, STATUS as status
+        FROM ITEM
+        WHERE USER_NO = #{userNo}
+        ORDER BY CREATE_AT DESC
+    </select>
+
+    <select id="selectUserPostList" parameterType="_int" resultType="com.kh.kbay.board.model.vo.BoardPost">
+        SELECT 
+            BOARD_NO as boardNo, BOARD_TITLE as boardTitle,
+            BOARD_DATE as boardDate, VIEWS as views
+        FROM BOARD_POST
+        WHERE USER_NO = #{userNo}
+        ORDER BY BOARD_NO DESC
+    </select>
+
+</mapper>

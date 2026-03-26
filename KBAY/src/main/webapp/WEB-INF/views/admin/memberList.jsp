@@ -1,37 +1,33 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <%-- 🌟 날짜 포맷용 추가 --%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원 조회 및 수정</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
-<link rel="stylesheet" 
-	href="${pageContext.request.contextPath}/resources/css/adminCss/memberList.css">
+<title>회원 관리 페이지 - K-BAY</title>
+<link rel="stylesheet" href="${contextPath}/resources/css/headerFooterCss/footer.css">
+<link rel="stylesheet" href="${contextPath}/resources/css/headerFooterCss/header.css">
+<link rel="stylesheet" href="${contextPath}/resources/css/adminCss/memberList.css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
+
 <div class="admin-wrap">
     <jsp:include page="/WEB-INF/views/admin/adminSidebar.jsp" />
 
     <div class="main-content">
-        
         <div class="page-header">
             <h2 class="page-title">전체 사용자 조회</h2>
             
             <div class="search-area">
                 <select class="search-select" name="searchCondition">
-                    <option value="userId">유저아이디</option>
-                    <option value="userName">유저이름</option>
-                    <option value="enrollDate">가입일자</option>
+                    <option value="userId" ${param.searchCondition == 'userId' ? 'selected' : ''}>유저아이디</option>
+                    <option value="userName" ${param.searchCondition == 'userName' ? 'selected' : ''}>유저이름</option>
                 </select>
-                <input type="text" class="search-input" name="searchKeyword" placeholder="Search">
+                <input type="text" class="search-input" name="searchKeyword" value="${param.searchKeyword}" placeholder="Search">
                 <button type="button" class="btn-search">검색</button>
             </div>
         </div>
@@ -49,7 +45,6 @@
             </thead>
             <tbody>
                 <c:choose>
-                    <%-- 1. 조회된 회원이 없을 경우 --%>
                     <c:when test="${empty list}">
                         <tr>
                             <td colspan="6" style="padding: 50px 0; text-align: center; color: #777;">
@@ -57,23 +52,19 @@
                             </td>
                         </tr>
                     </c:when>
-                    
-                    <%-- 2. 조회된 회원이 있을 경우 (10개씩 반복) --%>
                     <c:otherwise>
                         <c:forEach var="member" items="${list}">
                             <tr class="member-row" data-user-no="${member.userNo}">
                                 <td>${member.userNo}</td>
                                 <td>${member.userId}</td>
                                 <td>${member.userName}</td>
-                                
-                                <%-- 
-                                    주의: address, phone, enrollDate는 
-                                    질문자님의 Member VO 클래스의 변수명에 맞게 살짝 수정해 주세요!
-                                    (예: userAddress, userPhone 등)
-                                --%>
-                                <td>${member.address}</td>
-                                <td>${member.phone}</td>
-                                <td>${member.enrollDate}</td>
+                                <td>${member.userAddress}</td>
+                                <td>${member.userPhone}</td>
+                                <td>
+                                	<fmt:parseDate value="${member.userEnrollDate}" var="parsedDate" 
+                                                   pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
+                                    <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm" />
+                                </td>
                             </tr>
                         </c:forEach>
                     </c:otherwise>
@@ -81,72 +72,64 @@
             </tbody>
         </table>
 
+        <%-- 페이징 영역 (기존 유지) --%>
         <div class="pagination-area">
             <ul class="pagination-list">
-                
-                <%-- 1. 이전 페이지 (<) 버튼 --%>
-                <c:choose>
-                    <%-- 현재 페이지가 1페이지면 클릭 안 되게 막기 --%>
-                    <c:when test="${pi.currentPage eq 1}">
-                        <li class="disabled"><a href="javascript:void(0)">&lt;</a></li>
-                    </c:when>
-                    <c:otherwise>
-                        <%-- 아니면 이전 페이지(현재페이지 - 1)로 이동! (검색어 유지) --%>
-                        <li><a href="${contextPath}/admin/memberList?cpage=${pi.currentPage - 1}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">&lt;</a></li>
-                    </c:otherwise>
-                </c:choose>
+                <c:if test="${pi.currentPage > 1}">
+                    <li><a href="${contextPath}/admin/memberList?cpage=${pi.currentPage - 1}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">&lt;</a></li>
+                </c:if>
 
-                <%-- 2. 페이지 번호 (startPage ~ endPage까지 반복) --%>
                 <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-                    <c:choose>
-                        <%-- 현재 페이지 번호일 경우 진하게(active) 표시하고 클릭 막기 --%>
-                        <c:when test="${p eq pi.currentPage}">
-                            <li class="active"><a href="javascript:void(0)">${p}</a></li>
-                        </c:when>
-                        <%-- 다른 페이지 번호일 경우 해당 페이지로 이동! (검색어 유지) --%>
-                        <c:otherwise>
-                            <li><a href="${contextPath}/admin/memberList?cpage=${p}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">${p}</a></li>
-                        </c:otherwise>
-                    </c:choose>
+                    <li class="${p == pi.currentPage ? 'active' : ''}">
+                        <a href="${contextPath}/admin/memberList?cpage=${p}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">${p}</a>
+                    </li>
                 </c:forEach>
 
-                <%-- 3. 다음 페이지 (>) 버튼 --%>
-                <c:choose>
-                    <%-- 현재 페이지가 마지막 페이지(maxPage)면 클릭 안 되게 막기 --%>
-                    <c:when test="${pi.currentPage eq pi.maxPage}">
-                        <li class="disabled"><a href="javascript:void(0)">&gt;</a></li>
-                    </c:when>
-                    <c:otherwise>
-                        <%-- 아니면 다음 페이지(현재페이지 + 1)로 이동! (검색어 유지) --%>
-                        <li><a href="${contextPath}/admin/memberList?cpage=${pi.currentPage + 1}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">&gt;</a></li>
-                    </c:otherwise>
-                </c:choose>
-                
+                <c:if test="${pi.currentPage < pi.maxPage}">
+                    <li><a href="${contextPath}/admin/memberList?cpage=${pi.currentPage + 1}&searchCondition=${param.searchCondition}&searchKeyword=${param.searchKeyword}">&gt;</a></li>
+                </c:if>
             </ul>
         </div>
     </div>
 </div>
 
-<div id="memberModal" class="modal-overlay">
-    <div class="modal-content">
+<%-- 모달창 --%>
+<div id="memberModal" class="modal-overlay"> <div class="modal-content">
         <div class="modal-header">
-            <h3>회원 상세 정보</h3>
-            <button class="btn-close-modal" id="closeModalTop">&times;</button>
+            <h3>회원 관리 메뉴</h3> <button class="btn-close-modal" id="closeModalTop">&times;</button>
         </div>
+        
         <div class="modal-body">
-            <p style="color: #666; text-align: center; padding: 40px 0;">
-                선택한 회원의 상세 정보 및 수정 폼이 들어갈 자리입니다.<br>
-                (나중에 아이디, 이름, 권한 변경 등의 기능을 추가하세요!)
-            </p>
+            <%-- 1. 회원 요약 정보 영역 --%>
+            <div class="user-info-summary">
+                <span class="user-badge">회원 No. <span id="targetUserNo"></span></span>
+                <h4 id="targetUserName">사용자 이름</h4>
+                <p id="targetUserId"></p>
+            </div>
+
+            <%-- 2. 5개 관리 메뉴 그리드 (이모지 제거, 클래스 추가) --%>
+            <div class="admin-menu-grid">
+                <button type="button" class="menu-btn" onclick="viewUserAuctions()">경매 내역</button>
+                <button type="button" class="menu-btn" onclick="viewUserPosts()">작성 글</button>
+                <button type="button" class="menu-btn" onclick="viewUserComments()">작성 댓글</button>
+                <button type="button" class="menu-btn" onclick="viewUserReports()">신고 내역</button>
+                
+                <button type="button" class="menu-btn full-width" onclick="openEditForm()">정보 수정</button>
+            </div>
         </div>
+        
         <div class="modal-footer">
             <button type="button" class="btn-cancel" id="closeModalBottom">닫기</button>
-            <button type="button" class="btn-save">수정 내용 저장</button>
         </div>
     </div>
 </div>
 
+<%-- 🌟 자바스크립트 통역사 배치 (contextPath 전달) --%>
+<script>
+    const contextPath = "${contextPath}";
+</script>
 <script src="${contextPath}/resources/js/adminJs/memberList.js"></script>
+
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 </body>
 </html>
