@@ -70,15 +70,12 @@
 
     <select id="selectUserPostList" parameterType="_int" resultType="com.kh.kbay.board.model.vo.BoardPost">
         SELECT 
-            BOARD_NO as boardNo, 
-            BOARD_TITLE as boardTitle,
-            BOARD_DATE as boardDate, 
-            
-            BOARD_COUNT as views 
-            
-            FROM BOARD_POST
-        WHERE USER_NO = #{userNo}
-        ORDER BY BOARD_NO DESC
+        BOARD_NO as boardNo, 
+        BOARD_TITLE as boardTitle,
+        BOARD_DATE as boardDate, 
+        VIEW_COUNT as views,        BOARD_DELETE as boardDelete  FROM BOARD_POST
+    WHERE USER_NO = #{userNo}
+    ORDER BY BOARD_NO DESC
     </select>
 
 </mapper>
