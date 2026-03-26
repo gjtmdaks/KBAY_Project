@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.kbay.admin.dao.AdminDao;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 
@@ -48,6 +49,12 @@ public class AdminServiceImpl implements AdminService {
 	public List<BoardPost> selectUserPostList(int userNo) {
 		// 회원이 작성한 게시글 목록 가져오기 (게시판 VO 이름이 BoardPost 군요!)
 		return ad.selectUserPostList(userNo);
+	}
+
+	@Override
+	public List<Reply> selectUserReplyList(int userNo) {
+		// TODO Auto-generated method stub
+		return ad.selectUserReplyList(userNo);
 	}
 
 }

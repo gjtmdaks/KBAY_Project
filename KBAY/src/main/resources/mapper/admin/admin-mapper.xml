@@ -77,5 +77,16 @@
     WHERE USER_NO = #{userNo}
     ORDER BY BOARD_NO DESC
     </select>
-
+	
+	<select id="selectUserReplyList" parameterType="_int" resultType="com.kh.kbay.board.model.vo.Reply">
+    SELECT 
+        REPLY_NO as replyNo,
+        BOARD_NO as boardNo,
+        REPLY_CONTENT as replyContent,
+        REPLY_DATE as replyDate,
+        REPLY_DELETE as replyDelete
+    FROM REPLY
+    WHERE USER_NO = #{userNo}
+    ORDER BY REPLY_NO DESC
+	</select>
 </mapper>

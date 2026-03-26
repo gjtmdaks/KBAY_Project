@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 
@@ -18,5 +19,7 @@ public interface AdminDao {
 	List<Item> selectUserItemList(int userNo);
 
 	List<BoardPost> selectUserPostList(int userNo);
+
+	List<Reply> selectUserReplyList(int userNo);
 
 }
