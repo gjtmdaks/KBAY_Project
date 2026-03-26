@@ -8,26 +8,26 @@
         <c:when test="${type == 'purchase'}">
             <h4>구매 관리</h4>
             <div class="card-buttons">
-                <button>입찰 현황</button>
-                <button>결제 현황</button>
-                <button>사고 내역</button>
+                <a href="/mypage/bidList" class="card-btn">입찰 현황</a>
+                <a href="/mypage/paymentList" class="card-btn">결제 현황</a>
+                <a href="/mypage/reportList" class="card-btn">사고 내역</a>
             </div>
         </c:when>
         <c:when test="${type == 'sale'}">
             <h4>판매 관리</h4>
             <div class="card-buttons">
-                <button>판매 현황</button>
-                <button>거래 현황</button>
-                <button>사고 내역</button>
+                <a href="/mypage/bidList" class="card-btn">판매 현황</a>
+                <a href="/mypage/paymentList" class="card-btn">거래 현황</a>
+                <a href="/mypage/reportList" class="card-btn">사고 내역</a>
             </div>
         </c:when>
         <c:when test="${type == 'activity'}">
             <h4>나의 활동</h4>
             <div class="card-buttons">
-                <button>FAQ</button>
-                <button>나의 게시글 보기</button>
-                <button>신고 내역</button>
-                <button>나의 댓글 보기</button>
+                <a href="/mypage/faq" class="card-btn">FAQ</a>
+                <a href="/mypage/boardList" class="card-btn">나의 게시글 보기</a>
+                <a href="/mypage/reportList" class="card-btn">신고 내역</a>
+                <a href="/mypage/replyList" class="card-btn">나의 댓글 보기</a>
             </div>
         </c:when>
         <c:when test="${type == 'accident'}">
