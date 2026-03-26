@@ -124,7 +124,7 @@
     </div>
 </div>
 
-<%-- 🌟 자바스크립트 통역사 배치 (contextPath 전달) --%>
+<%-- 자바스크립트 통역사 배치 (contextPath 전달) --%>
 <script>
     const contextPath = "${contextPath}";
 </script>
