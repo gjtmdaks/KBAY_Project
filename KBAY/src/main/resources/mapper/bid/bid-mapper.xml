@@ -100,17 +100,16 @@
 	    ORDER BY B.BID_TIME DESC
 	</select>
 	
-	<select id="findTopBid" resultType="bid">
-	    SELECT *
-	    FROM (
-	        SELECT *
-	        FROM BID
-	        WHERE ITEM_NO = #{itemNo}
-	        	AND BID_STATUS IS NULL
-	        ORDER BY BID_PRICE DESC, BID_TIME ASC
-	    )
-	    WHERE ROWNUM = 1
-	</select>
+	    <select id="findTopBid" parameterType="_int" resultType="Bid">
+    SELECT *
+    FROM (
+        SELECT *
+        FROM BID
+        WHERE ITEM_NO = #{itemNo}
+        ORDER BY BID_PRICE DESC, BID_TIME ASC
+    )
+    WHERE ROWNUM = 1
+    </select>
 	<select id="findSecondBid" resultType="Bid">
 	    SELECT *
 	    FROM (
@@ -145,4 +144,5 @@
 	    WHERE BID_NO = #{bidNo}
 	    	AND BID_STATUS IS NULL
 	</update>
+	
 </mapper>

@@ -7,13 +7,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.kbay.bid.dao.BidDao;
 import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.common.RedisPublisher;
+import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.service.ItemService;
+import com.kh.kbay.member.dao.MemberDao;
+import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +31,16 @@ public class BidServiceImpl implements BidService {
 	// 여기에서 Redis-x64-3.0.504.zip 다운
 	// 압축해제 -> redis-server.exe 실행 -> redis-cli.exe 실행 후 톰캣서버 가동
 	private final BidDao bd;
+    private final MemberService ms;
+    private final MemberDao md;
+    private final ItemService is;
     private final RedissonClient redissonClient;
     private final RedisPublisher redisPublisher;
 
     @Override
     @Transactional
     public int placeBid(Bid req) {
+        Bid previousTopBid = bd.findTopBid(req.getItemNo());
         // 1. Redis가 없는 경우 (Fallback)
         if (redissonClient == null) {
             checkSelfOutbidding(req); // 공통 로직으로 분리 권장
@@ -55,6 +63,25 @@ public class BidServiceImpl implements BidService {
             // 입찰 실행 및 랭킹 확인
             int ranking = bd.placeBid(req);
             bd.updateRanking(req.getItemNo());
+            
+            // 2. [비동기 메일 발송 조건]
+            // 내가 1등이 되었고, 이전 1등이 존재하며, 그게 내가 아닐 때
+            if (ranking == 1 && previousTopBid != null && previousTopBid.getUserNo() != req.getUserNo()) {
+                log.info("메일 발송 조건 충족! 이전 1등 번호: {}", previousTopBid.getUserNo());
+                // 이전 1등의 유저 정보(이메일) 조회
+                Member outbidUser = md.selectMemberByUserNo(previousTopBid.getUserNo()); 
+                
+                if (outbidUser != null && outbidUser.getUserEmail() != null) {
+                    // 1. 아이템 번호로 실제 아이템 정보를 조회해옵니다. (ItemService 주입 필요)
+                    Item item = is.selectItemByNo(req.getItemNo()); 
+                    String itemTitle = (item != null) ? item.getItemTitle() : "경매 상품";
+
+                    log.info("메일 발송 시도 - 수신자: {}, 상품명: {}", outbidUser.getUserEmail(), itemTitle);
+                    
+                    // 2. "상품알림" 대신 실제 itemTitle을 넘깁니다.
+                    ms.sendOutbidEmail(outbidUser.getUserEmail(), itemTitle, req.getBidPrice());
+                }
+            }
             
             // 갱신된 '2등 가격'(Vickrey 현재가) 조회
             int vickreyCurrentPrice = bd.selectCurrentPrice(req.getItemNo());

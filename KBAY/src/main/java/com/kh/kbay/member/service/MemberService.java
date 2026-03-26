@@ -19,4 +19,6 @@ public interface MemberService {
 	int emailCheck(String email);
 
 	boolean verifyCode(String email, String inputCode);
+	
+    void sendOutbidEmail(String email, String itemTitle, int newPrice);
 }

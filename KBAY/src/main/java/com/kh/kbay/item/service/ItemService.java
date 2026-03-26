@@ -28,4 +28,5 @@ public interface ItemService {
 
 	void updateEndItemStatus(int itemNo);
 
+    Item selectItemByNo(int itemNo);
 }

@@ -24,4 +24,5 @@ public interface MemberDao {
 	
 	int deleteAuthCode(String email);
 
+    Member selectMemberByUserNo(int userNo);
 }

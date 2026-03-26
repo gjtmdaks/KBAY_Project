@@ -181,4 +181,8 @@
 	    SET WINNER_PROCESSED = 'Y'
 	    WHERE ITEM_NO = #{itemNo}
 	</update>
+	
+	    <select id="selectItemByNo" resultType="item" >
+    SELECT * FROM ITEM WHERE ITEM_NO = #{itemNo}
+</select>
 </mapper>
