@@ -9,13 +9,8 @@
 <head>
 <meta charset="UTF-8">
 <title>관리자 페이지</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/adminCss/admin.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminCss/admin.css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />

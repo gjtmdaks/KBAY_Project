@@ -10,13 +10,7 @@
 <title>Insert title here</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
-<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/boardCss/boardDetail.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/reportCss/report.css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />

@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                     <td>사고 건수</td>
-                    <td>0건</td>
+                    <td>${accidentCount}건</td>
                 </tr>
             </table>
         </c:when>

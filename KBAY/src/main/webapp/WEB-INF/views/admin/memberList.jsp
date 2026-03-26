@@ -8,8 +8,6 @@
 <head>
 <meta charset="UTF-8">
 <title>회원 관리 페이지 - K-BAY</title>
-<link rel="stylesheet" href="${contextPath}/resources/css/headerFooterCss/footer.css">
-<link rel="stylesheet" href="${contextPath}/resources/css/headerFooterCss/header.css">
 <link rel="stylesheet" href="${contextPath}/resources/css/adminCss/memberList.css">
 </head>
 <body>

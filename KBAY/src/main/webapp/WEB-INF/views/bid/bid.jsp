@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bidCss/bid.css">
 <!-- 1. 입찰 확인 모달 -->
 <div id="confirmModal" class="modal">
     <div class="modal-content">

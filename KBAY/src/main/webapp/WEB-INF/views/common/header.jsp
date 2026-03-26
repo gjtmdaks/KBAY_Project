@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <header>
 	<div class="container header-inner">
@@ -31,7 +32,7 @@
 				
 				<br>
 				
-				<a href="${contextPath}/member/mypage.me" class="hover-link">마이페이지</a> | 
+				<a href="${contextPath}/mypage/mypage.me" class="hover-link">마이페이지</a> | 
 				<sec:authorize access="hasAuthority('3')">
 					<a href="${contextPath}/admin/adminpage.me" class="hover-link">관리자페이지</a> | 
 				</sec:authorize>

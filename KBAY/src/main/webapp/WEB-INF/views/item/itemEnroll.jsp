@@ -7,10 +7,6 @@
 <meta charset="UTF-8">
 <title>K-Bay 경매 물품 등록</title>
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
-<link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/itemCss/itemEnroll.css">
 </head>
 <body>
