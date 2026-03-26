@@ -79,4 +79,8 @@ public class ItemDaoImpl implements ItemDao {
 		session.update("item.updateEndItemStatus", itemNo);
 	}
 	
+    @Override
+    public Item selectItemByNo(int itemNo) {
+        return session.selectOne("item.selectItemByNo",itemNo);
+    }
 }

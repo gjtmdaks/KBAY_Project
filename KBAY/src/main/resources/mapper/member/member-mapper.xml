@@ -75,4 +75,17 @@
     DELETE FROM MAIL_AUTH 
     WHERE USER_EMAIL = #{email}
 </delete>
+
+<select id="selectMemberByUserNo" parameterType="_int" resultMap="memberResultSet">
+    SELECT 
+        USER_NO,
+        USER_ID,
+        USER_NAME,
+        USER_EMAIL,
+        USER_PHONE,
+        AUTHORITY
+    FROM MEMBER
+    WHERE USER_NO = #{userNo}
+      AND USER_DELETE_YN = 'N'
+</select>
 </mapper>

@@ -33,4 +33,5 @@ public interface ItemDao {
 
 	void updateEndItemStatus(int itemNo);
 
+    Item selectItemByNo(int itemNo);
 }

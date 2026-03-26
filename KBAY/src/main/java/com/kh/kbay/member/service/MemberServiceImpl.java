@@ -8,6 +8,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -112,6 +113,30 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
         return result > 0;
     }
     
+    // 신규 최상위 입찰자가 나타났을 때 메일 전송
+    @Async
+    @Override
+    public void sendOutbidEmail(String email, String itemTitle, int newPrice) {
+        try {
+            MimeMessage msg = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "utf-8");
+            
+            helper.setFrom("dustkd1693@gmail.com", "K-Bay 경매알림");
+            helper.setTo(email);
+            helper.setSubject("[K-Bay] 입찰 순위 변동 알림입니다.");
+            
+            String content = "<h3>입찰 알림</h3>"
+                           + "<p>회원님이 입찰하신 <b>[" + itemTitle + "]</b> 상품에 더 높은 금액의 입찰자가 나타났습니다.</p>"
+                           + "<p>새로운 현재가: <span style='color:red;'>" + String.format("%,d", newPrice) + "원</span></p>"
+                           + "<p>낙찰을 위해 다시 입찰에 참여해보세요!</p>";
+            
+            helper.setText(content, true);
+            mailSender.send(msg);
+            log.info("비동기 알림 메일 발송 완료: {}", email);
+        } catch (Exception e) {
+            log.error("메일 발송 중 오류 발생", e);
+        }
+    }
     
 	
 }

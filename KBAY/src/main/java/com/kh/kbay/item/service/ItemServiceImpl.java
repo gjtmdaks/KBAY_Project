@@ -137,4 +137,9 @@ public class ItemServiceImpl implements ItemService {
 	public void updateEndItemStatus(int itemNo) {
 		id.updateEndItemStatus(itemNo);
 	}
+	
+    @Override
+    public Item selectItemByNo(int itemNo) {
+        return id.selectItemByNo(itemNo); 
+    }
 }

@@ -60,4 +60,9 @@ public class MemberDaoImpl implements MemberDao {
     public int deleteAuthCode(String email) {
         return session.delete("member.deleteAuthCode", email);
     }
+    
+    @Override
+    public Member selectMemberByUserNo(int userNo) {
+        return session.selectOne("member.selectMemberByUserNo", userNo);
+    }
 }
