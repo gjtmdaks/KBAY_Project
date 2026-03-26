@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.service.BidService;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
@@ -154,18 +155,29 @@ public class ItemController {
 	        @PathVariable("itemNo") int itemNo,
 	        Model model,
 	        HttpServletRequest request,
-	        HttpServletResponse response
+	        HttpServletResponse response,
+	        Authentication auth
 	        ) {
 		
 		Item item = is.selectItemDetail(itemNo, request, response);
-
+		
 	    int bidCount = bs.selectBidCount(itemNo);
 	    int currentPrice = bs.selectCurrentPrice(itemNo);
 	    int maxPrice = bs.selectMaxPrice(itemNo);
-		
+	    
 		if(item == null) {
 			return "common/errorPage"; 
 		}
+		
+		boolean isTopBidder = false;
+	    if (auth != null && auth.isAuthenticated()) {
+	        Member loginUser = (Member) auth.getPrincipal();
+	        Bid topBid = bs.findTopBid(itemNo); // bs(BidService)를 통해 1등 조회
+	        
+	        if (topBid != null && topBid.getUserNo() == loginUser.getUserNo()) {
+	            isTopBidder = true;
+	        }
+	    }
 		
 		ItemCategory itemCategory = is.selectItemCategory(item.getItemCdNo());
 
@@ -175,6 +187,7 @@ public class ItemController {
 	    model.addAttribute("currentPrice", currentPrice);
 	    model.addAttribute("maxPrice", maxPrice);
 	    model.addAttribute("now", new Date());
+	    model.addAttribute("isTopBidder", isTopBidder);
 		
 		return "item/itemDetail";
 	}

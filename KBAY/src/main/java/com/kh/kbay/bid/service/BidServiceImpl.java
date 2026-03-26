@@ -30,60 +30,73 @@ public class BidServiceImpl implements BidService {
     private final RedissonClient redissonClient;
     private final RedisPublisher redisPublisher;
 
-	@Override
-	@Transactional
-	public int placeBid(Bid req) {
+    @Override
+    @Transactional
+    public int placeBid(Bid req) {
+        // 1. Redis가 없는 경우 (Fallback)
+        if (redissonClient == null) {
+            checkSelfOutbidding(req); // 공통 로직으로 분리 권장
+            int ranking = bd.placeBid(req);
+            log.info("Redis 없음 → DB 기반 입찰 처리");
+            return ranking;
+        }
 
-	    // 🔥 Redis 없을 때 fallback
-	    if (redissonClient == null) {
+        // 2. Redis가 있는 경우
+        String lockKey = "bid:item:" + req.getItemNo();
+        RLock lock = redissonClient.getLock(lockKey);
 
-	        // DB만 사용 (트랜잭션 + select for update 추천)
-	        int ranking = bd.placeBid(req);
+        try {
+            boolean available = lock.tryLock(3, 5, TimeUnit.SECONDS);
+            if (!available) throw new IllegalStateException("입찰 폭주");
 
-	        // Redis 없으므로 pub/sub 생략
-	        log.info("Redis 없음 → DB 기반 입찰 처리");
+            // 락을 잡은 직후, 최신 상태에서 본인 체크를 수행
+            checkSelfOutbidding(req);
 
-	        return ranking;
-	    }
+            // 입찰 실행 및 랭킹 확인
+            int ranking = bd.placeBid(req);
+            bd.updateRanking(req.getItemNo());
+            
+            // 갱신된 '2등 가격'(Vickrey 현재가) 조회
+            int vickreyCurrentPrice = bd.selectCurrentPrice(req.getItemNo());
+            
+            // 🔥현재 1등이 누구인지 다시 확인
+            Bid finalTopBid = bd.findTopBid(req.getItemNo());
+            int topUserNo = (finalTopBid != null) ? finalTopBid.getUserNo() : req.getUserNo();
+            
+            // 메시지 생성 
+            Bid msg = new Bid(
+                    req.getItemNo(),
+                    vickreyCurrentPrice,
+                    topUserNo, 
+                    ranking
+            );
 
-	    // 🔥 Redis 있을 때만 실행
-	    String lockKey = "bid:item:" + req.getItemNo();
-	    RLock lock = redissonClient.getLock(lockKey);
+            if (redisPublisher != null) {
+                redisPublisher.publish("bid-channel", msg);
+            }
 
-	    try {
-	        boolean available = lock.tryLock(3, 5, TimeUnit.SECONDS);
+            return ranking;
 
-	        if (!available) {
-	            throw new IllegalStateException("입찰 폭주");
-	        }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("락 획득 중 인터럽트 발생", e);
+        } finally {
+            if (lock != null && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
 
-	        int ranking = bd.placeBid(req);
-
-	        // 메시지 생성
-	        Bid msg = new Bid(
-	                req.getItemNo(),
-	                req.getBidPrice(),
-	                req.getUserNo(),
-	                ranking
-	        );
-
-	        // 🔥 publisher도 null 체크
-	        if (redisPublisher != null) {
-	            redisPublisher.publish("bid-channel", msg);
-	        }
-
-	        return ranking;
-
-	    } catch (InterruptedException e) {
-	        Thread.currentThread().interrupt();
-	        throw new RuntimeException("락 획득 중 인터럽트 발생", e);
-
-	    } finally {
-	        if (lock != null && lock.isHeldByCurrentThread()) {
-	            lock.unlock();
-	        }
-	    }
-	}
+    // 중복 로직 방지를 위한 private 메소드
+    private void checkSelfOutbidding(Bid req) {
+        Bid topBid = bd.findTopBid(req.getItemNo());
+        if (topBid != null && topBid.getUserNo() == req.getUserNo()) {
+            if (req.getBidPrice() <= topBid.getBidPrice()) {
+                throw new IllegalArgumentException("이미 최순위 입찰자입니다. 기존 입찰가(" 
+                                                    + String.format("%,d", topBid.getBidPrice()) + "원)보다 높은 금액으로만 증액 가능합니다.");
+            }
+        }
+    }
 
 	@Override
 	public int selectBidCount(int itemNo) {
