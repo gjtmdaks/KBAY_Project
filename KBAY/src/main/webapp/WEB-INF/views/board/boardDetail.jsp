@@ -52,9 +52,10 @@
 	                      || fn:endsWith(ext, '.gif')}">
 	
 	                <img src="${bi.changeName}" 
-	                     alt="${bi.originName}"
-	                     title="${bi.originName}"
-	                     class="image-preview">
+						alt="${bi.originName}"
+						title="${bi.originName}"
+						class="image-preview"
+						onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
 	            </c:if>
 	        </c:forEach>
 	    </div>
