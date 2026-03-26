@@ -20,6 +20,7 @@
 .scroll-container {
     width: 100%;
     overflow-x: auto; /* 가로 스크롤 활성화 */
+    padding-top: 20px;
     padding-bottom: 20px;
     -ms-overflow-style: none; /* IE 스크롤바 숨기기 */
     scrollbar-width: thin; /* 파이어폭스 스크롤바 얇게 */

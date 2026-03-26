@@ -38,15 +38,10 @@
                          onclick="location.href='${pageContext.request.contextPath}/auction/detail/${item.itemNo}'" 
                          style="cursor:pointer;">
                     <div class="item-img">
-                        <c:choose>
-                            <c:when test="${not empty item.mainImg}">
-                                <img src="${item.mainImg}" alt="${item.itemTitle}" style="width:100%; height:100%; object-fit:cover;">
-                            </c:when>
-                            <c:otherwise>
-                                NO IMAGE
-                            </c:otherwise>
-                        </c:choose>
+                        <img src="${item.mainImg}" alt="${item.itemTitle}" style="width:100%; height:100%; object-fit:cover;"
+							onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
                     </div>
+                    
                     <div class="item-info">
                         <h4>${item.itemTitle}</h4>
                         <p class="price">
@@ -54,9 +49,9 @@
                         </p>
                         <div class="item-meta">
    						 <span>입찰 ${item.bidCount}회</span>
-  						  <span class="main-timer" 
-    						      data-end="${item.endTime.time}" 
-    						      style="color: #2C3E50; font-weight: bold;">
+  						 <span class="main-timer" 
+								data-end="${item.endTime.time}" 
+								style="color: #2C3E50; font-weight: bold;">
       							    계산 중...
    						 </span>
 						</div>
