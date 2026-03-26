@@ -1,60 +1,43 @@
+/* ==========================================
+   🌟 [전역 변수] 파일 최상단에 딱 한 번만 선언!
+   ========================================== */
+let originalModalBody = "";  // 메뉴판 복구용
+let currentModalData = [];   // 서버 데이터 저장용
+let currentModalPage = 1;    // 현재 페이지 번호
+const itemsPerPage = 5;      // 한 페이지당 보여줄 개수
+
 document.addEventListener('DOMContentLoaded', function() {
-    
     const modal = document.getElementById('memberModal');
     const tableBody = document.querySelector('.member-table tbody');
-    
-    // 모달 닫기 버튼들
     const closeBtns = [
         document.getElementById('closeModalTop'),
         document.getElementById('closeModalBottom')
     ];
 
-    // 메뉴의 원래 모습을 저장할 전역 변수 (뒤로가기/닫기 시 복구용)
-    let originalModalBody = "";
-
+    // 회원 행 클릭 시 상세 정보 조회
     if (tableBody) {
         tableBody.addEventListener('click', function(e) {
             const targetRow = e.target.closest('.member-row');
-            
             if (targetRow) {
                 const userNo = targetRow.getAttribute('data-user-no');
-                
-                // [AJAX] 유저 상세 정보 불러오기
-                fetch(`${contextPath}/admin/memberDetail?userNo=${userNo}`, {
-                    method: 'GET'
-                })
-                .then(response => {
-                    if(!response.ok) throw new Error("데이터 응답 실패");
-                    return response.json();
-                })
+                fetch(`${contextPath}/admin/memberDetail?userNo=${userNo}`)
+                .then(response => response.json())
                 .then(member => {
-                    // 데이터 꽂아넣기
                     document.getElementById('targetUserNo').innerText = member.userNo;
                     document.getElementById('targetUserName').innerText = member.userName;
                     document.getElementById('targetUserId').innerText = "@" + member.userId;
                     
-                    // 현재 메뉴 상태(5개 버튼)를 백업해둡니다.
+                    // 현재 메뉴 버튼 상태를 백업
                     originalModalBody = document.querySelector('.modal-body').innerHTML;
                     
                     if (modal) modal.classList.add('show');
                 })
-                .catch(err => {
-                    console.error("데이터 로드 실패:", err);
-                    alert("회원 정보를 불러오는 데 실패했습니다.");
-                });
+                .catch(err => console.error("회원 상세 로드 실패:", err));
             }
         });
     }
 
-    // 모달 복구 함수 (표 -> 메뉴판)
-    window.restoreModalMenu = function() {
-        const modalBody = document.querySelector('.modal-body');
-        if (originalModalBody) {
-            modalBody.innerHTML = originalModalBody;
-        }
-    };
-
-    // 모달 닫기 로직 (복구 함수 포함)
+    // 모달 닫기 로직 (복구 포함)
     closeBtns.forEach(btn => {
         if(btn) btn.addEventListener('click', () => {
             restoreModalMenu();
@@ -72,49 +55,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 경매 내역 조회
-// 페이지 계산을 위한 전역 변수 추가 (맨 위에 추가하거나 기존 변수 밑에 두세요)
-let originalModalBody = ""; 
+// 메뉴판 복구 함수
+window.restoreModalMenu = function() {
+    const modalBody = document.querySelector('.modal-body');
+    if (originalModalBody) {
+        modalBody.innerHTML = originalModalBody;
+    }
+};
 
-// (아까 추가했던 페이징 변수들도 여기 같이 두시면 좋습니다)
-let currentModalData = [];
-let currentModalPage = 1;
-const itemsPerPage = 5;
-
-// ==========================================
-// 1. 서버에서 경매 데이터 가져오기
-// ==========================================
+/* ==========================================
+   📦 [기능 1] 경매 내역 조회 (페이징 윈도우 적용)
+   ========================================== */
 function viewUserAuctions() {
     const userNo = document.getElementById('targetUserNo').innerText;
-    const modalBody = document.querySelector('.modal-body');
-    
-    if (!originalModalBody) {
-        originalModalBody = modalBody.innerHTML;
-    }
-
-    fetch(`${contextPath}/admin/userItemList?userNo=${userNo}`, { method: 'GET' })
+    fetch(`${contextPath}/admin/userItemList?userNo=${userNo}`)
     .then(response => response.json())
     .then(list => {
-        currentModalData = list; // 🌟 전체 데이터를 안전하게 백업!
-        currentModalPage = 1;    // 무조건 1페이지부터 시작
-        renderAuctionTable();    // 🌟 화면 그리는 함수 출동!
+        currentModalData = list;
+        currentModalPage = 1;
+        renderAuctionTable();
     })
-    .catch(err => console.error("데이터 로드 실패:", err));
+    .catch(err => console.error("경매 로드 실패:", err));
 }
 
-// ==========================================
-// 2. 데이터를 잘라서 표와 페이징 버튼 그리기
-// ==========================================
 function renderAuctionTable() {
     const modalBody = document.querySelector('.modal-body');
     const list = currentModalData;
     const totalItems = list.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1; // 총 페이지 수 계산
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
-    // 🌟 100개 데이터 중 1~5번, 6~10번... 이렇게 자르기!
     const startIndex = (currentModalPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const pageData = list.slice(startIndex, endIndex);
+    const pageData = list.slice(startIndex, startIndex + itemsPerPage);
 
     let html = `<div class="sub-list-header">
                     <h4>경매 등록 내역 (<span style="color:#4CAF50;">${totalItems}</span>건)</h4>
@@ -122,104 +93,132 @@ function renderAuctionTable() {
                 </div>
                 <table class="modal-sub-table">
                     <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>경매 제목</th>
-                            <th>시작가(현재가)</th>
-                            <th>등록일</th>
-                            <th>상태</th>
-                        </tr>
+                        <tr><th>No</th><th>제목</th><th>가격</th><th>등록일</th><th>상태</th></tr>
                     </thead>
                     <tbody>`;
 
     if (totalItems === 0) {
-        html += `<tr><td colspan="5" style="padding:30px 0; color:#888; text-align:center;">등록한 경매가 없습니다.</td></tr>`;
+        html += `<tr><td colspan="5" style="text-align:center; padding:30px;">내역 없음</td></tr>`;
     } else {
-        // 자른 데이터(pageData)만 반복문 돌리기
         pageData.forEach(item => {
-            // 🌟 잃어버렸던 가격 포맷 복구!
             let startPrice = item.startPrice ? item.startPrice.toLocaleString() : '0';
             let currentPrice = item.currentPrice ? item.currentPrice.toLocaleString() : '0';
-
-            // 🌟 날짜 예쁘게 만들기
-            let dateObj = new Date(item.createAt);
-            let formattedDate = dateObj.getFullYear() + '.' + 
-                                String(dateObj.getMonth() + 1).padStart(2, '0') + '.' + 
-                                String(dateObj.getDate()).padStart(2, '0');
+            let date = new Date(item.createAt).toLocaleDateString();
 
             html += `<tr>
                         <td>${item.itemNo}</td>
-                        <td class="text-left" style="font-weight:bold;">${item.itemTitle}</td>
-                        <td>
-                            ${startPrice}원<br>
-                            <span style="color:#e74c3c; font-size:11px;">(${currentPrice}원)</span>
-                        </td>
-                        <td>${formattedDate}</td>
+                        <td class="text-left"><b>${item.itemTitle}</b></td>
+                        <td>${startPrice}원<br><span style="color:#e74c3c; font-size:11px;">(${currentPrice}원)</span></td>
+                        <td>${date}</td>
                         <td><span class="status-badge status-${item.status}">${item.status}</span></td>
-                     </tr>`;
+                    </tr>`;
         });
     }
     html += `</tbody></table>`;
 
-    // ==========================================
-    // 3. 모달용 미니 페이징 버튼 달기
-    // ==========================================
+    // 🌟 페이징 버튼 (최대 5개 제한 로직)
     if (totalItems > 0) {
         html += `<div class="modal-pagination">`;
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === currentModalPage) {
-                // 현재 페이지면 까만색으로 진하게!
-                html += `<button class="page-btn active">${i}</button>`;
-            } else {
-                // 다른 페이지면 클릭 시 넘어가는 버튼!
-                html += `<button class="page-btn" onclick="changeAuctionPage(${i})">${i}</button>`;
-            }
+        const windowSize = 2;
+        let startP = Math.max(1, currentModalPage - windowSize);
+        let endP = Math.min(totalPages, currentModalPage + windowSize);
+
+        if (startP > 1) {
+            html += `<button class="page-btn" onclick="changeAuctionPage(1)">1</button>`;
+            if (startP > 2) html += `<span class="page-dots">...</span>`;
+        }
+        for (let i = startP; i <= endP; i++) {
+            html += `<button class="page-btn ${i === currentModalPage ? 'active' : ''}" onclick="changeAuctionPage(${i})">${i}</button>`;
+        }
+        if (endP < totalPages) {
+            if (endP < totalPages - 1) html += `<span class="page-dots">...</span>`;
+            html += `<button class="page-btn" onclick="changeAuctionPage(${totalPages})">${totalPages}</button>`;
         }
         html += `</div>`;
     }
-
     modalBody.innerHTML = html;
 }
 
-// ==========================================
-// 4. 페이지 버튼 클릭 시 실행되는 함수
-// ==========================================
 function changeAuctionPage(page) {
-    currentModalPage = page; // 페이지 번호 바꾸고
-    renderAuctionTable();    // 다시 그리기!
+    currentModalPage = page;
+    renderAuctionTable();
 }
 
-// 작성 글 조회
+/* ==========================================
+   📝 [기능 2] 작성 글 조회 (페이징 윈도우 적용)
+   ========================================== */
 function viewUserPosts() {
     const userNo = document.getElementById('targetUserNo').innerText;
-    const modalBody = document.querySelector('.modal-body');
-    
-    fetch(`${contextPath}/admin/userPostList?userNo=${userNo}`, { method: 'GET' })
+    fetch(`${contextPath}/admin/userPostList?userNo=${userNo}`)
     .then(response => response.json())
     .then(list => {
-        let html = `<div class="sub-list-header">
-                        <h4>작성 게시글 (<span style="color:#3498db;">${list.length}</span>건)</h4>
-                        <button class="btn-mini-back" onclick="restoreModalMenu()">🔙 뒤로가기</button>
-                    </div>
-                    <table class="modal-sub-table">
-                        <thead>
-                            <tr><th>No</th><th>제목</th><th>작성일</th><th>조회수</th></tr>
-                        </thead>
-                        <tbody>`;
-        if (list.length === 0) {
-            html += `<tr><td colspan="4">작성한 글이 없습니다.</td></tr>`;
-        } else {
-            list.forEach(post => {
-                let date = new Date(post.boardDate).toLocaleDateString();
-                html += `<tr>
-                            <td>${post.boardNo}</td>
-                            <td class="text-left">${post.boardTitle}</td>
-                            <td>${date}</td>
-                            <td>${post.views}</td>
-                         </tr>`;
-            });
+        currentModalData = list;
+        currentModalPage = 1;
+        renderPostTable();
+    })
+    .catch(err => console.error("게시글 로드 실패:", err));
+}
+
+function renderPostTable() {
+    const modalBody = document.querySelector('.modal-body');
+    const list = currentModalData;
+    const totalItems = list.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+
+    const startIndex = (currentModalPage - 1) * itemsPerPage;
+    const pageData = list.slice(startIndex, startIndex + itemsPerPage);
+
+    let html = `<div class="sub-list-header">
+                    <h4>작성 게시글 (<span style="color:#3498db;">${totalItems}</span>건)</h4>
+                    <button class="btn-mini-back" onclick="restoreModalMenu()">🔙 뒤로가기</button>
+                </div>
+                <table class="modal-sub-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>제목</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                            <th>상태</th> </tr>
+                    </thead>
+                    <tbody>`;
+
+    if (totalItems === 0) {
+        html += `<tr><td colspan="4" style="text-align:center; padding:30px;">글 없음</td></tr>`;
+    } else {
+        pageData.forEach(post => {
+            let date = new Date(post.boardDate).toLocaleDateString();
+            
+            let statusHtml = post.boardDelete === 'Y' 
+                ? `<span class="status-badge status-N">삭제됨</span>` 
+                : `<span class="status-badge status-Y">정상</span>`;
+
+            html += `<tr>
+                        <td>${post.boardNo}</td>
+                        <td class="text-left">${post.boardTitle}</td>
+                        <td>${date}</td>
+                        <td>${post.views || 0}</td>
+                        <td>${statusHtml}</td> </tr>`;
+        });
+    }
+    html += `</tbody></table>`;
+
+    // 페이징 버튼 영역 (아까와 동일)
+    if (totalItems > 0) {
+        html += `<div class="modal-pagination">`;
+        const windowSize = 2;
+        let startP = Math.max(1, currentModalPage - windowSize);
+        let endP = Math.min(totalPages, currentModalPage + windowSize);
+
+        for (let i = startP; i <= endP; i++) {
+            html += `<button class="page-btn ${i === currentModalPage ? 'active' : ''}" onclick="changePostPage(${i})">${i}</button>`;
         }
-        html += `</tbody></table>`;
-        modalBody.innerHTML = html;
-    });
+        html += `</div>`;
+    }
+    modalBody.innerHTML = html;
+}
+
+function changePostPage(page) {
+    currentModalPage = page;
+    renderPostTable();
 }
