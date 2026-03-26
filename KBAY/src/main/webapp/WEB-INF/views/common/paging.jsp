@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headerFooterCss/paging.css">
 <c:set var="blockSize" value="10" />
 
 <!-- startPage 계산 -->

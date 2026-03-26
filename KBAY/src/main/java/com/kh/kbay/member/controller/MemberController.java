@@ -88,11 +88,6 @@ public class MemberController {
     public String loginForm() {
         return "member/login";
     }
-
-	@GetMapping("mypage.me")
-	public String myPageForm() {
-		return "mypage/mypageHome";
-	}
 	
 	@GetMapping("verify")
 	public String verifyPage() {

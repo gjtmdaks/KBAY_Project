@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/itemCss/auction.css">
 <!-- 남은 시간 계산 -->
 <c:choose>
     <c:when test="${type eq 'yetDeal'}">

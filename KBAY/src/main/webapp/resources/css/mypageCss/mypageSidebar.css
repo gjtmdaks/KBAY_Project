@@ -1,0 +1,89 @@
+/* ---------------- 사이드바 공통 스타일 ---------------- */
+.sidebar { 
+    width: 220px; 
+    flex-shrink: 0; 
+}
+
+.sidebar-title { 
+    background-color: #000; 
+    color: #fff; 
+    padding: 20px 0; 
+    text-align: center; 
+    font-size: 18px; 
+    font-weight: bold; 
+    margin: 0;
+}
+
+.sidebar-menu { 
+    background-color: #999; /* 커뮤니티와 동일한 회색 배경 */
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+
+.sidebar-menu li { 
+    border-bottom: 0.5px solid #828282; /* 하얀색 구분선 */
+}
+
+.sidebar-menu li:last-child {
+    border-bottom: none; /* 마지막 줄은 선 없앰 */
+}
+
+.sidebar-menu li a { 
+    display: block; 
+    padding: 15px 20px; 
+    color: #fff; 
+    text-decoration: none; 
+    font-size: 15px; 
+    transition: 0.2s;
+}
+
+.sidebar-menu li a:hover { 
+    background-color: #777; /* 마우스 올렸을 때 살짝 어두워짐 */
+    font-weight: bold; 
+}
+
+/* ---------------- 서브메뉴(아코디언) 스타일 ---------------- */
+
+/* 토글 버튼(화살표 포함) 정렬 */
+.submenu-toggle {
+    display: flex !important; /* 화살표를 우측 끝으로 밀기 위해 사용 */
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 화살표 기본 애니메이션 설정 */
+.arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+/* 메뉴가 열렸을 때 화살표 180도 회전 */
+.has-submenu.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* 서브메뉴(하위 목록) 기본 상태: 숨김 */
+.submenu {
+    display: none;
+    background-color: #888;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 서브메뉴 안의 항목들 텍스트 디자인 */
+.submenu li a {
+    padding: 12px 20px 12px 40px;
+    font-size: 14px;
+    color: #eee;
+}
+
+.submenu li a:hover {
+    background-color: #666;
+}
+
+/* 메뉴가 열렸을 때 서브메뉴 나타나게 하기 */
+.has-submenu.open .submenu {
+    display: block;
+}

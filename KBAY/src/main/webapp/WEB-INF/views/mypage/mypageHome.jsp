@@ -9,20 +9,18 @@
 <meta charset="UTF-8">
 <title>마이페이지</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mypageCss/mypage.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headerFooterCss/header.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 </head>
 <body>
     <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
     <section class="mypage-container">
         <aside class="mypage-sidebar">
-            <jsp:include page="mypageHeader.jsp" />
+            <jsp:include page="mypageSidebar.jsp" />
         </aside>
 
         <main class="mypage-main">
             <div class="mypage-greeting">
-                <strong>${user.name}</strong>님, 반갑습니다!
+                <strong>${user.userName}</strong>님, 반갑습니다!
                 <p>👍 나의 거래 좋아요 수: ${user.likeCount}</p>
                 <div class="mypage-actions">
                     <button>내 정보 수정</button>

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/reportCss/report.css">
 <div id="reportPopup" style="display:none;">
     <h3>신고 사유 선택</h3>
 
