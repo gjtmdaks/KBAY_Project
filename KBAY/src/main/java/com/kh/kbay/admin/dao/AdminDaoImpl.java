@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 
@@ -49,6 +50,12 @@ public class AdminDaoImpl implements AdminDao {
         // sqlSession(또는 session)을 사용해서 XML 쿼리를 부르는 곳
         return session.selectList("adminMapper.selectUserPostList", userNo);
     }
+
+	@Override
+	public List<Reply> selectUserReplyList(int userNo) {
+		// TODO Auto-generated method stub
+		return session.selectList("adminMapper.selectUserReplyList", userNo);
+	}
 	
 	
 	

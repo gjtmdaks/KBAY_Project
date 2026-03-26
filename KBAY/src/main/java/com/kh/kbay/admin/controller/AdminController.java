@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.kbay.admin.service.AdminService;
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
 import com.kh.kbay.item.model.vo.Item;
@@ -109,5 +110,11 @@ public class AdminController {
     @GetMapping("/userPostList")
     public List<BoardPost> selectUserPostList(@RequestParam("userNo") int userNo) {
         return adminService.selectUserPostList(userNo);
+    }
+    
+    @ResponseBody
+    @GetMapping("/userReplyList")
+    public List<Reply> selectUserReplyList(@RequestParam("userNo") int userNo) {
+        return adminService.selectUserReplyList(userNo);
     }
 }
