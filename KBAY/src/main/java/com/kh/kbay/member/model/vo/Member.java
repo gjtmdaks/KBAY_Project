@@ -28,8 +28,6 @@ public class Member implements UserDetails {
 	private int likeCount;
 	private int noPayCount;
 	private char userStatus;
-
-
 	
 	public String getUserName() {
         return userName;
