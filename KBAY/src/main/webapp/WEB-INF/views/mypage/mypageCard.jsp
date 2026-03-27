@@ -8,26 +8,24 @@
         <c:when test="${type == 'purchase'}">
             <h4>구매 관리</h4>
             <div class="card-buttons">
-                <a href="/mypage/bidList" class="card-btn">입찰 현황</a>
-                <a href="/mypage/paymentList" class="card-btn">결제 현황</a>
-                <a href="/mypage/reportList" class="card-btn">사고 내역</a>
+                <a href="${pageContext.request.contextPath}/mypage/bidList" class="card-btn">입찰 현황</a>
+                <a href="${pageContext.request.contextPath}/mypage/paymentList" class="card-btn">결제 현황</a>
             </div>
         </c:when>
         <c:when test="${type == 'sale'}">
             <h4>판매 관리</h4>
             <div class="card-buttons">
-                <a href="/mypage/bidList" class="card-btn">판매 현황</a>
-                <a href="/mypage/paymentList" class="card-btn">거래 현황</a>
-                <a href="/mypage/reportList" class="card-btn">사고 내역</a>
+                <a href="${pageContext.request.contextPath}/mypage/saleList" class="card-btn">판매 현황</a>
+                <a href="${pageContext.request.contextPath}/mypage/paymentList" class="card-btn">거래 현황</a>
             </div>
         </c:when>
         <c:when test="${type == 'activity'}">
             <h4>나의 활동</h4>
             <div class="card-buttons">
-                <a href="/mypage/faq" class="card-btn">FAQ</a>
-                <a href="/mypage/boardList" class="card-btn">나의 게시글 보기</a>
-                <a href="/mypage/reportList" class="card-btn">신고 내역</a>
-                <a href="/mypage/replyList" class="card-btn">나의 댓글 보기</a>
+                <a href="${pageContext.request.contextPath}/mypage/faq" class="card-btn">FAQ</a>
+                <a href="${pageContext.request.contextPath}/mypage/boardList" class="card-btn">나의 게시글 보기</a>
+                <a href="${pageContext.request.contextPath}/mypage/reportList" class="card-btn">신고 내역</a>
+                <a href="${pageContext.request.contextPath}/mypage/replyList" class="card-btn">나의 댓글 보기</a>
             </div>
         </c:when>
         <c:when test="${type == 'accident'}">
@@ -39,7 +37,7 @@
                 </tr>
                 <tr>
                     <td>사고 건수</td>
-                    <td>${accidentCount}건</td>
+                    <td><a href="${pageContext.request.contextPath}/mypage/reportList" class="card-btn">${accidentCount}건</a></td>
                 </tr>
             </table>
         </c:when>
