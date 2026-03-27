@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="mypage">
-		<select id="selectAccidentCount" parameterType="int" resultType="int">
-	    SELECT COUNT(*)
-	    FROM REPORT r
-	    WHERE
-	        (
-	            r.target_type = 'item'
-	            AND EXISTS (
-	                SELECT 1 FROM ITEM i
-	                WHERE i.item_no = r.target_no
-	                AND i.user_no = #{userNo}
-	            )
-	        )
-	        OR
-	        (
-	            r.target_type = 'board'
-	            AND EXISTS (
-	                SELECT 1 FROM BOARD_POST b
-	                WHERE b.board_no = r.target_no
-	                AND b.user_no = #{userNo}
-	            )
-	        )
-	        OR
-	        (
-	            r.target_type = 'reply'
-	            AND EXISTS (
-	                SELECT 1 FROM REPLY rp
-	                WHERE rp.reply_no = r.target_no
-	                AND rp.user_no = #{userNo}
-	            )
-	        )
+	<select id="selectAccidentCount" resultType="int">
+		SELECT COUNT(*) FROM (
+		
+		    SELECT r.report_no
+		    FROM REPORT r
+		    JOIN ITEM i ON r.target_no = i.item_no
+		    WHERE r.target_type = 'item'
+		      AND i.user_no = #{userNo}
+		
+		    UNION ALL
+		
+		    SELECT r.report_no
+		    FROM REPORT r
+		    JOIN BOARD_POST b ON r.target_no = b.board_no
+		    WHERE r.target_type = 'board'
+		      AND b.user_no = #{userNo}
+		
+		    UNION ALL
+		
+		    SELECT r.report_no
+		    FROM REPORT r
+		    JOIN REPLY rp ON r.target_no = rp.reply_no
+		    WHERE r.target_type = 'reply'
+		      AND rp.user_no = #{userNo}
+		
+		)
 	</select>
 	
 	<select id="selectBidList" resultType="Bid">
@@ -46,7 +42,7 @@
 	</select>
 	
 	<select id="selectSaleList" resultType="Item">
-		SELECT item_no, item_title, current_price, status
+		SELECT *
 		FROM ITEM
 		WHERE user_no = #{userNo}
 		ORDER BY item_no DESC
@@ -62,41 +58,122 @@
 	</select>
 	
 	<select id="selectBoardList" resultType="BoardPost">
-		SELECT board_no, board_title, board_date
+		SELECT *
 		FROM BOARD_POST
 		WHERE user_no = #{userNo}
 		ORDER BY board_no DESC
 	</select>
 	
+	<select id="getBoardListByCategory" resultType="BoardPost">
+	    SELECT *
+	    FROM BOARD_POST
+	    WHERE user_no = #{userNo}
+	
+	    <if test="category != null and category != ''">
+	        AND board_cd_no = #{category}
+	    </if>
+	
+	    ORDER BY board_date DESC
+	</select>
+	
 	<select id="selectReplyList" resultType="ReplyListDto">
-		SELECT r.reply_content AS replyContent,
-				b.board_title AS boardTitle
+		SELECT 
+		    r.reply_no,
+		    r.reply_content,
+		    r.reply_date,
+		    b.board_no,
+		    b.board_title
 		FROM REPLY r
 		JOIN BOARD_POST b ON r.board_no = b.board_no
 		WHERE r.user_no = #{userNo}
+		ORDER BY r.reply_date DESC
 	</select>
 	
 	<select id="selectReportList" resultType="Report">
-		SELECT r.report_no, r.target_type, r.target_no
+		SELECT 
+		    r.report_no,
+		    r.target_type,
+		    r.target_no,
+		    r.status,
+		    r.created_at,
+		    c.REPORT_CATEGORY AS categoryName
 		FROM REPORT r
-		WHERE EXISTS (
-			SELECT 1 FROM ITEM i 
-			WHERE r.target_type='item' 
-			AND i.item_no=r.target_no 
-			AND i.user_no=#{userNo}
-		)
-		OR EXISTS (
-			SELECT 1 FROM BOARD_POST b 
-			WHERE r.target_type='board' 
-			AND b.board_no=r.target_no 
-			AND b.user_no=#{userNo}
-		)
-		OR EXISTS (
-			SELECT 1 FROM REPLY rp 
-			WHERE r.target_type='reply' 
-			AND rp.reply_no=r.target_no 
-			AND rp.user_no=#{userNo}
-		)
-		AND r.status = 'Y'
+		JOIN REPORT_CATEGORY c 
+		    ON r.report_cd_no = c.REPORT_CATEGORY_NO
+		WHERE r.user_no = #{userNo}
+		ORDER BY r.created_at DESC
+	</select>
+	
+	<update id="updateUser">
+	    UPDATE MEMBER
+	    SET 
+	        user_name = #{userName},
+	        user_address = #{userAddress},
+	        user_phone = #{userPhone},
+	        user_email = #{userEmail}
+	    WHERE user_no = #{userNo}
+	</update>
+	
+	<select id="selectUserByNo" resultType="Member">
+	    SELECT 
+	        user_no,
+	        user_id,
+	        user_name,
+	        user_address,
+	        user_phone,
+	        user_email,
+	        user_enroll_date
+	    FROM MEMBER
+	    WHERE user_no = #{userNo}
+	</select>
+	
+	<select id="selectReportedList" resultType="Report">
+		SELECT *
+		FROM (
+		    SELECT 
+		        r.report_no,
+		        r.target_type,
+		        r.target_no,
+		        r.status,
+		        r.created_at,
+		        c.REPORT_CATEGORY AS categoryName
+		    FROM REPORT r
+		    JOIN ITEM i ON r.target_no = i.item_no
+		    JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+		    WHERE r.target_type = 'item'
+		      AND i.user_no = #{userNo}
+		
+		    UNION ALL
+		
+		    SELECT 
+		        r.report_no,
+		        r.target_type,
+		        r.target_no,
+		        r.status,
+		        r.created_at,
+		        c.REPORT_CATEGORY AS categoryName
+		    FROM REPORT r
+		    JOIN BOARD_POST b ON r.target_no = b.board_no
+		    JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+		    WHERE r.target_type = 'board'
+		      AND b.user_no = #{userNo}
+		
+		    UNION ALL
+		
+		    SELECT 
+		        r.report_no,
+		        r.target_type,
+		        r.target_no,
+		        r.status,
+		        r.created_at,
+		        c.REPORT_CATEGORY AS categoryName
+		    FROM REPORT r
+		    JOIN REPLY rp ON r.target_no = rp.reply_no
+		    JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+		    WHERE r.target_type = 'reply'
+		      AND rp.user_no = #{userNo}
+		
+		) t
+		ORDER BY created_at DESC
 	</select>
 </mapper>

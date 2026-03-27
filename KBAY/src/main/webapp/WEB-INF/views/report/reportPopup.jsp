@@ -14,9 +14,9 @@
         <label><input type="radio" name="reportCdNo" value="3"> 불법 및 사기</label><br>
         <label><input type="radio" name="reportCdNo" value="4"> 도배 및 홍보</label><br>
         <label><input type="radio" name="reportCdNo" value="5"> 저작권 침해</label><br>
-        <label><input type="radio" name="reportCdNo" value="5"> 판매 제한 물품</label><br>
-        <label><input type="radio" name="reportCdNo" value="5"> 유해 화학물질</label><br>
-        <label><input type="radio" name="reportCdNo" value="5"> 기타</label><br>
+        <label><input type="radio" name="reportCdNo" value="6"> 판매 제한 물품</label><br>
+        <label><input type="radio" name="reportCdNo" value="7"> 유해 화학물질</label><br>
+        <label><input type="radio" name="reportCdNo" value="8"> 기타</label><br>
 
         <button type="button" onclick="submitReport()">신고</button>
         <button type="button" onclick="closeReportPopup()">취소</button>

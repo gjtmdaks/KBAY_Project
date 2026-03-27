@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,25 +19,27 @@
         </aside>
 
         <main class="mypage-main">
-            <div class="mypage-content">
-			    <h2>내 댓글</h2>
+            <div class="reply-list">
+                <h2>내 댓글</h2>
 			
-			    <table class="mypage-table">
-			        <thead>
-			            <tr>
-			                <th>게시글</th>
-			                <th>댓글 내용</th>
-			            </tr>
-			        </thead>
-			        <tbody>
-			            <c:forEach var="r" items="${list}">
-			                <tr>
-			                    <td>${r.boardTitle}</td>
-			                    <td>${r.replyContent}</td>
-			                </tr>
-			            </c:forEach>
-			        </tbody>
-			    </table>
+			    <c:if test="${empty list}">
+			        <div class="empty-box">작성한 댓글이 없습니다.</div>
+			    </c:if>
+			
+			    <c:forEach var="r" items="${list}">
+				    <div class="reply-card"
+				         onclick="location.href='${pageContext.request.contextPath}/board/boardDetail/${r.boardNo}'">
+				
+				        <div class="reply-title">${r.boardTitle}</div>
+				        <div class="reply-content">${r.replyContent}</div>
+				        <div class="reply-date">
+				        	<fmt:formatDate value="${r.replyDate}" pattern="MM-dd HH:mm"/>
+				        </div>
+				        
+				
+				    </div>
+				</c:forEach>
+			
 			</div>
         </main>
     </section>
