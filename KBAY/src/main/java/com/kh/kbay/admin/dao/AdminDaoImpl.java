@@ -10,6 +10,7 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,31 @@ public class AdminDaoImpl implements AdminDao {
 	public List<Reply> selectUserReplyList(int userNo) {
 		// TODO Auto-generated method stub
 		return session.selectList("adminMapper.selectUserReplyList", userNo);
+	}
+
+	
+	@Override
+	public int insertSuspendUserSanctionRecord(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.insert("adminMapper.insertSuspendUserSanctionRecord", paramMap);
+	}
+
+	@Override
+	public int updateSuspendUserStatusUpdate(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateSuspendUserStatusUpdate",paramMap);
+	}
+
+	@Override
+	public int updateUserStatusDelete(int userNo) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateUserStatusDelete", userNo);
+	}
+
+	@Override
+	public List<Report> selectUserReportList(int userNo) {
+		// TODO Auto-generated method stub
+		return session.selectList("adminMapper.selectUserReportList",userNo);
 	}
 	
 	

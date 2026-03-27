@@ -89,4 +89,42 @@
     WHERE USER_NO = #{userNo}
     ORDER BY REPLY_NO DESC
 	</select>
+	
+	<!-- 회원이 받은 신고 여부 -->
+	<select id="selectUserReportList" parameterType="_int" resultType="com.kh.kbay.report.model.vo.Report">
+    SELECT 
+        R.REPORT_NO as reportNo, 
+        R.TARGET_TYPE as targetType, 
+        R.TARGET_NO as targetNo, 
+        R.REPORT_CD_NO as reportCdNo,
+        C.REPORT_CATEGORY as reportCategoryName,
+        R.STATUS as status,
+        R.CREATED_AT as createAt
+    FROM REPORT R
+    LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
+    WHERE R.TARGET_NO IN (SELECT BOARD_NO FROM BOARD_POST WHERE USER_NO = #{userNo})
+       OR R.TARGET_NO IN (SELECT ITEM_NO FROM ITEM WHERE USER_NO = #{userNo})
+    ORDER BY R.REPORT_NO DESC
+</select>
+
+<insert id="insertSuspendUserSanctionRecord" parameterType="map">
+    INSERT INTO USER_SANCTION 
+        (SANCTION_NO, USER_NO, SANCTIONED_AT, SUSPEND_END_DATE)
+    VALUES 
+        (SEQ_SANCTION_NO.NEXTVAL, #{userNo}, SYSDATE, SYSDATE + #{days})
+</insert>
+
+<update id="updateSuspendUserStatusUpdate" parameterType="map">
+    UPDATE MEMBER 
+    SET USER_STATUS = 'Y' 
+    WHERE USER_NO = #{userNo}
+</update>
+
+<update id="updateUserStatusDelete" parameterType="_int">
+    UPDATE MEMBER 
+    SET USER_STATUS = 'Y', 
+        USER_DELETE_YN = 'Y' 
+    WHERE USER_NO = #{userNo}
+</update>
+
 </mapper>
