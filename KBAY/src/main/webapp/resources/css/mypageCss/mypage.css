@@ -171,3 +171,85 @@
 .mypage-table tr:hover {
     background: #fafafa;
 }
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #f5f5f5;
+}
+
+/* ----------------- 댓글 --------------------- */
+.reply-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reply-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.reply-card:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.reply-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.reply-content {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.reply-date {
+    font-size: 12px;
+    color: #999;
+}
+
+/* ----------------- 신고 --------------------- */
+.report-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.report-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fff;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.type {
+    font-weight: bold;
+}
+
+.status.done {
+    color: green;
+}
+
+.status.pending {
+    color: red;
+}
+
+.report-footer {
+    font-size: 12px;
+    color: #999;
+}

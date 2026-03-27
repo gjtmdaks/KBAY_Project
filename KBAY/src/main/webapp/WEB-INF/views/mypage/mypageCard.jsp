@@ -37,7 +37,7 @@
                 </tr>
                 <tr>
                     <td>사고 건수</td>
-                    <td><a href="${pageContext.request.contextPath}/mypage/reportList" class="card-btn">${accidentCount}건</a></td>
+                    <td><a href="${pageContext.request.contextPath}/mypage/reportedList" class="card-btn">${accidentCount}건</a></td>
                 </tr>
             </table>
         </c:when>

@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>신고 내역</title>
+<title>사고 내역</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mypageCss/mypage.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
 
         <main class="mypage-main">
             <div class="report-list">
-                <h2>신고 내역</h2>
+                <h2>사고 내역</h2>
 			
 			    <c:forEach var="r" items="${list}">
 			        <div class="report-card">

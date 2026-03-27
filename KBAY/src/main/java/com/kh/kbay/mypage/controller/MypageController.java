@@ -2,17 +2,21 @@ package com.kh.kbay.mypage.controller;
 
 import java.util.List;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.kbay.board.model.vo.BoardPost;
-import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.BidListDto;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
+import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.mypage.model.vo.WishListDto;
 import com.kh.kbay.mypage.service.MypageService;
 import com.kh.kbay.report.model.vo.Report;
@@ -52,6 +56,40 @@ public class MypageController {
 
         return "mypage/updateStatus";
     }
+    
+    @PostMapping("updateStatus")
+    public String updateStatus(Member user, Authentication auth) {
+
+        Member loginUser = (Member) auth.getPrincipal();
+
+        if(loginUser == null){
+            return "redirect:/login";
+        }
+
+        user.setUserNo(loginUser.getUserNo());
+
+        int result = ms.updateUser(user);
+
+        if(result > 0){
+
+            // 1. DB 재조회
+            Member updatedUser = ms.selectUserByNo(loginUser.getUserNo());
+
+            // 2. Authentication 새로 생성
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                    updatedUser,
+                    auth.getCredentials(),
+                    auth.getAuthorities()
+            );
+
+            // 3. SecurityContext 갱신
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+            return "redirect:/mypage/mypage.me";
+        }
+
+        return "redirect:/mypage/updateStatus";
+    }
 
     // 입찰
     @GetMapping("bidList")
@@ -69,7 +107,7 @@ public class MypageController {
     public String saleList(Authentication auth, Model model) {
         Member user = (Member) auth.getPrincipal();
         
-        List<Item> list = ms.getSaleList(user.getUserNo());
+        List<SaleListDto> list = ms.getSaleList(user.getUserNo());
         
         model.addAttribute("list", list);
         return "mypage/saleList";
@@ -88,12 +126,25 @@ public class MypageController {
 
     // 게시글
     @GetMapping("boardList")
-    public String boardList(Authentication auth, Model model) {
-        Member user = (Member) auth.getPrincipal();
-        
-        List<BoardPost> list = ms.getBoardList(user.getUserNo());
-        
+    public String getBoardList(
+            @RequestParam(value="category", required=false) Integer category,
+            Authentication auth,
+            Model model) {
+
+        Member loginUser = (Member) auth.getPrincipal();
+
+        int userNo = loginUser.getUserNo();
+
+        List<BoardPost> list;
+
+        if(category == null){
+            list = ms.getBoardList(userNo);
+        } else {
+            list = ms.getBoardListByCategory(userNo, category);
+        }
+
         model.addAttribute("list", list);
+
         return "mypage/boardList";
     }
 
@@ -108,7 +159,7 @@ public class MypageController {
         return "mypage/replyList";
     }
 
-    // 신고
+    // 신고한 것
     @GetMapping("reportList")
     public String reportList(Authentication auth, Model model) {
         Member user = (Member) auth.getPrincipal();
@@ -117,5 +168,16 @@ public class MypageController {
         
         model.addAttribute("list", list);
         return "mypage/reportList";
+    }
+
+    // 신고당한 것
+    @GetMapping("reportedList")
+    public String reportedList(Authentication auth, Model model) {
+        Member user = (Member) auth.getPrincipal();
+        
+        List<Report> list = ms.getReportedList(user.getUserNo());
+        
+        model.addAttribute("list", list);
+        return "mypage/reportedList";
     }
 }

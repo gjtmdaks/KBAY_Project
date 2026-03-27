@@ -37,7 +37,7 @@
 				
 				    <tbody>
 				        <c:forEach var="b" items="${list}">
-				            <tr>
+        					<tr class="clickable-row" data-href="${pageContext.request.contextPath}/auction/detail/${b.itemNo}">
 				
 				                <!-- 상태 -->
 				                <td>${b.statusText}</td>
@@ -83,5 +83,19 @@
     </section>
 
     <jsp:include page="/WEB-INF/views/common/footer.jsp" />
+    <script>
+	document.addEventListener("DOMContentLoaded", function(){
+	
+	    const rows = document.querySelectorAll(".clickable-row");
+	
+	    rows.forEach(row => {
+	        row.addEventListener("click", function(){
+	            const url = this.dataset.href;
+	            window.location.href = url;
+	        });
+	    });
+	
+	});
+	</script>
 </body>
 </html>
