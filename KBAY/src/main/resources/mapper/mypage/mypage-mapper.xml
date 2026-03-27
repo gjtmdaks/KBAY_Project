@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="mypage">
-	<select id="selectSummary" parameterType="int" resultType="MyPageSummary">
-	    SELECT
-	        (SELECT COUNT(*) FROM BID WHERE USER_NO = #{userNo}) AS bidCount,
-	        (SELECT COUNT(*) FROM ITEM WHERE USER_NO = #{userNo}) AS sellCount,
-	        (SELECT COUNT(*) FROM WISHLIST WHERE USER_NO = #{userNo}) AS wishCount
-		FROM DUAL
-	</select>
-	
-	<select id="selectAccidentCount" parameterType="int" resultType="int">
+		<select id="selectAccidentCount" parameterType="int" resultType="int">
 	    SELECT COUNT(*)
 	    FROM REPORT r
 	    WHERE
@@ -39,5 +31,72 @@
 	                AND rp.user_no = #{userNo}
 	            )
 	        )
+	</select>
+	
+	<select id="selectBidList" resultType="Bid">
+	    SELECT *
+	    FROM (
+	        SELECT 
+	            b.*,
+	            ROW_NUMBER() OVER (PARTITION BY b.item_no ORDER BY b.bid_price DESC) rn
+	        FROM BID b
+	        WHERE b.user_no = #{userNo}
+	    ) t
+	    WHERE rn = 1
+	</select>
+	
+	<select id="selectSaleList" resultType="Item">
+		SELECT item_no, item_title, current_price, status
+		FROM ITEM
+		WHERE user_no = #{userNo}
+		ORDER BY item_no DESC
+	</select>
+	
+	<select id="selectWishList" resultType="WishListDto">
+		SELECT i.item_no AS itemNo,
+				i.item_title AS itemTitle,
+				i.current_price AS currentPrice
+		FROM WISHLIST w
+		JOIN ITEM i ON w.item_no = i.item_no
+		WHERE w.user_no = #{userNo}
+	</select>
+	
+	<select id="selectBoardList" resultType="BoardPost">
+		SELECT board_no, board_title, board_date
+		FROM BOARD_POST
+		WHERE user_no = #{userNo}
+		ORDER BY board_no DESC
+	</select>
+	
+	<select id="selectReplyList" resultType="ReplyListDto">
+		SELECT r.reply_content AS replyContent,
+				b.board_title AS boardTitle
+		FROM REPLY r
+		JOIN BOARD_POST b ON r.board_no = b.board_no
+		WHERE r.user_no = #{userNo}
+	</select>
+	
+	<select id="selectReportList" resultType="Report">
+		SELECT r.report_no, r.target_type, r.target_no
+		FROM REPORT r
+		WHERE EXISTS (
+			SELECT 1 FROM ITEM i 
+			WHERE r.target_type='item' 
+			AND i.item_no=r.target_no 
+			AND i.user_no=#{userNo}
+		)
+		OR EXISTS (
+			SELECT 1 FROM BOARD_POST b 
+			WHERE r.target_type='board' 
+			AND b.board_no=r.target_no 
+			AND b.user_no=#{userNo}
+		)
+		OR EXISTS (
+			SELECT 1 FROM REPLY rp 
+			WHERE r.target_type='reply' 
+			AND rp.reply_no=r.target_no 
+			AND rp.user_no=#{userNo}
+		)
+		AND r.status = 'Y'
 	</select>
 </mapper>
