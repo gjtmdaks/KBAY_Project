@@ -15,4 +15,7 @@ public class Report {
 	private int targetNo;
 	private char status;
 	private Date createAt;
+	
+	// 화면에 보여줄 신고 유형
+    private String reportCategoryName;
 }

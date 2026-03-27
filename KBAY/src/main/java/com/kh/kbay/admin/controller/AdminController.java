@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +19,7 @@ import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,5 +118,32 @@ public class AdminController {
     @GetMapping("/userReplyList")
     public List<Reply> selectUserReplyList(@RequestParam("userNo") int userNo) {
         return adminService.selectUserReplyList(userNo);
+    }
+    
+    // 회원이 받은 신고 내역 조회
+    @ResponseBody
+    @GetMapping("/userReportList")
+    public List<Report> selectUserReportList(@RequestParam("userNo") int userNo) {
+        // 서비스 단으로 userNo를 넘겨서 신고 리스트를 받아옵니다.
+        return adminService.selectUserReportList(userNo);
+    }
+    
+    // 계정의 정지 요청
+    @ResponseBody
+    @PostMapping("/suspendUser")
+    public String suspendUser(@RequestParam("userNo") int userNo, @RequestParam("days") int days) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userNo", userNo);
+        paramMap.put("days", days);
+        int result = adminService.suspendUser(paramMap);
+        return result > 0 ? "success" : "fail";
+    }
+
+    // 🚫 계정 강제 탈퇴 요청
+    @ResponseBody
+    @PostMapping("/deleteUser")
+    public String deleteUser(@RequestParam("userNo") int userNo) {
+        int result = adminService.deleteUser(userNo);
+        return result > 0 ? "success" : "fail";
     }
 }

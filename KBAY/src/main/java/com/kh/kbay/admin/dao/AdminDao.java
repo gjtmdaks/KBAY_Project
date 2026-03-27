@@ -7,6 +7,7 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.report.model.vo.Report;
 
 public interface AdminDao {
 
@@ -21,5 +22,17 @@ public interface AdminDao {
 	List<BoardPost> selectUserPostList(int userNo);
 
 	List<Reply> selectUserReplyList(int userNo);
+
+	// USER_SANCTION에 기록
+	int insertSuspendUserSanctionRecord(Map<String, Object> paramMap);
+	// MEMBER의 제제 상태 여부 변경
+	int updateSuspendUserStatusUpdate(Map<String, Object> paramMap);
+	
+	// 영구 정지
+	int updateUserStatusDelete(int userNo);
+
+	List<Report> selectUserReportList(int userNo);
+
+
 
 }

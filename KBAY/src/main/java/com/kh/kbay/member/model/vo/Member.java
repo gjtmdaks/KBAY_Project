@@ -27,6 +27,7 @@ public class Member implements UserDetails {
 	private String userLoginIp;
 	private int likeCount;
 	private int noPayCount;
+	private char userStatus;
 
 
 	

@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.kbay.admin.dao.AdminDao;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 	
-	private final AdminDao ad; // 🌟 이 친구(DAO)에게 일을 시켜야 합니다!
+	private final AdminDao ad;
 	
 	@Override
 	public int selectMemberListCount(Map<String, Object> safeMap) {
@@ -55,6 +57,30 @@ public class AdminServiceImpl implements AdminService {
 	public List<Reply> selectUserReplyList(int userNo) {
 		// TODO Auto-generated method stub
 		return ad.selectUserReplyList(userNo);
+	}
+	
+	// 계정의 정지
+	@Transactional
+	@Override
+	public int suspendUser(Map<String, Object> paramMap) {
+        int result1 = ad.insertSuspendUserSanctionRecord(paramMap); // USER_SANCTION 제제 기록 기입
+        int result2 = ad.updateSuspendUserStatusUpdate(paramMap); // MEMBER의 제제 상태 여부 변경
+        
+        return (result1 > 0 && result2 > 0) ? 1 : 0; 
+    }
+	
+	// 강제 탈퇴
+	@Override
+	public int deleteUser(int userNo) {
+        // 영구 정지: MEMBER의 STATUS='Y', DELETE_YN='Y' 로 변경
+        return ad.updateUserStatusDelete(userNo);
+    }
+	
+	// 회원이 받은 신고 내역
+	@Override
+	public List<Report> selectUserReportList(int userNo) {
+		// TODO Auto-generated method stub
+		return ad.selectUserReportList(userNo);
 	}
 
 }
