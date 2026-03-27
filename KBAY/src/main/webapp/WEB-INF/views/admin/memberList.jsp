@@ -20,14 +20,16 @@
         <div class="page-header">
             <h2 class="page-title">전체 사용자 조회</h2>
             
-            <div class="search-area">
-                <select class="search-select" name="searchCondition">
-                    <option value="userId" ${param.searchCondition == 'userId' ? 'selected' : ''}>유저아이디</option>
-                    <option value="userName" ${param.searchCondition == 'userName' ? 'selected' : ''}>유저이름</option>
-                </select>
-                <input type="text" class="search-input" name="searchKeyword" value="${param.searchKeyword}" placeholder="Search">
-                <button type="button" class="btn-search">검색</button>
-            </div>
+            <form action="${contextPath}/admin/memberList" method="GET" id="searchForm">
+                <div class="search-area">
+                    <select class="search-select" name="searchCondition">
+                        <option value="userId" ${param.searchCondition == 'userId' ? 'selected' : ''}>유저아이디</option>
+                        <option value="userName" ${param.searchCondition == 'userName' ? 'selected' : ''}>유저이름</option>
+                    </select>
+                    <input type="text" class="search-input" name="searchKeyword" value="${param.searchKeyword}" placeholder="Search">
+                    <button type="submit" class="btn-search">검색</button>
+                </div>
+            </form>
         </div>
 
         <table class="member-table">
@@ -39,6 +41,8 @@
                     <th>유저주소</th>
                     <th>유저전화번호</th>
                     <th>가입일자</th>
+                    <th>정지여부</th>
+                    <th>탈퇴여부</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,6 +67,30 @@
                                                    pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
                                     <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm" />
                                 </td>
+                                <%-- 정지 여부 데이터 바인딩 --%>
+                                <td>
+								    <c:choose>
+								        <%-- 'Y'를 char형으로 비교하기 위해 .charAt(0) 사용! --%>
+								        <c:when test="${member.userStatus == 'Y'.charAt(0)}">
+								            <span style="color:#e67e22; font-weight:bold;">정지됨</span>
+								        </c:when>
+								        <c:otherwise>
+								            <span style="color:#2ecc71;">정상</span>
+								        </c:otherwise>
+								    </c:choose>
+								</td>
+								<%-- 탈퇴 여부 데이터 바인딩 --%>
+								<td>
+								    <c:choose>
+								        <%-- 여기도 동일하게 .charAt(0) 적용! --%>
+								        <c:when test="${member.userDeleteYn == 'Y'.charAt(0)}">
+								            <span style="color:#c0392b; font-weight:bold;">탈퇴(영구정지)</span>
+								        </c:when>
+								        <c:otherwise>
+								            <span style="color:#95a5a6;">유지</span>
+								        </c:otherwise>
+								    </c:choose>
+								</td>
                             </tr>
                         </c:forEach>
                     </c:otherwise>

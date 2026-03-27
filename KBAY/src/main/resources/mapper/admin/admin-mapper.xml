@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="adminMapper">
-
+	
     <select id="selectMemberListCount" parameterType="map" resultType="_int">
         SELECT COUNT(*) 
         FROM MEMBER
@@ -29,7 +29,9 @@
                     USER_NAME as userName,
                     USER_ADDRESS as userAddress, 
                     USER_PHONE as userPhone,
-                    USER_ENROLL_DATE as userEnrollDate
+                    USER_ENROLL_DATE as userEnrollDate,
+                    USER_STATUS as userStatus,
+                	USER_DELETE_YN as userDeleteYn
                 FROM MEMBER
                 <where>
                     <if test="searchKeyword != null and searchKeyword != ''">

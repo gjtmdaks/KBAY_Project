@@ -31,7 +31,6 @@ public class Member implements UserDetails , Serializable{
 	private int likeCount;
 	private int noPayCount;
 	private char userStatus;
-	
 
 	
 	public String getUserName() {
