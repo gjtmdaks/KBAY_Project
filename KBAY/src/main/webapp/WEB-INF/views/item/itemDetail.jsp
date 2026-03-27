@@ -84,12 +84,13 @@
                 <span class="label">경매 번호</span>
                 <span class="value">#${item.itemNo}</span>
             </div>
-        <c:if test="${not empty loginUser and loginUser.userNo != b.userNo}">
-            <div class="report-button-block">
-                <button type="button" class="report-btn" onclick="openReportPopup('board', ${b.boardNo})">게시글 신고</button>
-            </div>
-            <jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
-        </c:if>
+            <c:if test="${not empty loginUser and loginUser.userNo != item.userNo}">
+                <button type="button" class="report-btn"
+                        onclick="openReportPopup('item', ${item.itemNo})">
+                        🚨 신고하기
+                </button>
+                <jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
+            </c:if>
         </div>
 
         <div class="price-section">
