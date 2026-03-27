@@ -22,7 +22,6 @@ public class RedisConfig {
 	        return Redisson.create(config);
 
 	    } catch (Exception e) {
-	        System.out.println("🔥 Redis 없음 → 무시하고 진행");
 	        return null; // 핵심
 	    }
 	}

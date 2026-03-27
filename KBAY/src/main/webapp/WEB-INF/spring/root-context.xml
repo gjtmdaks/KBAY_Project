@@ -16,7 +16,7 @@
 	<context:property-placeholder location="classpath:driver.properties, classpath:email.properties"/>
 	
 	<!-- DB연결설정 -->
-	<!-- 1단계 : DB연결을 위한 도구 설정
+	<!-- 1단계 : DB연결을 위한 도구 설정 	
 		BasicDataSource datasource = new BasicDataSource();
 		datasource.setDriverClassName("datasource.driverClassName");
 		...
