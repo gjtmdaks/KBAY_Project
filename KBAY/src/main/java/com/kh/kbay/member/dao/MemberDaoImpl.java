@@ -1,5 +1,6 @@
 package com.kh.kbay.member.dao;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -65,4 +66,16 @@ public class MemberDaoImpl implements MemberDao {
     public Member selectMemberByUserNo(int userNo) {
         return session.selectOne("member.selectMemberByUserNo", userNo);
     }
+
+	@Override
+	public Date selectSuspendEndDate(int userNo) {
+		// TODO Auto-generated method stub
+		return session.selectOne("member.selectSuspendEndDate",userNo);
+	}
+
+	@Override
+	public void updateReleaseSuspend(int userNo) {
+		// TODO Auto-generated method stub
+		session.update("member.updateReleaseSuspend", userNo);
+	}
 }
