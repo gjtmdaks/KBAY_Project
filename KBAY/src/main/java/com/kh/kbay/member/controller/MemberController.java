@@ -7,6 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,7 +88,29 @@ public class MemberController {
     }
 
 	@GetMapping("login")
-    public String loginForm() {
+    public String loginForm(
+    		HttpServletRequest request, 
+            Model model, 
+            @RequestParam(value = "error", required = false) String error) {
+		
+		if (error != null) {
+            HttpSession session = request.getSession();
+            // 시큐리티가 세션에 저장해둔 에러 객체 꺼내기
+            Exception exception = (Exception) session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+            
+            String errorMessage = "아이디 또는 비밀번호가 일치하지 않습니다."; // 기본값
+            
+            if (exception != null) {
+                // 우리가 예외로 던졌던 "이 계정은 임시 정지된 계정입니다." 문자열을 가져옴
+                errorMessage = exception.getMessage();
+                
+                // ★ 중요: 한번 화면에 띄울 거니까 세션에서 에러를 지워줍니다!
+                session.removeAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+            }
+            
+            model.addAttribute("loginErrorMsg", errorMessage);
+        }
+		
         return "member/login";
     }
 	

@@ -88,4 +88,16 @@
     WHERE USER_NO = #{userNo}
       AND USER_DELETE_YN = 'N'
 </select>
+
+<select id="selectSuspendEndDate" parameterType="_int" resultType="java.util.Date">
+    SELECT MAX(SUSPEND_END_DATE) 
+    FROM USER_SANCTION 
+    WHERE USER_NO = #{userNo}
+</select>
+
+<update id="updateReleaseSuspend" parameterType="_int">
+    UPDATE MEMBER 
+    SET USER_STATUS = 'N' 
+    WHERE USER_NO = #{userNo}
+</update>
 </mapper>

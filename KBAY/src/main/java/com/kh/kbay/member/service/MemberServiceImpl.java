@@ -1,5 +1,6 @@
 package com.kh.kbay.member.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -9,6 +10,8 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +38,35 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
         if (loginUser == null) {
             throw new UsernameNotFoundException(userId + "을 찾을 수 없습니다.");
         }
+        
+        // 강제 탈퇴 및 임시 정
+
+        // 영구 정지 (강제 탈퇴) 계정 확인
+        if (loginUser.getUserDeleteYn() == 'Y') {
+            throw new DisabledException("이 계정은 영구 정지된 계정입니다.");
+        }
+
+        // 임시 정지 계정 확인 및 자동 해제 로직
+        if (loginUser.getUserStatus() == 'Y') {
+            Date suspendEndDate = md.selectSuspendEndDate(loginUser.getUserNo());
+
+            if (suspendEndDate != null) {
+                Date today = new Date();
+                
+                if (today.after(suspendEndDate)) {
+                    // ✅ [자동 해제]
+                    md.updateReleaseSuspend(loginUser.getUserNo());
+                    loginUser.setUserStatus('N'); 
+                } else {
+                    // ❌ [로그인 차단]
+                    throw new LockedException("이 계정은 임시 정지된 계정입니다."); 
+                }
+            } else {
+                // 🛡️ [철벽 방어] 상태가 'Y'인데 정지 기간 데이터가 없을 경우 무조건 차단!
+                throw new LockedException("이 계정은 관리자에 의해 정지되었습니다."); 
+            }
+        }
+        
         return loginUser;
     }
 
