@@ -36,136 +36,81 @@
 	<div class="detail-container">
 	
 	    <!-- 이미지 영역 -->
-	    <div class="image-section">
-	
-	        <!-- 대표 이미지 -->
-	        <div class="main-image">
-	            <img id="mainImg"
-	                 src="${item.mainImg}"
-	                 onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
-	        </div>
-	
-	        <!-- 썸네일 리스트 -->
-			<div class="thumbnail-wrapper">
-			    <button class="thumb-btn left" onclick="scrollThumb(-1)">❮</button>
-			
-			    <div class="thumbnail-list" id="thumbList">
-			        <c:if test="${item.mainImg != null}">
-			            <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
-			        </c:if>
-			
-			        <c:forEach var="img" items="${item.subImgList}">
-			            <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)">
-			        </c:forEach>
+	        <div class="image-section">
+        <div class="main-image">
+            <img id="mainImg" src="${item.mainImg}" onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+        </div>
+        <div class="thumbnail-wrapper">
+            <button class="thumb-btn left" onclick="scrollThumb(-1)">❮</button>
+            <div class="thumbnail-list" id="thumbList">
+                <c:if test="${not empty item.mainImg}">
+                    <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
+                </c:if>
+                <c:forEach var="img" items="${item.subImgList}">
+                    <img src="${img.imgUrl}" class="thumb" onclick="changeImage(this)">
+                </c:forEach>
 			    </div>
 			
-			    <button class="thumb-btn right" onclick="scrollThumb(1)">❯</button>
-			</div>
-	    </div>
+			                <button class="thumb-btn right" onclick="scrollThumb(1)">❯</button>
+        </div>
+    </div>
 	
 	    <!-- 상품 정보 -->
-	    <div class="info-section">
-	        <h2>${item.itemTitle}</h2>
-	
-	        <!-- 타이머 -->
-			<table class="auction-table">
-			    <tr>
-			        <th>남은시간</th>
-			        <td>
-			            <strong class="timer" id="timer"
-			                data-end="${item.endTime.time}"
-			                data-start="${item.startTime.time}">
-			            </strong>
-			        </td>
-			    </tr>
-			    <tr>
-			    	<th></th>
-			        <td class="end-time">
-			            (<fmt:formatDate value="${item.endTime}" pattern="yyyy년 M월 d일 HH:mm:ss"/>)
-			        </td>
-			    </tr>
-			
-			    <!-- 경매번호 -->
-			    <tr>
-			        <th>경매번호</th>
-			        <td>${item.itemNo}</td>
-			    </tr>
-			    
-			      <tr>
-                <th>조회수</th>
-                <td>${item.views}회</td>
-                </tr>
-			
-			    <!-- 입찰수 -->
-			    <tr>
-			        <th>입찰수</th>
-			        <td id="bidCount">
-			            <c:choose>
-			                <c:when test="${empty bidCount}">0회</c:when>
-			                <c:otherwise>${bidCount}회</c:otherwise>
-			            </c:choose>
-			        </td>
-			    </tr>
-			
-			</table>
-		    
-		    <hr>
-	
-			<div class="meta">
-                <span>카테고리: ${itemCategory.itemCategory}</span>
-                <br>
-                <span>판매자: ${item.userNo}</span>
-                <br>
-                <c:if test="${not empty loginUser and loginUser.userNo != item.userNo}">
-				    <button type="button" class="report-btn"
-				        onclick="openReportPopup('item', ${item.itemNo})">
-				        🚨 신고하기
-				    </button>
-				</c:if>
+	        <div class="info-section">
+        <h2 class="item-title">${item.itemTitle}</h2>
+        <div class="meta-info">
+            <span class="category-tag">${itemCategory.itemCategory}</span>
+            <span class="seller-name">판매자: <strong>${item.userName}</strong></span>
+        </div>
+
+        <div class="auction-details">
+            <div class="info-row">
+                <span class="label">남은 시간</span>
+                <span id="timer" class="value timer-text" data-end="${item.endTime.time}" data-start="${item.startTime.time}">-</span>
             </div>
-			<jsp:include page="/WEB-INF/views/report/reportPopup.jsp" />
-                
-	        <!-- 가격 -->
-	        <div class="price-box">
-    <c:choose>
-        <c:when test="${now.time < item.startTime.time}">
-            <div>시작가 <strong><fmt:formatNumber value="${item.startPrice}" pattern="#,###" /></strong></div>
-        </c:when>
-
-        <c:when test="${now.time > item.endTime.time}">
-            <div>낙찰가 <strong><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong></div>
-        </c:when>
-
-        <c:otherwise>
-            <div>
-                현재가 <strong id="currentPrice"><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong>
-                <button type="button" class="btn-bid-history-small" onclick="openBidModal(${item.itemNo})">
-                    [입찰기록]
-                </button>
+            <div class="info-row">
+                <span class="label">입찰 수</span>
+                <span id="bidCount" class="value">${bidCount}회</span>
             </div>
-        </c:otherwise>
-    </c:choose>
+            <div class="info-row">
+                <span class="label">조회수</span>
+                <span class="value">${item.views}회</span>
+            </div>
+            <div class="info-row">
+                <span class="label">경매 번호</span>
+                <span class="value">#${item.itemNo}</span>
+            </div>
+        </div>
 
-    		<c:if test="${item.directBuy eq 'Y'}">
-        <div class="buy-now">즉시구매가 <fmt:formatNumber value="${item.buyNowPrice}" pattern="#,###" /></div>
-  		  </c:if>
-		</div>
-	
-	        <!-- 입찰 -->
-	       <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
-    <div class="bid-section-wrapper">
-       <div class="bid-box">
-    <input type="number" id="bidPrice" placeholder="입찰 금액" step="1000">
-    <button onclick="submitBid(event, ${item.itemNo})">입찰하기</button>
-		</div>
-        
-        <p id="topBidderMsg" class="top-bidder-msg" 
-           style="color: #2980b9; font-weight: bold; margin-top: 12px; ${isTopBidder ? '' : 'display: none;'}">
-            📢 귀하가 현재 최순위 입찰자입니다.
-        </p>
-  		  </div>
-		</c:if>
-	    </div>
+        <div class="price-section">
+            <div class="price-header">
+                <span class="price-label">현재 입찰가</span>
+                <button type="button" class="btn-history" onclick="openBidModal(${item.itemNo})">입찰기록 ❯</button>
+            </div>
+            <div class="price-amount-wrapper">
+                <strong id="currentPrice"><fmt:formatNumber value="${currentPrice}" pattern="#,###" /></strong>
+                <span class="unit">원</span>
+            </div>
+
+            <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
+                <div class="bid-form">
+                    <div class="input-group">
+  					  <input type="text" id="bidPrice" placeholder="금액 입력" oninput="formatBidPrice(this)">
+   						 <span class="input-unit">원</span>
+   						 <div class="bid-controls">
+   					     <button type="button" onclick="changeBidAmount(1000)">▲</button>
+   				     <button type="button" onclick="changeBidAmount(-1000)">▼</button>
+    				</div>
+				</div>
+                    <button class="btn-submit-bid" onclick="submitBid(event, ${item.itemNo})">입찰하기</button>
+                    <p id="topBidderMsg" class="top-bid-notice" style="${isTopBidder ? '' : 'display: none;'}">
+                        ✓ 현재 회원님이 최고가 입찰자입니다.
+                    </p>
+                </div>
+            </c:if>
+        </div>
+    </div>
+</div>
 	    
 	    
 
@@ -206,9 +151,16 @@
 	
 	<script>
 	// 이미지 변경
-	function changeImage(el){
-	    document.getElementById("mainImg").src = el.src;
-	}
+	function changeImage(el) {
+    const mainImg = document.getElementById("mainImg");
+    mainImg.classList.add("fade-out");
+    setTimeout(() => {
+        mainImg.src = el.src;
+        mainImg.onload = () => {
+            mainImg.classList.remove("fade-out");
+        };
+    }, 300);
+}
 	
 	// 타이머
 	function updateTimer(){
@@ -237,25 +189,43 @@
 	    const m = Math.floor((sec % 3600)/60);
 	    const s = sec % 60;
 	
-	    if(d > 0) return d+"일 "+h+"시간 "+m+"분"+s+"초";
-	    if(h > 0) return h+"시간 "+m+"분"+s+"초";
-	    return m+"분"+s+"초";
+	    if(d > 0) return d+"일 "+h+"시간 "+m+"분 "+s+"초";
+	    if(h > 0) return h+"시간 "+m+"분 "+s+"초";
+	    return m+"분 "+s+"초";
 	}
 	
 	setInterval(updateTimer,1000);
 	updateTimer();
 	
-	
+	function formatBidPrice(el) {
+	    let value = el.value.replace(/[^0-9]/g, '');
+	    if (value) {
+	        el.value = Number(value).toLocaleString();
+	    } else {
+	        el.value = '';
+	    }
+	}
+
+	function changeBidAmount(step) {
+	    const input = document.getElementById("bidPrice");
+	    let currentVal = parseInt(input.value.replace(/,/g, "")) || 0;
+	    
+	    let newVal = currentVal + step;
+	    if (newVal < 0) newVal = 0; // 0원 이하 방지
+	    
+	    input.value = newVal.toLocaleString();
+	}
 	// 입찰
-	function submitBid(e, itemNo){
+    function submitBid(e, itemNo){
     const btn = event.target; // 클릭한 버튼
     const bidPriceInput = document.getElementById("bidPrice");
-    const bidPrice = parseInt(bidPriceInput.value, 10);
+    const bidPrice = parseInt(bidPriceInput.value.replace(/,/g, ""), 10);
 
     if(!bidPrice || isNaN(bidPrice)){
         alert("올바른 금액을 입력하세요.");
         return;
     }
+   
 	
 	    // 1차 확인 팝업
   openConfirmModal(bidPrice, function() {
@@ -303,7 +273,7 @@
 	        });
 	    });
 	}
-	
+	 
 	function openConfirmModal(bidPrice, onConfirm){
 
 		
@@ -417,9 +387,10 @@
 	    priceEl.innerText = data.bidPrice.toLocaleString();
 	    
 	    // 입찰금액 = 현재가 + 1000
-	    if(bidPriceInput && document.activeElement !== bidPriceInput) {
-    bidPriceInput.value = data.bidPrice + 1000;
-	}
+	  if(bidPriceInput && document.activeElement !== bidPriceInput) {
+    // 숫자를 넣을 때 toLocaleString()을 붙여주세요
+    bidPriceInput.value = (data.bidPrice + 1000).toLocaleString();
+}
 	    
 	 // 2. 가격 상승 시 시각적 효과
 	    if(data.bidPrice > prevPrice) {
@@ -451,7 +422,7 @@
 	    const initialPrice = parseInt("${currentPrice}") || 0;
 	    const bidPriceInput = document.getElementById("bidPrice");
 	    if(bidPriceInput) {
-	        bidPriceInput.value = initialPrice + 1000;
+	        bidPriceInput.value = (initialPrice + 1000).toLocaleString();
 	    }
 	});
 	</script>
@@ -500,7 +471,8 @@
 	                    + String(d.getDate()).padStart(2, '0') + " " 
 	                    + String(d.getHours()).padStart(2, '0') + ":" 
 	                    + String(d.getMinutes()).padStart(2, '0') + ":" 
-	                    + String(d.getSeconds()).padStart(2, '0');
+                        + String(d.getSeconds()).padStart(2, '0') + ":" 
+                        + String(d.getMilliseconds()).padStart(3, '0');
 					
 	                    // 내 입찰기록은 강조해서 표시
 	                var row = "<tr class='" + (isMine ? "my-bid-row" : "") + "'>" +

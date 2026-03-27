@@ -103,10 +103,13 @@
 	</insert>
 	
 	<select id="selectItemDetail" resultType="item">
-		SELECT *
-		FROM ITEM
-		WHERE ITEM_NO = #{itemNo}
-	</select>
+		    SELECT 
+        I.*, 
+        M.USER_NAME
+    FROM ITEM I
+    JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
+    WHERE I.ITEM_NO = #{itemNo}
+</select>
 	<select id="selectItemCategory" resultType="itemCategory">
 		SELECT *
 		FROM ITEM_CD
@@ -182,7 +185,12 @@
 	    WHERE ITEM_NO = #{itemNo}
 	</update>
 	
-	    <select id="selectItemByNo" resultType="item" >
-    SELECT * FROM ITEM WHERE ITEM_NO = #{itemNo}
+	            <select id="selectItemByNo" resultType="item">
+    SELECT 
+        I.*, 
+        M.USER_NAME 
+    FROM ITEM I
+    JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
+    WHERE I.ITEM_NO = #{itemNo}
 </select>
 </mapper>

@@ -16,7 +16,7 @@ public class Item {
 	private int itemCdNo;
 	private int userNo;
 	private String itemTitle;
-
+    private String userName;
 	private int itemSize;
 	private String itemContent;
 	private int startPrice;
