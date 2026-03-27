@@ -41,7 +41,7 @@
             <img id="mainImg" src="${item.mainImg}" onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
         </div>
         <div class="thumbnail-wrapper">
-            <button class="thumb-btn left" onclick="scrollThumb(-1)">❮</button>
+                        <button class="thumb-btn left" onclick="moveImage(-1)">❮</button>
             <div class="thumbnail-list" id="thumbList">
                 <c:if test="${not empty item.mainImg}">
                     <img src="${item.mainImg}" class="thumb" onclick="changeImage(this)">
@@ -51,12 +51,16 @@
                 </c:forEach>
 			    </div>
 			
-			                <button class="thumb-btn right" onclick="scrollThumb(1)">❯</button>
+			      <button class="thumb-btn right" onclick="moveImage(1)">❯</button>
         </div>
     </div>
 	
 	    <!-- 상품 정보 -->
 	        <div class="info-section">
+	                    <button type="button" id="wishBtn" class="wish-btn ${isWish > 0 ? 'active' : ''}" 
+            onclick="toggleWishlist(${item.itemNo})">
+        <span class="heart-icon">${isWish > 0 ? '❤️' : '🤍'}</span>
+            </button>
         <h2 class="item-title">${item.itemTitle}</h2>
         <div class="meta-info">
             <span class="category-tag">${itemCategory.itemCategory}</span>
@@ -153,6 +157,10 @@
 	// 이미지 변경
 	function changeImage(el) {
     const mainImg = document.getElementById("mainImg");
+    
+    document.querySelectorAll('.thumb').forEach(thumb => thumb.classList.remove('active'));
+    el.classList.add('active');
+    
     mainImg.classList.add("fade-out");
     setTimeout(() => {
         mainImg.src = el.src;
@@ -162,6 +170,55 @@
     }, 300);
 }
 	
+    function moveImage(dir) {
+        const thumbs = document.querySelectorAll('.thumb');
+        let activeIndex = -1;
+
+        thumbs.forEach((thumb, index) => {
+            if (thumb.classList.contains('active')) activeIndex = index;
+        });
+
+        if (activeIndex === -1) activeIndex = 0;
+
+        let newIndex = activeIndex + dir;
+        
+        if (newIndex >= 0 && newIndex < thumbs.length) {
+            changeImage(thumbs[newIndex]);
+            thumbs[newIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    
+    // 찜목록 위시리스트
+    function toggleWishlist(itemNo) {
+        const wishBtn = document.getElementById("wishBtn");
+        const heartIcon = wishBtn.querySelector(".heart-icon");
+
+        // 로그인 여부는 서버(Controller)에서 401로 응답받아 처리하는 게 깔끔합니다.
+        fetch(`${pageContext.request.contextPath}/wishlist/toggle`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ itemNo: itemNo })
+        })
+        .then(res => {
+            if (res.status === 401) {
+                alert("로그인이 필요합니다.");
+                location.href = "${pageContext.request.contextPath}/member/login";
+                return;
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.result === "INSERT") {
+                wishBtn.classList.add("active");
+                heartIcon.innerText = "❤️";
+            } else if (data.result === "DELETE") {
+                wishBtn.classList.remove("active");
+                heartIcon.innerText = "🤍";
+            }
+        })
+        .catch(err => console.error(err));
+    }
+    
 	// 타이머
 	function updateTimer(){
 	    const el = document.getElementById("timer");
@@ -199,9 +256,18 @@
 	
 	function formatBidPrice(el) {
 	    let value = el.value.replace(/[^0-9]/g, '');
+        const MAX_BID = 1000000000; // 10억 상한선
+        
 	    if (value) {
-	        el.value = Number(value).toLocaleString();
-	    } else {
+            let numValue = parseInt(value, 10);
+            
+            if (numValue > MAX_BID) {
+                numValue = MAX_BID; 
+                alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+            }
+            
+            el.value = numValue.toLocaleString();
+        }else {
 	        el.value = '';
 	    }
 	}
@@ -209,9 +275,11 @@
 	function changeBidAmount(step) {
 	    const input = document.getElementById("bidPrice");
 	    let currentVal = parseInt(input.value.replace(/,/g, "")) || 0;
-	    
+        const MAX_BID = 1000000000;
+        
 	    let newVal = currentVal + step;
 	    if (newVal < 0) newVal = 0; // 0원 이하 방지
+        if (newVal > MAX_BID) newVal = MAX_BID;
 	    
 	    input.value = newVal.toLocaleString();
 	}
@@ -220,13 +288,17 @@
     const btn = event.target; // 클릭한 버튼
     const bidPriceInput = document.getElementById("bidPrice");
     const bidPrice = parseInt(bidPriceInput.value.replace(/,/g, ""), 10);
-
+    const MAX_BID = 1000000000;
+    
     if(!bidPrice || isNaN(bidPrice)){
         alert("올바른 금액을 입력하세요.");
         return;
     }
    
-	
+    if (bidPrice > MAX_BID) {
+        alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+        return;
+    }
 	    // 1차 확인 팝업
   openConfirmModal(bidPrice, function() {
 	    	btn.disabled = true;
@@ -316,9 +388,6 @@
 	
 	const thumbList = document.getElementById("thumbList");
 
-	function scrollThumb(dir){
-	    thumbList.scrollLeft += dir * 200;
-	}
 
 	// 드래그 스크롤
 	let isDown = false;
@@ -419,6 +488,8 @@
 	// 기존 setInterval은 삭제하고 connect() 호출
 	document.addEventListener("DOMContentLoaded", function() {
 	    connect();
+        const firstThumb = document.querySelector('.thumb');
+        if(firstThumb) firstThumb.classList.add('active');
 	    const initialPrice = parseInt("${currentPrice}") || 0;
 	    const bidPriceInput = document.getElementById("bidPrice");
 	    if(bidPriceInput) {

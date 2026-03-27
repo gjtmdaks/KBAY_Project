@@ -1,5 +1,6 @@
 package com.kh.kbay.member.model.vo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class Member implements UserDetails {
+public class Member implements UserDetails , Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private int userNo;
 	private int authority;
 	private String userId;
@@ -28,6 +31,7 @@ public class Member implements UserDetails {
 	private int likeCount;
 	private int noPayCount;
 	private char userStatus;
+
 	
 	public String getUserName() {
         return userName;
