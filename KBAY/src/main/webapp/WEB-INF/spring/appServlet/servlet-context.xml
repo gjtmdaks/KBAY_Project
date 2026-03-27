@@ -21,7 +21,11 @@
 		<mvc:annotation-drive/>에서 mvc접두어를 뺀 태그. (mvc가 default로 설정되어있어서.)
 		mvc와 관련된 어노테이션을 활성화시키는 역할
 	 -->
-	 
+	<annotation-driven>
+		<argument-resolvers>
+			<beans:bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver" />
+		</argument-resolvers>
+	</annotation-driven>
 	 <!--  이메일 전송 스위치  -->
 <task:annotation-driven executor="mailExecutor" />
 
@@ -31,6 +35,7 @@
                rejection-policy="CALLER_RUNS" />
                
 	<annotation-driven />
+
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
@@ -86,6 +91,7 @@
 		 - WebSocket/Sockjs는 메세지를 실시간으로 송수신하기 위한 양방향 채널이며
 		   특별한 "기능적인 규약"은 존재하지 않는다.
 	 -->
+	 
 	<beans:bean id="chatHandler" class="com.kh.kbay.chat.model.websocket.ChatWebsocket" />
 
 	<websocket:handlers>

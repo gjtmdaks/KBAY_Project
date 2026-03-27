@@ -93,6 +93,32 @@
     border-radius: 15px;
     background: #fff;
     box-shadow: var(--shadow);
+        position: relative;
+}
+
+.wish-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
+
+.wish-btn:hover {
+    transform: scale(1.1);
+}
+
+.wish-btn .heart-icon {
+    color: #ddd; /* 기본 회색 하트 */
+}
+
+.wish-btn.active .heart-icon {
+    color: #e74c3c; /* 찜했을 때 빨간 하트 */
 }
 
 .item-title {
