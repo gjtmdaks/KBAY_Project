@@ -102,5 +102,43 @@ public class AdminDaoImpl implements AdminDao {
 		return session.selectList("adminMapper.selectUserReportList",userNo);
 	}
 	
+	// 신고 내역 처리 부분
+	@Override
+	public int selectReportListCount(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectReportListCount", paramMap);
+	}
+	@Override
+	public List<Report> selectReportList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.selectList("adminMapper.selectReportList", paramMap);
+	}
+
+	@Override
+	public Map<String, Object> selectReportTargetInfo(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectReportTargetInfo", paramMap);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectReportStats(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.selectList("adminMapper.selectReportStats", paramMap);
+	}
+
+	@Override
+	public int updateTargetDeleteStatus(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateTargetDeleteStatus",paramMap);
+	}
+
+	@Override
+	public int updateReportKeepStatus(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateReportKeepStatus",paramMap);
+	}
+
+	
+	
 	
 }

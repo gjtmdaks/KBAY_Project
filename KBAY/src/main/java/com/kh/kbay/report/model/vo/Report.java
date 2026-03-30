@@ -19,6 +19,8 @@ public class Report {
 	
 	// 화면에 보여줄 신고 유형
     private String reportCategoryName;
+    
+    private String reporterId;
     private String targetTitle;   // item / board 제목
     private String replyContent;  // 댓글 내용
     private int boardNo;

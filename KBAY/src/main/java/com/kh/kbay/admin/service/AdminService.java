@@ -37,6 +37,15 @@ public interface AdminService {
 	
 	//회원이 받은 신고 내역 조회
 	List<Report> selectUserReportList(int userNo);
+	
+	// 신고 내역 처리 부분
+	int selectReportListCount(Map<String, Object> paramMap);
+	List<Report> selectReportList(Map<String, Object> paramMap);
+	
+	Map<String, Object> selectReportTargetInfo(Map<String, Object> paramMap);
+	List<Map<String, Object>> selectReportStats(Map<String, Object> paramMap);
+	
+	int updateReportProcess(Map<String, Object> paramMap);
 
 	
 

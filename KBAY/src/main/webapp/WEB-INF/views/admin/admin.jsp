@@ -36,11 +36,11 @@
                         <i class="far fa-id-badge"></i>
                         <span>회원 조회/수정</span>
                     </a>
-                    <a href="${contextPath}/admin/reportList" class="square-btn">
+                    <a href="${contextPath}/admin/adminReportList" class="square-btn">
                         <i class="fas fa-comment-dots"></i>
                         <span>신고/문의 내역 처리</span>
                     </a>
-                    <a href="${contextPath}/admin/paymentList" class="square-btn">
+                    <a href="${contextPath}/admin/adminPaymentList" class="square-btn">
                         <i class="fas fa-shield-alt"></i>
                         <span>회원 결제<br>내역 관리</span>
                     </a>
@@ -50,15 +50,15 @@
             <div class="section-box">
                 <div class="section-title">경매 및 상품 관리</div>
                 <div class="btn-grid">
-                    <a href="${contextPath}/admin/auctionCancel" class="square-btn">
+                    <a href="${contextPath}/admin/adminAuctionCancel" class="square-btn">
                         <i class="far fa-file-image"></i>
                         <span>경매 강제<br>종료 및 취소</span>
                     </a>
-                    <a href="${contextPath}/admin/succession" class="square-btn">
+                    <a href="${contextPath}/admin/adminSuccession" class="square-btn">
                         <i class="fas fa-file-signature"></i>
                         <span>낙찰 취하 신청 및<br>낙찰 승계관리</span>
                     </a>
-                    <a href="${contextPath}/admin/bidLog" class="square-btn">
+                    <a href="${contextPath}/admin/adminBidLog" class="square-btn">
                         <i class="fas fa-chart-line"></i>
                         <span>입찰 로그 확인</span>
                     </a>
