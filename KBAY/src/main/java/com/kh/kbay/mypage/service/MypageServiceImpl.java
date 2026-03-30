@@ -1,11 +1,17 @@
 package com.kh.kbay.mypage.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.ServletContext;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.bid.dao.BidDao;
 import com.kh.kbay.bid.model.vo.Bid;
@@ -16,6 +22,9 @@ import com.kh.kbay.item.model.vo.ItemImg;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.dao.MypageDao;
 import com.kh.kbay.mypage.model.vo.BidListDto;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqCategory;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
 import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.mypage.model.vo.WishListDto;
@@ -32,6 +41,7 @@ public class MypageServiceImpl implements MypageService {
 	private final MypageDao md;
 	private final ItemDao id;
 	private final BidDao bd;
+	private final ServletContext application;
     
     @Override
     public int getAccidentCount(int userNo) {
@@ -123,10 +133,7 @@ public class MypageServiceImpl implements MypageService {
 	        // 3. 입찰 수
 	        int bidCount = bd.selectBidCount(itemNo);
 
-	        // 4. 최고 입찰자
-	        Bid topBid = bd.findTopBid(itemNo);
-
-	        // 5. 상태 변환
+	        // 4. 상태 변환
 	        String statusText;
 
 	        switch(item.getStatus()){
@@ -143,13 +150,7 @@ public class MypageServiceImpl implements MypageService {
 	                statusText = "-";
 	        }
 
-	        // 6. 순위 판단
-	        String rankingText = "차순위입찰자";
-	        if(topBid != null && topBid.getUserNo() == userNo){
-	            rankingText = "최고입찰자";
-	        }
-
-	        // 7. DTO 조립
+	        // 5. DTO 조립
 	        SaleListDto dto = new SaleListDto();
 	        dto.setItemNo(itemNo);
 	        dto.setItemTitle(item.getItemTitle());
@@ -159,6 +160,7 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setEndTime(item.getEndTime());
 	        dto.setImgUrl(imgUrl);
 	        dto.setBuyerId(item.getUserNo()+""); // 필요시 join해서 userId로
+	        dto.setStatusText(statusText);
 
 	        result.add(dto);
 	    }
@@ -168,7 +170,47 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	public List<WishListDto> getWishList(int userNo) {
-		return md.getWishList(userNo);
+
+	    List<Item> wishItems = md.getWishList(userNo); // ← item 기준으로 가져오도록 DAO 수정 필요
+	    List<WishListDto> result = new ArrayList<>();
+
+	    for(Item item : wishItems){
+
+	        int itemNo = item.getItemNo();
+
+	        // 1. 이미지
+	        List<ItemImg> imgList = id.selectItemImgList(itemNo);
+	        String imgUrl = imgList.isEmpty() ? "/resources/no-image.png"
+	                                          : imgList.get(0).getImgUrl();
+
+	        // 2. 입찰 수
+	        int bidCount = bd.selectBidCount(itemNo);
+
+	        // 3. 상태 텍스트
+	        String statusText;
+	        switch(item.getStatus()){
+	            case "Y": statusText = "시작 전"; break;
+	            case "N": statusText = "진행 중"; break;
+	            case "E": statusText = "종료"; break;
+	            default: statusText = "-";
+	        }
+
+	        // 4. DTO 조립
+	        WishListDto dto = new WishListDto();
+	        dto.setItemNo(itemNo);
+	        dto.setItemTitle(item.getItemTitle());
+	        dto.setCurrentPrice(item.getCurrentPrice());
+	        dto.setViews(item.getViews());
+	        dto.setEndTime(item.getEndTime());
+	        dto.setImgUrl(imgUrl);
+	        dto.setBidCount(bidCount);
+	        dto.setStatus(item.getStatus());
+	        dto.setStatusText(statusText);
+
+	        result.add(dto);
+	    }
+
+	    return result;
 	}
 
 	@Override
@@ -208,6 +250,67 @@ public class MypageServiceImpl implements MypageService {
 	@Override
 	public List<Report> getReportedList(int userNo) {
 		return md.getReportedList(userNo);
+	}
+	
+	public List<Faq> getFaqList(int userNo) {
+	    return md.getFaqList(userNo);
+	}
+
+	public List<FaqCategory> getCategoryList() {
+	    return md.getCategoryList();
+	}
+
+	public int insertFaq(Faq faq, List<MultipartFile> files) {
+
+	    String savePath = "C:/upload/faq/";
+	    String serverIp = "192.168.10.25:8081";
+	    String webPath = "/kbay/upload/faq/";
+
+	    File dir = new File(savePath);
+	    if (!dir.exists()) dir.mkdirs();
+
+	    // 1. FAQ 먼저 insert
+	    int result = md.insertFaq(faq);
+
+	    if(result <= 0) return 0;
+
+	    // 2. 파일 처리
+	    if(files != null) {
+	        for(MultipartFile file : files) {
+
+	            if(file.isEmpty()) continue;
+
+	            String originName = file.getOriginalFilename();
+	            String ext = originName.substring(originName.lastIndexOf("."));
+	            String changeName = UUID.randomUUID().toString() + ext;
+
+	            try {
+	                file.transferTo(new File(savePath + changeName));
+
+	                FaqImg fi = new FaqImg();
+	                fi.setFaqId(faq.getFaqId()); // ★ 중요
+	                fi.setOriginName(originName);
+	                fi.setChangeName(changeName);
+	                fi.setFilePath("http://" + serverIp + webPath + changeName);
+
+	                md.insertFaqFile(fi);
+
+	            } catch (IOException e) {
+	                throw new RuntimeException("파일 업로드 실패");
+	            }
+	        }
+	    }
+
+	    return 1;
+	}
+
+	public Faq getFaqDetail(int id) {
+	    return md.getFaqDetail(id);
+	}
+
+	@Override
+	public List<FaqImg> getFaqFiles(int faqId) {
+	    return md.selectFaqFiles(faqId);
 	}
 
 }

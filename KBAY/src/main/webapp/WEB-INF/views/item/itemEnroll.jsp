@@ -90,6 +90,7 @@
 				<label for="sizeUnit">물품 사이즈</label> <select id="sizeUnit"
 					name="sizeUnit">
 					<option value="cm">cm (센티미터)</option>
+					                    <option value="mm">mm (밀리미터)</option>
 					<option value="inch">inch (인치)</option>
 					<option value="㎡">㎡ (제곱미터)</option>
 					<option value="kg">kg (킬로그램)</option>
@@ -98,7 +99,7 @@
 
 			<div class="form-group">
 				<label for="itemSize">물품 크기</label> <input type="number"
-					id="itemSize" name="itemSize" step="10" min="0"
+					id="itemSize" name="itemSize" step="1" min="0"
 					placeholder="단위에 맞는 수치를 입력하세요">
 			</div>
 
@@ -117,7 +118,7 @@
 				<textarea id="itemContent" name="itemContent" rows="5" required></textarea>
 				<div id="byte-counter-area"
 					style="text-align: right; margin-top: 5px; font-size: 13px; color: #666;">
-					<span id="nowByte">0</span> / 200 byte
+					 <span id="nowByte">0</span> / 3000 byte
 				</div>
 			</div>
 

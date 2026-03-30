@@ -44,16 +44,7 @@
                             data-href="${pageContext.request.contextPath}/auction/detail/${i.itemNo}">
 
                             <!-- 상태 -->
-                            <td>
-                                <c:choose>
-                                    <c:when test="${i.endTime.time lt now.time}">
-                                        마감
-                                    </c:when>
-                                    <c:otherwise>
-                                        진행 중
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
+                            <td>${i.statusText}</td>
 
                             <!-- 이미지 -->
                             <td>

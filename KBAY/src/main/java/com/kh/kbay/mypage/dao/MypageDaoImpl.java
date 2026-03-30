@@ -10,8 +10,10 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqCategory;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
-import com.kh.kbay.mypage.model.vo.WishListDto;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,7 @@ public class MypageDaoImpl implements MypageDao {
 	}
 
 	@Override
-	public List<WishListDto> getWishList(int userNo) {
+	public List<Item> getWishList(int userNo) {
 		return session.selectList("mypage.selectWishList", userNo);
 	}
 
@@ -77,6 +79,32 @@ public class MypageDaoImpl implements MypageDao {
 	@Override
 	public List<Report> getReportedList(int userNo) {
 		return session.selectList("mypage.selectReportedList", userNo);
+	}
+	
+	public List<Faq> getFaqList(int userNo) {
+	    return session.selectList("mypage.getFaqList", userNo);
+	}
+
+	public int insertFaq(Faq faq) {
+	    return session.insert("mypage.insertFaq", faq);
+	}
+
+	public List<FaqCategory> getCategoryList() {
+	    return session.selectList("mypage.getCategoryList");
+	}
+
+	public Faq getFaqDetail(int id) {
+	    return session.selectOne("mypage.getFaqDetail", id);
+	}
+
+	@Override
+	public void insertFaqFile(FaqImg fi) {
+	    session.insert("mypage.insertFaqFile", fi);
+	}
+
+	@Override
+	public List<FaqImg> selectFaqFiles(int faqId) {
+		return session.selectList("mypage.selectFaqFiles", faqId);
 	}
 
 }

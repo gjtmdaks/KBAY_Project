@@ -1,4 +1,4 @@
 datasource.driverClassName=oracle.jdbc.driver.OracleDriver
-datasource.url=
-datasource.username=
-datasource.password=
+datasource.url=jdbc:oracle:thin:@localhostIP:xe
+datasource.username=데이터베이스 ID
+datasource.password=데이터베이스 PWD

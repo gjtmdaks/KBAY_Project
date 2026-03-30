@@ -15,4 +15,5 @@ public class SaleListDto {
 
     private String imgUrl;
     private String buyerId; // 최고 입찰자
+    private String statusText;
 }

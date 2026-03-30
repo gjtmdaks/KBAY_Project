@@ -2,10 +2,14 @@ package com.kh.kbay.mypage.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.kh.kbay.board.model.vo.BoardPost;
-import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.BidListDto;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqCategory;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
 import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.mypage.model.vo.WishListDto;
@@ -34,5 +38,15 @@ public interface MypageService {
 	Member selectUserByNo(int userNo);
 
 	List<Report> getReportedList(int userNo);
+
+	List<Faq> getFaqList(int userNo);
+
+	List<FaqCategory> getCategoryList();
+
+	int insertFaq(Faq faq, List<MultipartFile> files);
+
+	Faq getFaqDetail(int id);
+
+	List<FaqImg> getFaqFiles(int id);
 
 }
