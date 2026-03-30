@@ -88,7 +88,7 @@
                                 
                                 <%-- 날짜 포맷 --%>
                                 <td>
-                                    <fmt:parseDate value="${report.createAt}" var="parsedDate" pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
+                                    <fmt:parseDate value="${report.createdAt}" var="parsedDate" pattern="E MMM dd HH:mm:ss z yyyy" parseLocale="en_US" />
                                     <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm" />
                                 </td>
                                 
