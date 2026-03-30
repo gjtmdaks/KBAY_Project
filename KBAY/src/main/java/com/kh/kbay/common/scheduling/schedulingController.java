@@ -26,7 +26,7 @@ public class schedulingController {
     private final BidService bs;
     private final BoardService boards;
 	
-	@Scheduled(fixedDelay = 1000) // 1초마다
+	@Scheduled(fixedDelay = 1000000) // 1초마다
 	public void updateItemStatus() {
 		int updated = is.updateItemStatus();
 		if (updated > 0) {

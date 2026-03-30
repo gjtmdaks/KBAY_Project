@@ -231,4 +231,58 @@
 	    ) t
 	    ORDER BY created_at DESC
 	</select>
+	
+	<select id="getFaqList" resultType="Faq">
+        SELECT F.*, C.CATEGORY_NAME
+        FROM FAQ F
+        JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
+        WHERE F.USER_NO = #{userNo}
+        ORDER BY F.CREATE_DATE DESC
+    </select>
+
+	<insert id="insertFaq">
+	    
+	    <selectKey keyProperty="faqId" resultType="int" order="BEFORE">
+	        SELECT SEQ_FAQ.NEXTVAL FROM DUAL
+	    </selectKey>
+	
+	    INSERT INTO FAQ (
+	        FAQ_ID, USER_NO, CATEGORY_ID, TITLE, CONTENT, FILE_PATH
+	    ) VALUES (
+	        #{faqId},
+	        #{userNo},
+	        #{categoryId},
+	        #{title},
+	        #{content},
+	        #{filePath}
+	    )
+	</insert>
+
+    <select id="getCategoryList" resultType="FaqCategory">
+        SELECT * FROM FAQ_CATEGORY
+    </select>
+
+	<select id="getFaqDetail" resultType="Faq">
+	    SELECT 
+	        F.*, 
+	        C.CATEGORY_NAME,
+	        M.USER_NAME
+	    FROM FAQ F
+	    JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
+	    JOIN MEMBER M ON F.USER_NO = M.USER_NO
+	    WHERE F.FAQ_ID = #{id}
+	</select>
+	
+	<insert id="insertFaqFile">
+	    INSERT INTO FAQ_IMG
+	    (FILE_ID, FAQ_ID, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+	    VALUES
+	    (SEQ_FAQ_IMG.NEXTVAL, #{faqId}, #{originName}, #{changeName}, #{filePath})
+	</insert>
+	
+	<select id="selectFaqFiles" resultType="FaqImg">
+		SELECT *
+		FROM FAQ_IMG
+		WHERE FAQ_ID = #{faqId}
+	</select>
 </mapper>
