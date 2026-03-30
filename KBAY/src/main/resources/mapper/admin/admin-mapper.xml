@@ -167,7 +167,7 @@
                 R.TARGET_TYPE as targetType, 
                 R.TARGET_NO as targetNo, 
                 C.REPORT_CATEGORY as reportCategoryName,
-                M.USER_ID as reporterId,    R.CREATED_AT as createAt, 
+                M.USER_ID as reporterId,    R.CREATED_AT as createdAt, 
                 R.STATUS as status
             FROM REPORT R
             LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO

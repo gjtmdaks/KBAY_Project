@@ -229,9 +229,6 @@ public class MypageController {
         model.addAttribute("faq", ms.getFaqDetail(id));
         
         List<FaqImg> fileList = ms.getFaqFiles(id);
-        for(FaqImg f : fileList) {
-        	System.out.println(f);
-        }
         model.addAttribute("fileList", fileList); // ★ 추가
         
 
