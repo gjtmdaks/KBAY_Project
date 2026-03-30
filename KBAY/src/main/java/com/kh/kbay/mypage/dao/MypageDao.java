@@ -19,7 +19,7 @@ public interface MypageDao {
 
 	List<Item> getSaleList(int userNo);
 
-	List<WishListDto> getWishList(int userNo);
+	List<Item> getWishList(int userNo);
 
 	List<BoardPost> getBoardList(int userNo);
 
