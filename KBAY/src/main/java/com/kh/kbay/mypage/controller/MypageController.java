@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.BidListDto;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
 import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.mypage.model.vo.WishListDto;
@@ -179,5 +182,59 @@ public class MypageController {
         
         model.addAttribute("list", list);
         return "mypage/reportedList";
+    }
+    
+    // 문의 목록
+    @GetMapping("faq")
+    public String faqList(Authentication auth, Model model) {
+        Member user = (Member) auth.getPrincipal();
+
+        List<Faq> list = ms.getFaqList(user.getUserNo());
+        model.addAttribute("list", list);
+
+        return "mypage/faq";
+    }
+
+    // 문의 작성 페이지
+    @GetMapping("faq/write")
+    public String faqWriteForm(Authentication auth, Model model) {
+
+        Member loginUser = (Member) auth.getPrincipal();
+
+        model.addAttribute("loginUser", loginUser);
+        model.addAttribute("categoryList", ms.getCategoryList());
+
+        return "mypage/faqWrite";
+    }
+
+    // 문의 등록
+    @PostMapping("faq/insert")
+    public String insertFaq(
+            Faq faq,
+            @RequestParam(value="upfile", required=false) List<MultipartFile> files,
+            Authentication auth
+    ) {
+        Member user = (Member) auth.getPrincipal();
+        faq.setUserNo(user.getUserNo());
+
+        ms.insertFaq(faq, files);
+
+        return "redirect:/mypage/faq";
+    }
+
+    // 상세
+    @GetMapping("faq/detail")
+    public String faqDetail(@RequestParam("id") int id, Model model) {
+
+        model.addAttribute("faq", ms.getFaqDetail(id));
+        
+        List<FaqImg> fileList = ms.getFaqFiles(id);
+        for(FaqImg f : fileList) {
+        	System.out.println(f);
+        }
+        model.addAttribute("fileList", fileList); // ★ 추가
+        
+
+        return "mypage/faqDetail";
     }
 }
