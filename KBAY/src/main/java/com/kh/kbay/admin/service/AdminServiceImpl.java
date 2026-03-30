@@ -100,6 +100,46 @@ public class AdminServiceImpl implements AdminService {
 		// TODO Auto-generated method stub
 		return ad.selectUserReportList(userNo);
 	}
+	
+	// 신고 내역 처리 부분
+	@Override
+	public int selectReportListCount(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectReportListCount(paramMap);
+	}
+	@Override
+	public List<Report> selectReportList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectReportList(paramMap);
+	}
+
+	@Override
+	public Map<String, Object> selectReportTargetInfo(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectReportTargetInfo(paramMap);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectReportStats(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectReportStats(paramMap);
+	}
+
+	@Override
+	public int updateReportProcess(Map<String, Object> paramMap) {
+		int result = 0;
+		String action = (String) paramMap.get("action");
+		
+		// 1. [강제 삭제]를 선택했다면? -> 원본 글 지우는 DAO 호출!
+		if ("DELETE".equals(action)) {
+			result = ad.updateTargetDeleteStatus(paramMap);
+		}
+		
+		// 2. [강제 삭제]든 [정상 유지]든 무조건 실행! -> 신고 완료 처리 DAO 호출!
+		int reportResult = ad.updateReportKeepStatus(paramMap);
+		
+		return result + reportResult;
+	}
 
 	
 

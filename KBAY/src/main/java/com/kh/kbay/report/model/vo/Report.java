@@ -19,4 +19,6 @@ public class Report {
 	
 	// 화면에 보여줄 신고 유형
     private String reportCategoryName;
+    
+    private String reporterId;
 }

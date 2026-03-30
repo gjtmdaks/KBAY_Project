@@ -33,7 +33,7 @@ public class AdminController {
 	private final AdminService adminService;
 	
 
-    @GetMapping("/adminpage.me") // 아까 헤더에서 연결한 관리자페이지 주소
+    @GetMapping("/adminPage.me") // 아까 헤더에서 연결한 관리자페이지 주소
     public String adminPage(Model model) {
         
     	// 1. 현재 총 가입자 수 조회
@@ -143,5 +143,101 @@ public class AdminController {
     public String deleteUser(@RequestParam("userNo") int userNo) {
         int result = adminService.deleteUser(userNo);
         return result > 0 ? "success" : "fail";
+    }
+    
+    // 신고 내역 처리 부분
+    @GetMapping("/adminReportList")
+    public String adminReportList(
+            @RequestParam(value="cpage", defaultValue = "1") int currentPage,
+            @RequestParam(value="reportStatus", defaultValue = "ALL") String reportStatus,
+            @RequestParam(value="targetType", defaultValue = "ALL") String targetType,
+            Model model) {
+        
+        // 1. 화면에서 넘어온 검색 필터(상태, 유형)를 맵에 쏙 담기
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("reportStatus", reportStatus);
+        paramMap.put("targetType", targetType);
+        
+        // 2. 페이징 설정 (한 페이지에 10개씩 보여주기)
+        int boardLimit = 10;
+        int pageLimit = 5;
+        
+        // 3. 필터 조건에 맞는 전체 신고 건수 조회 (서비스 호출)
+        int listCount = adminService.selectReportListCount(paramMap);
+        
+        // 4. 페이징 계산기 실행
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, pageLimit, boardLimit);
+        
+        // 5. DB에서 가져올 시작/끝 번호 계산
+        int offset = (currentPage - 1) * boardLimit + 1;
+        int limit = currentPage * boardLimit;
+        
+        paramMap.put("offset", offset);
+        paramMap.put("limit", limit);
+        
+        // 6. 진짜 신고 목록 데이터 가져오기 (서비스 호출)
+        List<Report> reportList = adminService.selectReportList(paramMap);
+        
+        // 7. JSP(화면)로 예쁘게 포장해서 보내기!
+        model.addAttribute("reportList", reportList);
+        model.addAttribute("pi", pi);
+        // (참고: 검색 파라미터는 JSP에서 ${param.reportStatus} 로 바로 꺼내 쓰므로 모델에 안 담아도 됩니다!)
+        
+        return "admin/adminReportList";
+    }
+    
+    @GetMapping("/reportDetail")
+    @ResponseBody
+    public Map<String, Object> reportDetail(
+            @RequestParam("targetType") String targetType,
+            @RequestParam("targetNo") int targetNo) {
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("targetType", targetType);
+        paramMap.put("targetNo", targetNo);
+        
+        Map<String, Object> targetInfo = adminService.selectReportTargetInfo(paramMap);
+        List<Map<String, Object>> reportStats = adminService.selectReportStats(paramMap);
+        
+        int totalReportCount = 0;
+        if(reportStats != null) {
+            for(Map<String, Object> stat : reportStats) {
+                Object countObj = stat.get("REPORT_COUNT");
+                if (countObj == null) countObj = stat.get("REPORTCOUNT");
+                if (countObj == null) countObj = stat.get("reportCount");
+                
+                if (countObj != null) {
+                    totalReportCount += Integer.parseInt(String.valueOf(countObj));
+                }
+            }
+        }
+        
+        // Model 대신 Map에 담아서 리턴합니다! (프론트의 AJAX가 이 데이터를 받음)
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("targetType", targetType);
+        resultMap.put("targetNo", targetNo);
+        resultMap.put("targetInfo", targetInfo);
+        resultMap.put("reportStats", reportStats);
+        resultMap.put("totalReportCount", totalReportCount);
+        
+        return resultMap;
+    }
+    
+    @PostMapping("/processReport")
+    @ResponseBody
+    public String processReport(
+            @RequestParam("targetType") String targetType,
+            @RequestParam("targetNo") int targetNo,
+            @RequestParam("action") String action) {
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("targetType", targetType);
+        paramMap.put("targetNo", targetNo);
+        paramMap.put("action", action);
+        
+        // 서비스 호출 (성공하면 1 이상 반환)
+        int result = adminService.updateReportProcess(paramMap);
+        
+        return result > 0 ? "SUCCESS" : "FAIL";
     }
 }
