@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     itemContent.addEventListener('input', function() {
         const currentByte = getByteLength(this.value);
         nowByte.innerText = currentByte;
-        if (currentByte > 200) {
+        if (currentByte > 3000) {
             byteCounterArea.style.color = "#E74C3C"; 
             nowByte.style.fontWeight = "bold";
         } else {
@@ -183,8 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const end = new Date(endTimeInput.value);
         const diffDays = (end - start) / (1000 * 60 * 60 * 24);
         
-        if (itemTitle.length > 15 || getByteLength(itemTitle) > 50) {
-            alert("물품명은 15글자 이내로 입력해주세요.");
+           if (itemTitle.length > 30 || getByteLength(itemTitle) > 100) {
+            alert("물품명은 30글자 이내로 입력해주세요.");
             document.getElementById('itemTitle').focus();
             e.preventDefault(); return;
         }
@@ -207,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault(); return;
         }
 
-        if (itemContent.value.length > 100 || getByteLength(itemContent.value) > 200) {
-            alert("물품에 대한 상세 설명은 200byte 이내로 입력해주세요.");
+        if (getByteLength(itemContent.value) > 3000) {
+            alert("물품에 대한 상세 설명은 3000byte 이내로 입력해주세요.");
             itemContent.focus();
             e.preventDefault(); return;
         }

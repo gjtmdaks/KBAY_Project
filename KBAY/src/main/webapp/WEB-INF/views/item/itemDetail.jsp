@@ -84,6 +84,35 @@
                 <span class="label">경매 번호</span>
                 <span class="value">#${item.itemNo}</span>
             </div>
+                                    <div class="info-row">
+        <span class="label">제조국</span>
+        <span class="value">
+            <c:choose>
+                <c:when test="${item.countryNo == 'KOR'}">대한민국</c:when>
+                <c:when test="${item.countryNo == 'USA'}">미국</c:when>
+                <c:when test="${item.countryNo == 'JPN'}">일본</c:when>
+                <c:when test="${item.countryNo == 'CHN'}">중국</c:when>
+                <c:when test="${item.countryNo == 'FRA'}">프랑스</c:when>
+                <c:when test="${item.countryNo == 'DEU'}">독일</c:when>
+                <c:when test="${item.countryNo == 'RUS'}">러시아</c:when>
+                <c:when test="${item.countryNo == 'BRA'}">브라질</c:when>
+                <c:when test="${item.countryNo == 'IND'}">인도</c:when>
+                <c:when test="${item.countryNo == 'CAN'}">캐나다</c:when>
+                <c:when test="${item.countryNo == 'AUS'}">호주</c:when>
+                <c:when test="${item.countryNo == 'ESP'}">스페인</c:when>
+                <c:when test="${item.countryNo == 'ITA'}">이탈리아</c:when>
+                <c:when test="${item.countryNo == 'ZAF'}">남아프리카공화국</c:when>
+                <c:when test="${item.countryNo == 'MEX'}">멕시코</c:when>
+                <c:when test="${item.countryNo == 'SWE'}">스웨덴</c:when>
+                <c:when test="${item.countryNo == 'NOR'}">노르웨이</c:when>
+                <c:when test="${item.countryNo == 'FIN'}"> 핀란드</c:when>
+                <c:when test="${item.countryNo == 'GBR'}">영국</c:when>
+                <c:when test="${item.countryNo == 'ETC'}">기타 국가</c:when>
+                <c:otherwise>${item.countryNo}</c:otherwise>
+            </c:choose>
+        </span>
+    </div>
+    
             <c:if test="${not empty loginUser and loginUser.userNo != item.userNo}">
                 <button type="button" class="report-btn"
                         onclick="openReportPopup('item', ${item.itemNo})">
@@ -279,17 +308,21 @@
 	    }
 	}
 
-	function changeBidAmount(step) {
-	    const input = document.getElementById("bidPrice");
-	    let currentVal = parseInt(input.value.replace(/,/g, "")) || 0;
-        const MAX_BID = 1000000000;
-        
-	    let newVal = currentVal + step;
-	    if (newVal < 0) newVal = 0; // 0원 이하 방지
-        if (newVal > MAX_BID) newVal = MAX_BID;
-	    
-	    input.value = newVal.toLocaleString();
-	}
+    const MAX_BID = 1000000000;
+    let newVal;
+
+    if (currentVal % 1000 !== 0) {
+        if (step > 0) {
+            newVal = Math.ceil(currentVal / 1000) * 1000;
+        } else {
+            newVal = Math.floor(currentVal / 1000) * 1000;
+        }
+    } else {
+        newVal = currentVal + step;
+    }
+
+    if (newVal < 0) newVal = 0;
+    if (newVal > MAX_BID) newVal = MAX_BID;
 	// 입찰
     function submitBid(e, itemNo){
     const btn = event.target; // 클릭한 버튼
@@ -299,6 +332,12 @@
     
     if(!bidPrice || isNaN(bidPrice)){
         alert("올바른 금액을 입력하세요.");
+        return;
+    }
+    
+    if (bidPrice % 1000 !== 0) {
+        alert("입찰 금액은 1,000원 단위로만 입력 가능합니다.");
+        bidPriceInput.focus();
         return;
     }
    
