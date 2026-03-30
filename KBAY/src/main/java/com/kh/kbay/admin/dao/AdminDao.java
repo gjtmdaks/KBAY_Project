@@ -11,6 +11,11 @@ import com.kh.kbay.report.model.vo.Report;
 
 public interface AdminDao {
 
+	// 가입자수, 진행중인 경매, 신고 내역
+	int selectTotalMemberCount();
+	int selectActiveAuctionsCount();
+	int selectUnprocessedReportsCount();
+	
 	int selectMemberListCount(Map<String, Object> safeMap);
 
 	List<Member> selectMemberList(Map<String, Object> safeMap);
@@ -32,6 +37,8 @@ public interface AdminDao {
 	int updateUserStatusDelete(int userNo);
 
 	List<Report> selectUserReportList(int userNo);
+
+	
 
 
 

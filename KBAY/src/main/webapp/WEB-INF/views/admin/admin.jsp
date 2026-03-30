@@ -22,9 +22,9 @@
         <div class="info-box">
             <div class="info-title"><sec:authentication property="principal.userName" /> 관리자님, 반갑습니다.</div>
             <ul class="info-list">
-                <li><i class="fas fa-user-circle"></i> 금일 신규 가입자: <strong>${todayNewMembers}</strong>명</li>
-                <li><i class="fas fa-gavel"></i> 현재 진행 중인 경매 건수: <strong>${activeAuctionsCount}</strong> 건</li>
-                <li><i class="fas fa-exclamation-triangle"></i> 미처리 신고 내역: <strong>${unprocessedReportsCount}</strong>건</li>
+                <li><i class="fas fa-user-circle"></i> 현재 총 가입자 : <strong>${todayNewMembers}</strong> 명</li>
+                <li><i class="fas fa-gavel"></i> 현재 진행 중인 경매 건수 : <strong>${activeAuctionsCount}</strong> 건</li>
+                <li><i class="fas fa-exclamation-triangle"></i> 미처리 신고 내역 : <strong>${unprocessedReportsCount}</strong> 건</li>
             </ul>
         </div>
 

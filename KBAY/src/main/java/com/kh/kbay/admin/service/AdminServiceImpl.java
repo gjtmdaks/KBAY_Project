@@ -24,6 +24,24 @@ public class AdminServiceImpl implements AdminService {
 	private final AdminDao ad;
 	
 	@Override
+	public int selectTotalMemberCount() {
+		// TODO Auto-generated method stub
+		return ad.selectTotalMemberCount();
+	}
+
+	@Override
+	public int selectActiveAuctionsCount() {
+		// TODO Auto-generated method stub
+		return ad.selectActiveAuctionsCount();
+	}
+
+	@Override
+	public int selectUnprocessedReportsCount() {
+		// TODO Auto-generated method stub
+		return ad.selectUnprocessedReportsCount();
+	}
+	
+	@Override
 	public int selectMemberListCount(Map<String, Object> safeMap) {
 		// 전체 회원 수 가져오기
 		return ad.selectMemberListCount(safeMap);
@@ -82,5 +100,7 @@ public class AdminServiceImpl implements AdminService {
 		// TODO Auto-generated method stub
 		return ad.selectUserReportList(userNo);
 	}
+
+	
 
 }

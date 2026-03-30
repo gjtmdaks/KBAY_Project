@@ -139,8 +139,6 @@
                 <button type="button" class="menu-btn" onclick="viewUserPosts()">작성 글</button>
                 <button type="button" class="menu-btn" onclick="viewUserComments()">작성 댓글</button>
                 <button type="button" class="menu-btn" onclick="viewUserReports()">신고 내역</button>
-                
-                <button type="button" class="menu-btn full-width" onclick="openEditForm()">정보 수정</button>
             </div>
         </div>
         
