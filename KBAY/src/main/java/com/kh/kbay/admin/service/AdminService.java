@@ -10,6 +10,13 @@ import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.report.model.vo.Report;
 
 public interface AdminService {
+	
+	// 1. 현재 총 가입자 수
+	int selectTotalMemberCount();
+	// 2. 진행 중인 경매
+	int selectActiveAuctionsCount();
+	// 3. 미처리 신고 내역 건수 조회
+	int selectUnprocessedReportsCount();
 
 	int selectMemberListCount(Map<String, Object> safeMap);
 
@@ -31,5 +38,6 @@ public interface AdminService {
 	//회원이 받은 신고 내역 조회
 	List<Report> selectUserReportList(int userNo);
 
+	
 
 }

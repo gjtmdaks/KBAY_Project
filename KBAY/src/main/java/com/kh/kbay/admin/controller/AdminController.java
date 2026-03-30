@@ -32,25 +32,23 @@ public class AdminController {
 	
 	private final AdminService adminService;
 	
-//	@Autowired
-//    private AdminService adminService;
 
     @GetMapping("/adminpage.me") // 아까 헤더에서 연결한 관리자페이지 주소
     public String adminPage(Model model) {
         
-//        // 1. 오늘 가입한 사람 수 조회 (DB 쿼리 실행)
-//        int newMembers = adminService.getTodayNewMembersCount();
-//        
-//        // 2. 현재 진행중인 경매 수 조회
-//        int activeAuctions = adminService.getActiveAuctionsCount();
-//        
-//        // 3. 미처리 신고 내역 수 조회
-//        int unprocessedReports = adminService.getUnprocessedReportsCount();
-//        
-//        // 4. JSP(화면)로 데이터 넘겨주기 (변수명이 JSP의 ${} 안의 이름과 같아야 함)
-//        model.addAttribute("todayNewMembers", newMembers);
-//        model.addAttribute("activeAuctionsCount", activeAuctions);
-//        model.addAttribute("unprocessedReportsCount", unprocessedReports);
+    	// 1. 현재 총 가입자 수 조회
+        int totalMembers = adminService.selectTotalMemberCount();
+        
+        // 2. 진행 중인 경매 건수 조회
+        int activeAuctions = adminService.selectActiveAuctionsCount();
+        
+        // 3. 미처리 신고 내역 건수 조회
+        int unprocessedReports = adminService.selectUnprocessedReportsCount();
+        
+        // JSP가 기다리고 있는 이름표(EL 변수명)에 맞춰서 모델에 담기!
+        model.addAttribute("todayNewMembers", totalMembers); 
+        model.addAttribute("activeAuctionsCount", activeAuctions);
+        model.addAttribute("unprocessedReportsCount", unprocessedReports);
         
         return "admin/admin"; // manager.jsp 경로
     }

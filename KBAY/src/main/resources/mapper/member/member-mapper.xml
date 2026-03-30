@@ -15,7 +15,7 @@
 	<select id="loginUserById" resultMap="memberResultSet">
 	SELECT *
 	FROM MEMBER
-	WHERE USER_ID = #{userId} AND USER_DELETE_YN = 'N'
+	WHERE USER_ID = #{userId}
 	</select>
 
 	<insert id="insertMember">

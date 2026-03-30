@@ -21,7 +21,26 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminDaoImpl implements AdminDao {
 	
 	private final SqlSessionTemplate session;
+	
+	@Override
+	public int selectTotalMemberCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectTotalMemberCount");
+	}
 
+	@Override
+	public int selectActiveAuctionsCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectActiveAuctionsCount");
+	}
+
+	@Override
+	public int selectUnprocessedReportsCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectUnprocessedReportsCount");
+	}
+	
+	
 	@Override
 	public int selectMemberListCount(Map<String, Object> safeMap) {
 		// TODO Auto-generated method stub
@@ -82,7 +101,6 @@ public class AdminDaoImpl implements AdminDao {
 		// TODO Auto-generated method stub
 		return session.selectList("adminMapper.selectUserReportList",userNo);
 	}
-	
 	
 	
 }

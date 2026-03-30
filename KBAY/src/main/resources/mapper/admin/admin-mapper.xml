@@ -3,6 +3,22 @@
 
 <mapper namespace="adminMapper">
 	
+	<select id="selectTotalMemberCount" resultType="_int">
+        SELECT COUNT(*) 
+        FROM MEMBER 
+        WHERE USER_DELETE_YN = 'N'
+    </select>
+    <select id="selectActiveAuctionsCount" resultType="_int">
+        SELECT COUNT(*) 
+        FROM ITEM 
+        WHERE STATUS = 'N' 
+    </select>
+    <select id="selectUnprocessedReportsCount" resultType="_int">
+        SELECT COUNT(*) 
+        FROM REPORT 
+        WHERE STATUS = 'N'
+    </select>
+	
     <select id="selectMemberListCount" parameterType="map" resultType="_int">
         SELECT COUNT(*) 
         FROM MEMBER

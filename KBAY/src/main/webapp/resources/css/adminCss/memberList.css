@@ -225,11 +225,6 @@
     border-color: #ccc;
 }
 
-/* 정보 수정 */
-.menu-btn.full-width {
-    grid-column: 1 / -1; 
-}
-
 /* 3. 모달 푸터 (닫기 버튼) - 배경 하얗게 */
 .modal-footer {
     display: flex; 
