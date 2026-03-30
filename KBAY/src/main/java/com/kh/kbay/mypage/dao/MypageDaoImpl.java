@@ -40,7 +40,7 @@ public class MypageDaoImpl implements MypageDao {
 	}
 
 	@Override
-	public List<WishListDto> getWishList(int userNo) {
+	public List<Item> getWishList(int userNo) {
 		return session.selectList("mypage.selectWishList", userNo);
 	}
 

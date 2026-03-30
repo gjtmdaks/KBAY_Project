@@ -168,7 +168,47 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	public List<WishListDto> getWishList(int userNo) {
-		return md.getWishList(userNo);
+
+	    List<Item> wishItems = md.getWishList(userNo); // ← item 기준으로 가져오도록 DAO 수정 필요
+	    List<WishListDto> result = new ArrayList<>();
+
+	    for(Item item : wishItems){
+
+	        int itemNo = item.getItemNo();
+
+	        // 1. 이미지
+	        List<ItemImg> imgList = id.selectItemImgList(itemNo);
+	        String imgUrl = imgList.isEmpty() ? "/resources/no-image.png"
+	                                          : imgList.get(0).getImgUrl();
+
+	        // 2. 입찰 수
+	        int bidCount = bd.selectBidCount(itemNo);
+
+	        // 3. 상태 텍스트
+	        String statusText;
+	        switch(item.getStatus()){
+	            case "Y": statusText = "시작 전"; break;
+	            case "N": statusText = "진행 중"; break;
+	            case "E": statusText = "종료"; break;
+	            default: statusText = "-";
+	        }
+
+	        // 4. DTO 조립
+	        WishListDto dto = new WishListDto();
+	        dto.setItemNo(itemNo);
+	        dto.setItemTitle(item.getItemTitle());
+	        dto.setCurrentPrice(item.getCurrentPrice());
+	        dto.setViews(item.getViews());
+	        dto.setEndTime(item.getEndTime());
+	        dto.setImgUrl(imgUrl);
+	        dto.setBidCount(bidCount);
+	        dto.setStatus(item.getStatus());
+	        dto.setStatusText(statusText);
+
+	        result.add(dto);
+	    }
+
+	    return result;
 	}
 
 	@Override

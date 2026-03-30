@@ -6,13 +6,13 @@
     <h2 class="sidebar-title">마이페이지</h2>
     <ul class="sidebar-menu">
 		<li><a href="${pageContext.request.contextPath}/mypage/mypage.me">마이페이지 홈</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/memberList">낙찰받은 물품</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/paymentList">FAQ</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/auctionCancel">입찰 현황</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/succession">거래 현황</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/bidLog">찜 목록</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/bidLog">신고 내역</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/bidLog">나의 활동</a></li>
-		<li><a href="${pageContext.request.contextPath}/mypage/bidLog">나의 정보</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/myitem">낙찰받은 물품</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/faq">FAQ</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/bidList">입찰 현황</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/paymentList">거래 현황</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/wishList">찜 목록</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/reportList">신고 내역</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/reportedList">사고 내역</a></li>
+		<li><a href="${pageContext.request.contextPath}/mypage/updateStatus">나의 정보</a></li>
     </ul>
 </aside>
