@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.kbay.admin.dao.AdminDao;
+import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -167,5 +168,23 @@ public class AdminServiceImpl implements AdminService {
 	public int insertInquiryAnswer(Map<String, Object> paramMap) {
 	    return ad.insertInquiryAnswer(paramMap);
 	}
+
+	// 경매 관리(종료 및 취소) 영역
+	@Override
+	public int selectAuctionListCount() {
+		return ad.selectAuctionListCount();
+	}
+	@Override
+	public List<Item> selectAdminAuctionList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectAdminAuctionList(paramMap);
+	}
+	@Override
+	public List<Bid> selectBidHistory(int itemNo) {
+		// TODO Auto-generated method stub
+		return ad.selectBidHistory(itemNo);
+	}
+
+	
 
 }

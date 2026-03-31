@@ -1,0 +1,200 @@
+/* 1. 전체 레이아웃 (신고 내역 CSS와 통일) */
+.admin-wrap { 
+    display: flex; 
+    max-width: 1300px; /* 테이블이 조금 더 넓으므로 살짝 키웠습니다 */
+    margin: 40px auto; 
+    padding: 0 20px;
+    gap: 40px; 
+    min-height: 700px;
+}
+
+.main-content { 
+    flex: 1; 
+    min-width: 0; 
+}
+
+/* 2. 페이지 헤더 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.page-title {
+    font-size: 24px;
+    color: #2c3e50;
+    font-weight: 800;
+}
+
+/* 3. 테이블 디자인 (report-table 스타일 계승) */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    table-layout: fixed; /* 컬럼 너비 고정을 위해 추가 */
+}
+
+.admin-table th, .admin-table td {
+    padding: 15px 8px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    word-break: break-all;
+}
+
+.admin-table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-size: 14px;
+}
+
+/* 상품명 클릭 포인트 */
+.title-cell {
+    text-align: left !important;
+    color: #3498db;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.title-cell:hover {
+    color: #2980b9;
+}
+
+/* 입찰 건수 배지 */
+.bid-badge {
+    background-color: #f39c12;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 4. 관리 버튼 (강제 취소용) */
+.btn-cancel {
+    padding: 7px 12px;
+    background-color: #333; /* 기본 블랙 톤 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #e74c3c; /* 마우스 올리면 경고 의미의 레드 */
+    transform: translateY(-1px);
+}
+
+/* 5. 입찰 기록 모달 (신고 모달 스타일 계승 및 확장) */
+.bid-modal {
+    width: 700px !important; /* 표가 들어가야 하므로 조금 더 넓게 */
+}
+
+.bid-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.bid-history-table th {
+    background-color: #f1f1f1;
+    font-size: 13px;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.bid-history-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+
+/* 최고 입찰가 강조 */
+.highest-bid {
+    background-color: #fff9db;
+    font-weight: bold;
+}
+
+/* IP 주소 등 작은 텍스트 처리 */
+.ip-text {
+    font-size: 11px;
+    color: #999;
+}
+
+/* 페이징 영역 */
+.pagination-area {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px;
+}
+
+.pagination-list li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #444;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.pagination-list li a:hover {
+    background-color: #f1f1f1;
+}
+
+.pagination-list li.active a {
+    background-color: #333;
+    color: white;
+    border-color: #333;
+}
+
+/* ================== 모달창 필수 디자인 ================== */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
+    z-index: 1000;
+    justify-content: center; align-items: center;
+}
+
+.modal-content {
+    background: #fff; width: 750px; border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #2c3e50; color: white; padding: 15px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.modal-header h3 { margin: 0; font-size: 18px; }
+
+.btn-close { 
+    background: transparent; border: none; color: white; 
+    font-size: 20px; cursor: pointer; 
+}
+
+.modal-body { 
+    padding: 25px; 
+    max-height: 80vh; /* 화면이 작아도 넘치지 않게 */
+    overflow-y: auto; 
+}

@@ -39,4 +39,7 @@ public class Item {
     private String mainImg;      // 대표
     private List<ItemImg> subImgList; // 나머지
     private int bidCount;
+    
+    private String categoryName; // 카테고리 이름
+    private String userId; // 유저 아이디
 }

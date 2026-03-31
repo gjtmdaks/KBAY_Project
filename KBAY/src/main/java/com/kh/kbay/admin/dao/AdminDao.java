@@ -3,6 +3,7 @@ package com.kh.kbay.admin.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -59,5 +60,10 @@ public interface AdminDao {
 	List<FaqImg> selectInquiryFiles(int faqId);
 	
 	int insertInquiryAnswer(Map<String, Object> paramMap);
+	
+	// 경매 관리(종료 및 취소) 영역
+	int selectAuctionListCount();
+	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
+	List<Bid> selectBidHistory(int itemNo);
 	
 }
