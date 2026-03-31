@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="boardPost">
+
+	<sql id="searchCondition">
+		<if test="keyword != null and keyword != ''">
+			AND
+			<choose>
+				<when test="condition == 'title'">B.BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
+				<when test="condition == 'writer'">M.USER_NAME LIKE '%' || #{keyword} || '%'</when>
+				<when test="condition == 'content'">B.BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
+				<otherwise>(B.BOARD_TITLE LIKE '%' || #{keyword} || '%' OR B.BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
+			</choose>
+		</if>
+	</sql>
+
 	<select id="getBoardTypeMap" resultType="boardCategory">
 		SELECT BOARD_CATEGORY_NO AS "boardCategory", BOARD_CATEGORY
 		FROM BOARD_TYPE
 	</select>
 	
-	<!-- board.jsp에서 리스트 출력 -->
-	<select id="boardPost.selectList" resultType="boardPost">
+	<select id="selectList" resultType="boardPost">
 		SELECT * FROM (
 			SELECT ROWNUM AS RNUM, T1.* FROM (
-				SELECT BOARD_NO, BOARD_TITLE, M.USER_NAME AS BOARD_WRITER, B.VIEW_COUNT, BOARD_DATE
-				FROM BOARD_POST B LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+				SELECT 
+					B.BOARD_NO, 
+					B.BOARD_TITLE, 
+					M.USER_NAME AS BOARD_WRITER, 
+					B.VIEW_COUNT, 
+					B.BOARD_DATE
+				FROM BOARD_POST B 
+				LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
 				WHERE B.BOARD_DELETE = 'N' 
 				<choose>
 					<when test="boardCdNo == 1">
-						AND BOARD_CD_NO IN (2, 3)
+						AND B.BOARD_CD_NO IN (2, 3)
 					</when>
 					<otherwise>
-						AND BOARD_CD_NO = #{boardCdNo}
+						AND B.BOARD_CD_NO = #{boardCdNo}
 					</otherwise>
 				</choose>
-				<if test="keyword != null and keyword != ''">
-					AND
-					<choose>
-						<when test="condition == 'title'">BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
-						<when test="condition == 'writer'">USER_NAME LIKE '%' || #{keyword} || '%'</when>
-						<when test="condition == 'content'">BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
-						<otherwise>(BOARD_TITLE LIKE '%' || #{keyword} || '%' OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
-					</choose>
-				</if>
-				ORDER BY BOARD_NO DESC
+				<include refid="searchCondition"/>
+				
+				ORDER BY B.BOARD_NO DESC
 			) T1
 		)
 		WHERE RNUM BETWEEN #{offset} AND #{limit}
 	</select>
 	
-	<!-- 보드 리스트 숫자세기 -->
 	<select id="selectBoardListCount" resultType="_int">
 	    SELECT COUNT(*)
 	    FROM BOARD_POST B
@@ -50,41 +60,17 @@
 	            AND B.BOARD_CD_NO = #{boardCdNo}
 	        </otherwise>
 	    </choose>
-	    
-	    <if test="keyword != null and keyword != ''">
-	        AND
-	        <choose>
-	            <when test="condition == 'title'">B.BOARD_TITLE LIKE '%' || #{keyword} || '%'</when>
-	            <when test="condition == 'writer'">M.USER_NAME LIKE '%' || #{keyword} || '%'</when>
-	            <when test="condition == 'content'">B.BOARD_CONTENT LIKE '%' || #{keyword} || '%'</when>
-	            <otherwise>(B.BOARD_TITLE LIKE '%' || #{keyword} || '%' OR B.BOARD_CONTENT LIKE '%' || #{keyword} || '%')</otherwise>
-	        </choose>
-	    </if>
+	    <include refid="searchCondition"/>
 	</select>
 	
 	<insert id="insertBoard" parameterType="boardPost">
 	    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
 	        SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
 	    </selectKey>
-		
 	    INSERT INTO BOARD_POST (
-	        BOARD_NO, 
-	        BOARD_TITLE, 
-	        BOARD_CONTENT, 
-	        BOARD_CD_NO, 
-	        USER_NO,
-	        VIEW_COUNT,
-	        BOARD_DATE,
-	        BOARD_DELETE
+	        BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_CD_NO, USER_NO, VIEW_COUNT, BOARD_DATE, BOARD_DELETE
 	    ) VALUES (
-	        #{boardNo}, 
-	        #{boardTitle}, 
-	        #{boardContent}, 
-	        #{boardCdNo}, 
-	        #{userNo},
-	        DEFAULT, 
-	        DEFAULT, 
-	        DEFAULT
+	        #{boardNo}, #{boardTitle}, #{boardContent}, #{boardCdNo}, #{userNo}, DEFAULT, DEFAULT, DEFAULT
 	    )
 	</insert>
 	
@@ -93,23 +79,19 @@
 	        INSERT INTO BOARD_IMG (
 	            BOARD_IMG_NO, BOARD_NO, IMG_LEVEL, ORIGIN_NAME, CHANGE_NAME
 	        ) VALUES (
-	            SEQ_BOARD_IMG_NO.NEXTVAL,
-	            #{img.boardNo},
-	            #{img.imgLevel}, 
-	            #{img.originName}, 
-	            #{img.changeName}
+	            SEQ_BOARD_IMG_NO.NEXTVAL, #{img.boardNo}, #{img.imgLevel}, #{img.originName}, #{img.changeName}
 	        )
 	    </foreach>
 	</insert>
 	
-	<!-- 보드 상세보기 -->
 	<select id="selectBoardDetail" resultType="boardPost">
 	    SELECT 
 	        B.BOARD_NO AS boardNo, 
 	        B.BOARD_TITLE AS boardTitle, 
 	        B.BOARD_CONTENT AS boardContent, 
 	        B.USER_NO AS userNo,
-	        M.USER_NAME AS boardWriter, B.VIEW_COUNT AS viewCount, 
+	        M.USER_NAME AS boardWriter, 
+	        B.VIEW_COUNT AS viewCount, 
 	        B.BOARD_DATE AS boardDate,
 	        B.BOARD_CD_NO AS boardCdNo
 	    FROM BOARD_POST B
@@ -119,29 +101,22 @@
 	</select>
 
 	<select id="selectBoardImg" resultType="boardImg">
-		SELECT *
-		FROM BOARD_IMG
-		WHERE BOARD_NO = #{boardNo}
-		AND IMG_LEVEL = 'N'
+		SELECT * FROM BOARD_IMG
+		WHERE BOARD_NO = #{boardNo} AND IMG_LEVEL = 'N'
 	</select>
 
-	<!-- 보드 삭제 -->
 	<delete id="deleteBoard" parameterType="_int">
-		UPDATE BOARD_POST
-			SET BOARD_DELETE = 'Y'
-		WHERE BOARD_NO = #{boardNo}
+		UPDATE BOARD_POST SET BOARD_DELETE = 'Y' WHERE BOARD_NO = #{boardNo}
 	</delete>
 
 	<update id="updateBoard" parameterType="BoardPost">
 		UPDATE BOARD_POST
-	    SET BOARD_TITLE = #{boardTitle},
-	        BOARD_CONTENT = #{boardContent}
+	    SET BOARD_TITLE = #{boardTitle}, BOARD_CONTENT = #{boardContent}
 	    WHERE BOARD_NO = #{boardNo}
 	</update>
 
 	<update id="deleteBoardImgList" parameterType="list">
-		UPDATE BOARD_IMG
-	    SET IMG_LEVEL = 'Y'
+		UPDATE BOARD_IMG SET IMG_LEVEL = 'Y'
 	    WHERE BOARD_IMG_NO IN
 	    <foreach collection="list" item="imgNo" open="(" separator="," close=")">
 	        #{imgNo}
@@ -155,7 +130,7 @@
 	</update>
 	
 	<select id="getAllImageNames" resultType="string">
-	    SELECT CHANGE_NAME
-	    FROM BOARD_IMG
+	    SELECT CHANGE_NAME FROM BOARD_IMG
 	</select>
+
 </mapper>
