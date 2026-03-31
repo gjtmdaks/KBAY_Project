@@ -6,6 +6,7 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -164,5 +165,15 @@ public class AdminDaoImpl implements AdminDao {
 	public int insertInquiryAnswer(Map<String, Object> paramMap) {
 	    return session.update("adminMapper.insertInquiryAnswer", paramMap);
 	}
+
+	@Override
+    public List<Map<String, Object>> selectItemListForAdmin() {
+        return session.selectList("adminMapper.selectItemListForAdmin");
+    }
+
+	@Override
+    public List<BidLogVo> selectBidLogsByItem(int itemNo) {
+        return session.selectList("adminMapper.selectBidLogsByItem", itemNo);
+    }
 	
 }

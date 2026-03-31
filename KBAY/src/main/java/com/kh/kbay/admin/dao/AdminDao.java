@@ -3,6 +3,9 @@ package com.kh.kbay.admin.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.mybatis.spring.SqlSessionTemplate;
+
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -59,5 +62,9 @@ public interface AdminDao {
 	List<FaqImg> selectInquiryFiles(int faqId);
 	
 	int insertInquiryAnswer(Map<String, Object> paramMap);
+	
+	List<Map<String, Object>> selectItemListForAdmin();
+	
+	List<BidLogVo> selectBidLogsByItem(int itemNo);
 	
 }

@@ -88,253 +88,286 @@
 
     <select id="selectUserPostList" parameterType="_int" resultType="com.kh.kbay.board.model.vo.BoardPost">
         SELECT 
-        BOARD_NO as boardNo, 
-        BOARD_TITLE as boardTitle,
-        BOARD_DATE as boardDate, 
-        VIEW_COUNT as views,        BOARD_DELETE as boardDelete  FROM BOARD_POST
-    WHERE USER_NO = #{userNo}
-    ORDER BY BOARD_NO DESC
+	        BOARD_NO as boardNo, 
+	        BOARD_TITLE as boardTitle,
+	        BOARD_DATE as boardDate, 
+	        VIEW_COUNT as views,
+	        BOARD_DELETE as boardDelete
+	    FROM BOARD_POST
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY BOARD_NO DESC
     </select>
 	
 	<select id="selectUserReplyList" parameterType="_int" resultType="com.kh.kbay.board.model.vo.Reply">
-    SELECT 
-        REPLY_NO as replyNo,
-        BOARD_NO as boardNo,
-        REPLY_CONTENT as replyContent,
-        REPLY_DATE as replyDate,
-        REPLY_DELETE as replyDelete
-    FROM REPLY
-    WHERE USER_NO = #{userNo}
-    ORDER BY REPLY_NO DESC
+	    SELECT 
+	        REPLY_NO as replyNo,
+	        BOARD_NO as boardNo,
+	        REPLY_CONTENT as replyContent,
+	        REPLY_DATE as replyDate,
+	        REPLY_DELETE as replyDelete
+	    FROM REPLY
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY REPLY_NO DESC
 	</select>
 	
 	<!-- 회원이 받은 신고 여부 -->
 	<select id="selectUserReportList" parameterType="_int" resultType="com.kh.kbay.report.model.vo.Report">
-    SELECT 
-        R.REPORT_NO as reportNo, 
-        R.TARGET_TYPE as targetType, 
-        R.TARGET_NO as targetNo, 
-        R.REPORT_CD_NO as reportCdNo,
-        C.REPORT_CATEGORY as reportCategoryName,
-        R.STATUS as status,
-        R.CREATED_AT as createAt
-    FROM REPORT R
-    LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
-    WHERE R.TARGET_NO IN (SELECT BOARD_NO FROM BOARD_POST WHERE USER_NO = #{userNo})
-       OR R.TARGET_NO IN (SELECT ITEM_NO FROM ITEM WHERE USER_NO = #{userNo})
-    ORDER BY R.REPORT_NO DESC
-</select>
+	    SELECT 
+	        R.REPORT_NO as reportNo, 
+	        R.TARGET_TYPE as targetType, 
+	        R.TARGET_NO as targetNo, 
+	        R.REPORT_CD_NO as reportCdNo,
+	        C.REPORT_CATEGORY as reportCategoryName,
+	        R.STATUS as status,
+	        R.CREATED_AT as createAt
+	    FROM REPORT R
+	    LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
+	    WHERE R.TARGET_NO IN (SELECT BOARD_NO FROM BOARD_POST WHERE USER_NO = #{userNo})
+	       OR R.TARGET_NO IN (SELECT ITEM_NO FROM ITEM WHERE USER_NO = #{userNo})
+	    ORDER BY R.REPORT_NO DESC
+	</select>
+	
+	<insert id="insertSuspendUserSanctionRecord" parameterType="map">
+	    INSERT INTO USER_SANCTION 
+	        (SANCTION_NO, USER_NO, SANCTIONED_AT, SUSPEND_END_DATE)
+	    VALUES 
+	        (SEQ_SANCTION_NO.NEXTVAL, #{userNo}, SYSDATE, SYSDATE + #{days})
+	</insert>
+	
+	<update id="updateSuspendUserStatusUpdate" parameterType="map">
+	    UPDATE MEMBER 
+	    SET USER_STATUS = 'Y' 
+	    WHERE USER_NO = #{userNo}
+	</update>
+	
+	<update id="updateUserStatusDelete" parameterType="_int">
+	    UPDATE MEMBER 
+	    SET USER_STATUS = 'Y', 
+	        USER_DELETE_YN = 'Y' 
+	    WHERE USER_NO = #{userNo}
+	</update>
+	
+	<select id="selectReportListCount" parameterType="map" resultType="_int">
+		SELECT COUNT(*)
+	    FROM REPORT R
+	    <where>
+	        <if test="reportStatus != null and reportStatus != 'ALL'">
+	            R.STATUS = #{reportStatus}
+	        </if>
+	        
+	        <if test="targetType != null and targetType != 'ALL'">
+	            AND R.TARGET_TYPE = #{targetType}
+	        </if>
+	    </where>
+	</select>
+	<select id="selectReportList" parameterType="map" resultType="Report">
+		SELECT * FROM (
+	        SELECT ROWNUM RNUM, A.* FROM (
+	            
+	            SELECT 
+	                R.REPORT_NO as reportNo, 
+	                R.TARGET_TYPE as targetType, 
+	                R.TARGET_NO as targetNo, 
+	                C.REPORT_CATEGORY as reportCategoryName,
+	                M.USER_ID as reporterId,    R.CREATED_AT as createdAt, 
+	                R.STATUS as status
+	            FROM REPORT R
+	            LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
+	            LEFT JOIN MEMBER M ON R.USER_NO = M.USER_NO
+	            
+	            <where>
+	                <if test="reportStatus != null and reportStatus != 'ALL'">
+	                    R.STATUS = #{reportStatus}
+	                </if>
+	                <if test="targetType != null and targetType != 'ALL'">
+	                    AND R.TARGET_TYPE = #{targetType}
+	                </if>
+	            </where>
+	            
+	            ORDER BY R.REPORT_NO DESC
+	            
+	        ) A
+	    )
+	    WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+	
+	<select id="selectReportTargetInfo" parameterType="map" resultType="map">
+	    <choose>
+	        <when test="targetType != null and targetType.equalsIgnoreCase('ITEM')">
+	            SELECT 
+	                I.ITEM_NO AS TARGET_NO,
+	                I.ITEM_TITLE AS TARGET_TITLE,       I.ITEM_CONTENT AS TARGET_CONTENT,
+	                I.STATUS AS TARGET_STATUS,
+	                M.USER_ID AS TARGET_WRITER
+	            FROM ITEM I
+	            LEFT JOIN MEMBER M ON I.USER_NO = M.USER_NO
+	            WHERE I.ITEM_NO = #{targetNo}
+	        </when>
+	        
+	        <when test="targetType != null and targetType.equalsIgnoreCase('BOARD')">
+	            SELECT 
+	                B.BOARD_NO AS TARGET_NO,
+	                B.BOARD_TITLE AS TARGET_TITLE,
+	                B.BOARD_CONTENT AS TARGET_CONTENT,
+	                B.BOARD_DELETE AS TARGET_STATUS,    M.USER_ID AS TARGET_WRITER
+	            FROM BOARD_POST B                       LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
+	            WHERE B.BOARD_NO = #{targetNo}
+	        </when>
+	        
+	        <when test="targetType != null and targetType.equalsIgnoreCase('REPLY')">
+	            SELECT 
+	                R.REPLY_NO AS TARGET_NO,
+	                '댓글 신고 내역입니다' AS TARGET_TITLE,
+	                R.REPLY_CONTENT AS TARGET_CONTENT,
+	                R.REPLY_DELETE AS TARGET_STATUS,
+	                M.USER_ID AS TARGET_WRITER
+	            FROM REPLY R
+	            LEFT JOIN MEMBER M ON R.USER_NO = M.USER_NO
+	            WHERE R.REPLY_NO = #{targetNo}
+	        </when>
+	
+	        <otherwise>
+	            SELECT 
+	                0 AS TARGET_NO,
+	                '알 수 없는 대상' AS TARGET_TITLE,
+	                '데이터를 찾을 수 없습니다.' AS TARGET_CONTENT,
+	                'N' AS TARGET_STATUS,
+	                'UNKNOWN' AS TARGET_WRITER
+	            FROM DUAL
+	        </otherwise>
+	    </choose>
+	</select>
+	
+	
+	<select id="selectReportStats" parameterType="map" resultType="map">
+	    SELECT 
+	        C.REPORT_CATEGORY as categoryName, 
+	        COUNT(*) as reportCount
+	    FROM REPORT R
+	    LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
+	    WHERE R.TARGET_TYPE = #{targetType} 
+	      AND R.TARGET_NO = #{targetNo}
+	    GROUP BY C.REPORT_CATEGORY
+	</select>
+	
+	<update id="updateTargetDeleteStatus" parameterType="map">
+	    <choose>
+	        <when test="targetType != null and targetType.equalsIgnoreCase('ITEM')">
+	            UPDATE ITEM
+	            SET STATUS = 'D'
+	            WHERE ITEM_NO = #{targetNo}
+	        </when>
+	        
+	        <when test="targetType != null and targetType.equalsIgnoreCase('BOARD')">
+	            UPDATE BOARD_POST
+	            SET BOARD_DELETE = 'Y'
+	            WHERE BOARD_NO = #{targetNo}
+	        </when>
+	        
+	        <when test="targetType != null and targetType.equalsIgnoreCase('REPLY')">
+	            UPDATE REPLY
+	            SET REPLY_DELETE = 'Y'
+	            WHERE REPLY_NO = #{targetNo}
+	        </when>
+	    </choose>
+	</update>
+	
+	<update id="updateReportKeepStatus" parameterType="map">
+	    UPDATE REPORT
+	    SET STATUS = 'Y'
+	    WHERE TARGET_TYPE = #{targetType} 
+	      AND TARGET_NO = #{targetNo}
+	</update>
+	
+	<!-- count -->
+	<select id="selectInquiryListCount" resultType="_int" parameterType="map">
+	    SELECT COUNT(*)
+	    FROM FAQ
+	    <where>
+	        <if test="status != 'ALL'">
+	            STATUS = #{status}
+	        </if>
+	    </where>
+	</select>
+	
+	<!-- list -->
+	<select id="selectInquiryList" parameterType="map" resultType="Faq">
+	    SELECT * FROM (
+	        SELECT ROWNUM RNUM, A.* FROM (
+	            SELECT 
+	                F.FAQ_ID as faqId,
+	                F.TITLE as title,
+	                F.STATUS as status,
+	                F.CREATE_DATE as createDate,
+	                M.USER_ID as userId
+	            FROM FAQ F
+	            JOIN MEMBER M ON F.USER_NO = M.USER_NO
+	            <where>
+	                <if test="status != 'ALL'">
+	                    F.STATUS = #{status}
+	                </if>
+	            </where>
+	            ORDER BY F.CREATE_DATE DESC
+	        ) A
+	    )
+	    WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+	
+	<!-- detail -->
+	<select id="selectInquiryDetail" resultType="Faq">
+	    SELECT 
+	        F.*, 
+	        M.USER_ID,
+	        C.CATEGORY_NAME
+	    FROM FAQ F
+	    JOIN MEMBER M ON F.USER_NO = M.USER_NO
+	    JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
+	    WHERE F.FAQ_ID = #{faqId}
+	</select>
+	
+	<!-- files -->
+	<select id="selectInquiryFiles" resultType="FaqImg">
+	    SELECT *
+	    FROM FAQ_IMG
+	    WHERE FAQ_ID = #{faqId}
+	</select>
+	
+	<!-- answer -->
+	<update id="insertInquiryAnswer">
+	    UPDATE FAQ
+	    SET ANSWER_CONTENT = #{answerContent},
+	        STATUS = 'DONE'
+	    WHERE FAQ_ID = #{faqId}
+	</update>
 
-<insert id="insertSuspendUserSanctionRecord" parameterType="map">
-    INSERT INTO USER_SANCTION 
-        (SANCTION_NO, USER_NO, SANCTIONED_AT, SUSPEND_END_DATE)
-    VALUES 
-        (SEQ_SANCTION_NO.NEXTVAL, #{userNo}, SYSDATE, SYSDATE + #{days})
-</insert>
+    <!-- 아이템 리스트 -->
+    <select id="selectItemListForAdmin" resultType="map">
+        SELECT 
+            i.ITEM_NO,
+            i.ITEM_TITLE,
+            i.CURRENT_PRICE,
+            i.STATUS,
+            COUNT(b.BID_NO) AS BID_COUNT
+        FROM ITEM i
+        LEFT JOIN BID b ON i.ITEM_NO = b.ITEM_NO
+        GROUP BY i.ITEM_NO, i.ITEM_TITLE, i.CURRENT_PRICE, i.STATUS
+        ORDER BY i.ITEM_NO DESC
+    </select>
 
-<update id="updateSuspendUserStatusUpdate" parameterType="map">
-    UPDATE MEMBER 
-    SET USER_STATUS = 'Y' 
-    WHERE USER_NO = #{userNo}
-</update>
-
-<update id="updateUserStatusDelete" parameterType="_int">
-    UPDATE MEMBER 
-    SET USER_STATUS = 'Y', 
-        USER_DELETE_YN = 'Y' 
-    WHERE USER_NO = #{userNo}
-</update>
-
-<select id="selectReportListCount" parameterType="map" resultType="_int">
-	SELECT COUNT(*)
-    FROM REPORT R
-    <where>
-        <if test="reportStatus != null and reportStatus != 'ALL'">
-            R.STATUS = #{reportStatus}
-        </if>
-        
-        <if test="targetType != null and targetType != 'ALL'">
-            AND R.TARGET_TYPE = #{targetType}
-        </if>
-    </where>
-</select>
-<select id="selectReportList" parameterType="map" resultType="Report">
-	SELECT * FROM (
-        SELECT ROWNUM RNUM, A.* FROM (
-            
-            SELECT 
-                R.REPORT_NO as reportNo, 
-                R.TARGET_TYPE as targetType, 
-                R.TARGET_NO as targetNo, 
-                C.REPORT_CATEGORY as reportCategoryName,
-                M.USER_ID as reporterId,    R.CREATED_AT as createdAt, 
-                R.STATUS as status
-            FROM REPORT R
-            LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
-            LEFT JOIN MEMBER M ON R.USER_NO = M.USER_NO
-            
-            <where>
-                <if test="reportStatus != null and reportStatus != 'ALL'">
-                    R.STATUS = #{reportStatus}
-                </if>
-                <if test="targetType != null and targetType != 'ALL'">
-                    AND R.TARGET_TYPE = #{targetType}
-                </if>
-            </where>
-            
-            ORDER BY R.REPORT_NO DESC
-            
-        ) A
-    )
-    WHERE RNUM BETWEEN #{offset} AND #{limit}
-</select>
-
-<select id="selectReportTargetInfo" parameterType="map" resultType="map">
-    <choose>
-        <when test="targetType != null and targetType.equalsIgnoreCase('ITEM')">
-            SELECT 
-                I.ITEM_NO AS TARGET_NO,
-                I.ITEM_TITLE AS TARGET_TITLE,       I.ITEM_CONTENT AS TARGET_CONTENT,
-                I.STATUS AS TARGET_STATUS,
-                M.USER_ID AS TARGET_WRITER
-            FROM ITEM I
-            LEFT JOIN MEMBER M ON I.USER_NO = M.USER_NO
-            WHERE I.ITEM_NO = #{targetNo}
-        </when>
-        
-        <when test="targetType != null and targetType.equalsIgnoreCase('BOARD')">
-            SELECT 
-                B.BOARD_NO AS TARGET_NO,
-                B.BOARD_TITLE AS TARGET_TITLE,
-                B.BOARD_CONTENT AS TARGET_CONTENT,
-                B.BOARD_DELETE AS TARGET_STATUS,    M.USER_ID AS TARGET_WRITER
-            FROM BOARD_POST B                       LEFT JOIN MEMBER M ON B.USER_NO = M.USER_NO
-            WHERE B.BOARD_NO = #{targetNo}
-        </when>
-        
-        <when test="targetType != null and targetType.equalsIgnoreCase('REPLY')">
-            SELECT 
-                R.REPLY_NO AS TARGET_NO,
-                '댓글 신고 내역입니다' AS TARGET_TITLE,
-                R.REPLY_CONTENT AS TARGET_CONTENT,
-                R.REPLY_DELETE AS TARGET_STATUS,
-                M.USER_ID AS TARGET_WRITER
-            FROM REPLY R
-            LEFT JOIN MEMBER M ON R.USER_NO = M.USER_NO
-            WHERE R.REPLY_NO = #{targetNo}
-        </when>
-
-        <otherwise>
-            SELECT 
-                0 AS TARGET_NO,
-                '알 수 없는 대상' AS TARGET_TITLE,
-                '데이터를 찾을 수 없습니다.' AS TARGET_CONTENT,
-                'N' AS TARGET_STATUS,
-                'UNKNOWN' AS TARGET_WRITER
-            FROM DUAL
-        </otherwise>
-    </choose>
-</select>
-
-
-<select id="selectReportStats" parameterType="map" resultType="map">
-    SELECT 
-        C.REPORT_CATEGORY as categoryName, 
-        COUNT(*) as reportCount
-    FROM REPORT R
-    LEFT JOIN REPORT_CATEGORY C ON R.REPORT_CD_NO = C.REPORT_CATEGORY_NO
-    WHERE R.TARGET_TYPE = #{targetType} 
-      AND R.TARGET_NO = #{targetNo}
-    GROUP BY C.REPORT_CATEGORY
-</select>
-
-<update id="updateTargetDeleteStatus" parameterType="map">
-    <choose>
-        <when test="targetType != null and targetType.equalsIgnoreCase('ITEM')">
-            UPDATE ITEM
-            SET STATUS = 'D'
-            WHERE ITEM_NO = #{targetNo}
-        </when>
-        
-        <when test="targetType != null and targetType.equalsIgnoreCase('BOARD')">
-            UPDATE BOARD_POST
-            SET BOARD_DELETE = 'Y'
-            WHERE BOARD_NO = #{targetNo}
-        </when>
-        
-        <when test="targetType != null and targetType.equalsIgnoreCase('REPLY')">
-            UPDATE REPLY
-            SET REPLY_DELETE = 'Y'
-            WHERE REPLY_NO = #{targetNo}
-        </when>
-    </choose>
-</update>
-
-<update id="updateReportKeepStatus" parameterType="map">
-    UPDATE REPORT
-    SET STATUS = 'Y'
-    WHERE TARGET_TYPE = #{targetType} 
-      AND TARGET_NO = #{targetNo}
-</update>
-
-<!-- count -->
-<select id="selectInquiryListCount" resultType="_int" parameterType="map">
-    SELECT COUNT(*)
-    FROM FAQ
-    <where>
-        <if test="status != 'ALL'">
-            STATUS = #{status}
-        </if>
-    </where>
-</select>
-
-<!-- list -->
-<select id="selectInquiryList" parameterType="map" resultType="Faq">
-    SELECT * FROM (
-        SELECT ROWNUM RNUM, A.* FROM (
-            SELECT 
-                F.FAQ_ID as faqId,
-                F.TITLE as title,
-                F.STATUS as status,
-                F.CREATE_DATE as createDate,
-                M.USER_ID as userId
-            FROM FAQ F
-            JOIN MEMBER M ON F.USER_NO = M.USER_NO
-            <where>
-                <if test="status != 'ALL'">
-                    F.STATUS = #{status}
-                </if>
-            </where>
-            ORDER BY F.CREATE_DATE DESC
-        ) A
-    )
-    WHERE RNUM BETWEEN #{offset} AND #{limit}
-</select>
-
-<!-- detail -->
-<select id="selectInquiryDetail" resultType="Faq">
-    SELECT 
-        F.*, 
-        M.USER_ID,
-        C.CATEGORY_NAME
-    FROM FAQ F
-    JOIN MEMBER M ON F.USER_NO = M.USER_NO
-    JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
-    WHERE F.FAQ_ID = #{faqId}
-</select>
-
-<!-- files -->
-<select id="selectInquiryFiles" resultType="FaqImg">
-    SELECT *
-    FROM FAQ_IMG
-    WHERE FAQ_ID = #{faqId}
-</select>
-
-<!-- answer -->
-<update id="insertInquiryAnswer">
-    UPDATE FAQ
-    SET ANSWER_CONTENT = #{answerContent},
-        STATUS = 'DONE'
-    WHERE FAQ_ID = #{faqId}
-</update>
+    <!-- 입찰 로그 상세 -->
+    <select id="selectBidLogsByItem" resultType="com.kh.kbay.bid.model.vo.BidLogVo">
+        SELECT 
+            b.BID_NO,
+            b.ITEM_NO,
+            b.USER_NO,
+            m.USER_ID,
+            b.BID_PRICE,
+            b.BID_TIME,
+            b.RANKING,
+            b.BID_IP
+        FROM BID b
+        JOIN MEMBER m ON b.USER_NO = m.USER_NO
+        WHERE b.ITEM_NO = #{itemNo}
+        ORDER BY b.BID_TIME DESC
+    </select>
 </mapper>
