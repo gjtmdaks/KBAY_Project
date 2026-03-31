@@ -217,7 +217,7 @@
                 R.REPLY_NO AS TARGET_NO,
                 '댓글 신고 내역입니다' AS TARGET_TITLE,
                 R.REPLY_CONTENT AS TARGET_CONTENT,
-                R.STATUS AS TARGET_STATUS,
+                R.REPLY_DELETE AS TARGET_STATUS,
                 M.USER_ID AS TARGET_WRITER
             FROM REPLY R
             LEFT JOIN MEMBER M ON R.USER_NO = M.USER_NO
@@ -258,13 +258,13 @@
         
         <when test="targetType != null and targetType.equalsIgnoreCase('BOARD')">
             UPDATE BOARD_POST
-            SET BOARD_DELETE = 'N'
+            SET BOARD_DELETE = 'Y'
             WHERE BOARD_NO = #{targetNo}
         </when>
         
         <when test="targetType != null and targetType.equalsIgnoreCase('REPLY')">
             UPDATE REPLY
-            SET STATUS = 'N'
+            SET REPLY_DELETE = 'Y'
             WHERE REPLY_NO = #{targetNo}
         </when>
     </choose>
