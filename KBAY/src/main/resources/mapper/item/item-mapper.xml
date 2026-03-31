@@ -10,7 +10,7 @@
 	                STATUS = 'N'
 	            </when>
 	            <when test="type == 'endDeal'">
-	                STATUS = 'E'
+	                STATUS IN ('E', 'C')
 	            </when>
 	            <when test="type == 'yetDeal'">
 	                STATUS = 'Y'
@@ -39,7 +39,7 @@
 	                        STATUS = 'N'
 	                    </when>
 	                    <when test="type == 'endDeal'">
-	                        STATUS = 'E'
+	                        STATUS IN ('E', 'C')
 	                    </when>
 	                    <when test="type == 'yetDeal'">
 	                        STATUS = 'Y'
@@ -168,7 +168,7 @@
 		    WHEN SYSDATE >= START_TIME THEN 'N'
 		    ELSE 'Y'
 		END
-		WHERE STATUS NOT IN ('E', 'D')
+		WHERE STATUS NOT IN ('E', 'D', 'C')
 		AND STATUS != CASE
 		    WHEN SYSDATE >= END_TIME THEN 'E'
 		    WHEN SYSDATE >= START_TIME THEN 'N'
