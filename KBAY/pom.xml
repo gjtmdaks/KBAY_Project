@@ -313,7 +313,15 @@
 		    <version>6.2.6.RELEASE</version>
 		</dependency>
 		
+		<!--  JSON 의존성 -->
+		<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20231013</version>
+	</dependency>
+		
 	</dependencies>
+	
 	
 	<build>
 		<plugins>

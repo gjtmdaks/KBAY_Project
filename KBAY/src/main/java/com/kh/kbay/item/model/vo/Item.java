@@ -35,7 +35,7 @@ public class Item {
 	private List<ItemImg> imgList;
     private String thumbnail;
     private int bidPrice;
-    
+    private String payStatus;
     private String mainImg;      // 대표
     private List<ItemImg> subImgList; // 나머지
     private int bidCount;

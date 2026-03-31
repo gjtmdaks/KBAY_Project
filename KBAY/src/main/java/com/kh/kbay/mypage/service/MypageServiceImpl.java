@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.servlet.ServletContext;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.bid.dao.BidDao;
@@ -60,7 +61,10 @@ public class MypageServiceImpl implements MypageService {
 
 	        // 1. 상품 정보
 	        Item item = id.selectItemDetail(itemNo);
-
+	        
+	        if(item == null) {
+	            continue; 
+	        }
 	        // 2. 이미지
 	        List<ItemImg> imgList = id.selectItemImgList(itemNo);
 	        String imgUrl = imgList.isEmpty() ? "/resources/no-image.png"
@@ -71,7 +75,6 @@ public class MypageServiceImpl implements MypageService {
 
 	        // 4. 최고 입찰자
 	        Bid topBid = bd.findTopBid(itemNo);
-
 	        // 5. 상태 변환
 	        String statusText;
 
@@ -109,10 +112,9 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setSellerId(item.getUserNo()+""); // 필요시 join해서 userId로
 	        dto.setImgUrl(imgUrl);
 	        dto.setRankingText(rankingText);
-
+	        dto.setPayStatus(item.getPayStatus());
 	        result.add(dto);
 	    }
-
 	    return result;
 	}
 
@@ -206,7 +208,8 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setBidCount(bidCount);
 	        dto.setStatus(item.getStatus());
 	        dto.setStatusText(statusText);
-
+	        dto.setPayStatus(item.getPayStatus());
+	        
 	        result.add(dto);
 	    }
 
@@ -312,5 +315,20 @@ public class MypageServiceImpl implements MypageService {
 	public List<FaqImg> getFaqFiles(int faqId) {
 	    return md.selectFaqFiles(faqId);
 	}
+	
+	@Override
+    public List<BidListDto> getWonList(Map<String, Object> map) {
+        // DAO에 Map을 그대로 전달합니다.
+        List<BidListDto> list = md.getWonList(map);
+        
+        // 이미지 null 처리 등 비즈니스 로직 추가
+        for(BidListDto dto : list) {
+            dto.setStatusText("낙찰완료");
+            if(dto.getImgUrl() == null) {
+                dto.setImgUrl("/resources/images/no-image.png");
+            }
+        }
+        return list;
+    }
 
 }

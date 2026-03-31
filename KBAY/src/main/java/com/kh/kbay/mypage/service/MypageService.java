@@ -1,6 +1,7 @@
 package com.kh.kbay.mypage.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,5 +49,7 @@ public interface MypageService {
 	Faq getFaqDetail(int id);
 
 	List<FaqImg> getFaqFiles(int id);
+	
+	List<BidListDto> getWonList(Map<String, Object> map);
 
 }
