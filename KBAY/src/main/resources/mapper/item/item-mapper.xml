@@ -46,6 +46,7 @@
 	                    </when>
 	                    <when test="type == 'search' and keyword != null and keyword != ''">
 	                        ITEM_TITLE LIKE '%' || #{keyword} || '%'
+	                        AND STATUS != 'D'
 	                    </when>
 	                </choose>
 	            </where>
@@ -194,5 +195,6 @@
     FROM ITEM I
     JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
     WHERE I.ITEM_NO = #{itemNo}
+    AND I.STATUS != 'D'
 </select>
 </mapper>
