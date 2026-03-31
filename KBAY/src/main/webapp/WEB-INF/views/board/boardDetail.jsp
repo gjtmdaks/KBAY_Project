@@ -67,7 +67,7 @@
     </div>
 
     <div class="nav-buttons">
-        <button type="button" onclick="location.href='list.bo'">목록으로</button>
+        <button type="button" onclick="goToList()">목록으로</button>
         <div>
             <button type="button" onclick="">이전 글</button>
             <button type="button" onclick="">다음 글</button>
@@ -147,5 +147,26 @@
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 <script src="${pageContext.request.contextPath}/resources/js/boardJs/boardDetail.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
+<script>
+    function goToList() {
+        // 1. 브라우저가 기억하는 '직전 페이지의 주소'를 가져옵니다.
+        const referrer = document.referrer;
+        
+        // 2. 직전 주소에 'community.me'가 포함되어 있다면 (검색 결과, 페이지 번호 등 모두 포함)
+        if (referrer && referrer.includes('community.me')) {
+            // 그 완벽한 주소 그대로 돌려보냅니다.
+            location.href = referrer;
+        } else {
+            // 3. 직전 주소가 없거나 다른 곳에서 바로 들어왔다면, 원래 소속 카테고리의 1페이지로 보냅니다.
+            const contextPath = "${pageContext.request.contextPath}";
+            const originalCategory = "${b.boardCdNo}"; 
+            
+            // 만약 b.boardCdNo가 빈 값이면 기본값 1(전체)로 세팅
+            const targetCategory = originalCategory ? originalCategory : '1'; 
+            
+            location.href = contextPath + '/board/community.me/' + targetCategory;
+        }
+    }
+</script>
 </body>
 </html>

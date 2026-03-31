@@ -24,18 +24,30 @@
 
     <main class="content-area">
         <div class="board-header">
-            <h2>커뮤니티</h2>
-            <div class="search-box">
-                <select><option>카테고리</option>
-                    <option value="writer" ${param.condition eq 'writer' ? 'selected' : ''}>작성자</option>
-                    <option value="title" ${param.condition eq 'title' ? 'selected' : ''}>제목</option>
-                    <option value="content" ${param.condition eq 'content' ? 'selected' : ''}>내용</option>
-                    <option value="titleAndContent" ${param.condition eq 'titleAndContent' ? 'selected' : ''}>제목+내용</option>
-                </select>
-            <input type="text" class="form-control" name="keyword" value="${param.keyword }" />
-            <button type="submit" class="searchBtn btn btn-secondary">검색</button>
-            </div>
-        </div>
+		    <h2>
+		        <c:choose>
+		            <c:when test="${boardCdNo == 1}">전체 커뮤니티</c:when>
+		            <c:when test="${boardCdNo == 2}">물품자랑</c:when>
+		            <c:when test="${boardCdNo == 3}">구매요망</c:when>
+		        </c:choose>
+		    </h2>
+		    
+		    <%-- 핵심: form 태그 추가! 목적지는 현재 게시판 주소, 방식은 GET --%>
+		    <form action="${pageContext.request.contextPath}/board/community.me/${boardCdNo}" method="get">
+		        <div class="search-box">
+		            <select name="condition">
+		                <option value="">카테고리</option>
+		                <option value="writer" ${param.condition eq 'writer' ? 'selected' : ''}>작성자</option>
+		                <option value="title" ${param.condition eq 'title' ? 'selected' : ''}>제목</option>
+		                <option value="content" ${param.condition eq 'content' ? 'selected' : ''}>내용</option>
+		                <option value="titleAndContent" ${param.condition eq 'titleAndContent' ? 'selected' : ''}>제목+내용</option>
+		            </select>
+		            
+		            <input type="text" class="form-control" name="keyword" value="${param.keyword}" />
+		            <button type="submit" class="searchBtn btn btn-secondary">검색</button>
+		        </div>
+		    </form>
+		</div>
 
         <table class="board-table">
         	<thead>
@@ -76,36 +88,48 @@
 		       href="${pageContext.request.contextPath}/board/insert/${boardCdNo}">글쓰기</a>
 		</div>
            
-        <div class="pagination-container">
-            <c:choose>
-                <c:when test="${pi.currentPage == 1}">
-                    <a href="#" class="disabled">&lt;</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="?cpage=${pi.currentPage - 1}">&lt;</a>
-                </c:otherwise>
-            </c:choose>
-
-            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-                <c:choose>
-                    <c:when test="${p == pi.currentPage}">
-                        <a href="#" class="active">${p}</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="?cpage=${p}">${p}</a>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-
-            <c:choose>
-                <c:when test="${pi.currentPage == pi.maxPage}">
-                    <a href="#" class="disabled">&gt;</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="?cpage=${pi.currentPage + 1}">&gt;</a>
-                </c:otherwise>
-            </c:choose>
-        </div>
+        <%-- 🚨 검색 조건 유지를 위한 변수 세팅 --%>
+		<c:set var="searchParam" value="" />
+		<c:if test="${not empty param.keyword}">
+		    <c:set var="searchParam" value="&condition=${param.condition}&keyword=${param.keyword}" />
+		</c:if>
+		
+		<div class="pagination-container">
+		    <%-- 이전 버튼 --%>
+		    <c:choose>
+		        <c:when test="${pi.currentPage == 1}">
+		            <a href="#" class="disabled">&lt;</a>
+		        </c:when>
+		        <c:otherwise>
+		            <%-- URL 뒤에 ${searchParam}을 붙여줍니다 --%>
+		            <a href="?cpage=${pi.currentPage - 1}${searchParam}">&lt;</a>
+		        </c:otherwise>
+		    </c:choose>
+		
+		    <%-- 페이지 번호 --%>
+		    <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+		        <c:choose>
+		            <c:when test="${p == pi.currentPage}">
+		                <a href="#" class="active">${p}</a>
+		            </c:when>
+		            <c:otherwise>
+		                <%-- URL 뒤에 ${searchParam}을 붙여줍니다 --%>
+		                <a href="?cpage=${p}${searchParam}">${p}</a>
+		            </c:otherwise>
+		        </c:choose>
+		    </c:forEach>
+		
+		    <%-- 다음 버튼 --%>
+		    <c:choose>
+		        <c:when test="${pi.currentPage == pi.maxPage}">
+		            <a href="#" class="disabled">&gt;</a>
+		        </c:when>
+		        <c:otherwise>
+		            <%-- URL 뒤에 ${searchParam}을 붙여줍니다 --%>
+		            <a href="?cpage=${pi.currentPage + 1}${searchParam}">&gt;</a>
+		        </c:otherwise>
+		    </c:choose>
+		</div>
         
     </main>
 	</div>
