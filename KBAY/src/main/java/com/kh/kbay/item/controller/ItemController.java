@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemController {
 	private final ItemService is;
 	private final BidService bs;
-	private final MemberService ms;
 	
 	@GetMapping("{type}")
 	public String itemList(
@@ -165,27 +166,31 @@ public class ItemController {
 		if(item == null) {
 			return "common/errorPage"; 
 		}
-		
+	        		
+		int isWish = 0;
 		boolean isTopBidder = false;
-	    if (auth != null && auth.isAuthenticated()) {
+		if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal().toString())) {
 	        Member loginUser = (Member) auth.getPrincipal();
-	        Bid topBid = bs.findTopBid(itemNo); // bs(BidService)를 통해 1등 조회
+	        int userNo = loginUser.getUserNo();
+
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("userNo", userNo);
+	        map.put("itemNo", itemNo);
 	        
-	        if (topBid != null && topBid.getUserNo() == loginUser.getUserNo()) {
+	        // 찜 여부 조회
+	        isWish = is.checkWishlist(map);
+
+	        // 최고 입찰자 여부 확인
+	        Bid topBid = bs.findTopBid(itemNo);
+	        if (topBid != null && topBid.getUserNo() == userNo) {
 	            isTopBidder = true;
 	        }
-	    }
-	    
-	    // 로그인한 유저인지 아닌지
-	    if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-	    	
-	        Member loginUser = (Member) auth.getPrincipal(); 
-	        
+
+	        // 로그인 유저 정보 모델에 추가
 	        model.addAttribute("loginUser", loginUser);
 	    }
-		
 		ItemCategory itemCategory = is.selectItemCategory(item.getItemCdNo());
-
+	    // [수정 포인트 2] 모든 데이터를 Model에 담아 JSP로 전달
 	    model.addAttribute("item", item);
 	    model.addAttribute("itemCategory", itemCategory);
 	    model.addAttribute("bidCount", bidCount);
@@ -193,7 +198,8 @@ public class ItemController {
 	    model.addAttribute("maxPrice", maxPrice);
 	    model.addAttribute("now", new Date());
 	    model.addAttribute("isTopBidder", isTopBidder);
-		
-		return "item/itemDetail";
+	    model.addAttribute("isWish", isWish); 
+	    
+	    return "item/itemDetail";
 	}
 }

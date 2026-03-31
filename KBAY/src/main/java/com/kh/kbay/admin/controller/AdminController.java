@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.kbay.admin.service.AdminService;
+
 import com.kh.kbay.bid.model.vo.Bid;
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.common.PageInfo;
@@ -300,6 +303,7 @@ public class AdminController {
         return result > 0 ? "SUCCESS" : "FAIL";
     }
     
+
     
     //경매 관리(종료 및 취소)
     @GetMapping("/adminAuctionCancel")
@@ -335,5 +339,21 @@ public class AdminController {
     @ResponseBody
     public List<Bid> getBidHistory(@RequestParam("itemNo") int itemNo) {
         return adminService.selectBidHistory(itemNo);
+      
+      
+    // 아이템 리스트
+    @GetMapping("/logs")
+    public String bidLogsPage(Model model) {
+    	List<Map<String, Object>> list = adminService.selectItemListForAdmin();
+    	
+        model.addAttribute("list", list);
+        return "admin/bidLogList";
+    }
+
+    // 입찰 로그 상세 (AJAX)
+    @GetMapping("/logs/{itemNo}")
+    @ResponseBody
+    public List<BidLogVo> getBidLogs(@PathVariable int itemNo) {
+        return adminService.selectBidLogsByItem(itemNo);
     }
 }

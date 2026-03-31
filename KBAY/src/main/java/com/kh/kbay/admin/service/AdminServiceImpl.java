@@ -3,11 +3,13 @@ package com.kh.kbay.admin.service;
 import java.util.List;
 import java.util.Map;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.kbay.admin.dao.AdminDao;
 import com.kh.kbay.bid.model.vo.Bid;
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -168,6 +170,16 @@ public class AdminServiceImpl implements AdminService {
 	public int insertInquiryAnswer(Map<String, Object> paramMap) {
 	    return ad.insertInquiryAnswer(paramMap);
 	}
+	
+    @Override
+    public List<Map<String, Object>> selectItemListForAdmin() {
+        return ad.selectItemListForAdmin();
+    }
+
+    @Override
+    public List<BidLogVo> selectBidLogsByItem(int itemNo) {
+        return ad.selectBidLogsByItem(itemNo);
+    }
 
 	// 경매 관리(종료 및 취소) 영역
 	@Override

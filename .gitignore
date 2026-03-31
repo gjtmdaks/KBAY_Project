@@ -3,6 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,eclipse,windows,maven
 driver.properties
 email.properties
+payment.properties
 ### Eclipse ###
 .metadata
 bin/

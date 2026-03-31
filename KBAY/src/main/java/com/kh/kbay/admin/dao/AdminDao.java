@@ -3,7 +3,10 @@ package com.kh.kbay.admin.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.kh.kbay.bid.model.vo.Bid;
+import com.kh.kbay.bid.model.vo.Bid
+import org.mybatis.spring.SqlSessionTemplate;
+
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -65,5 +68,9 @@ public interface AdminDao {
 	int selectAuctionListCount();
 	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
 	List<Bid> selectBidHistory(int itemNo);
+  
+	List<Map<String, Object>> selectItemListForAdmin();
+	
+	List<BidLogVo> selectBidLogsByItem(int itemNo);
 	
 }

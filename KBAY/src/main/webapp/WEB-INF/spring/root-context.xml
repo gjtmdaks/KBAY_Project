@@ -13,7 +13,7 @@
 		 - 서버구동과 동시에 세팅해야하는 내용들을 작성하며, 이 내용들은 어플리케이션 전역에서
 		   사용된다.
 	 -->
-	<context:property-placeholder location="classpath:driver.properties, classpath:email.properties"/>
+	<context:property-placeholder location="classpath:driver.properties, classpath:email.properties, classpath:payment.properties"/>
 	
 	<!-- DB연결설정 -->
 	<!-- 1단계 : DB연결을 위한 도구 설정 	

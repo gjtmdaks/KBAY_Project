@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.kbay.bid.model.vo.Bid;
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -69,5 +70,9 @@ public interface AdminService {
 	int selectAuctionListCount();
 	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
 	List<Bid> selectBidHistory(int itemNo);// 입찰 기록 전용 컨트롤러
+  
+    List<Map<String, Object>> selectItemListForAdmin();
+    
+    List<BidLogVo> selectBidLogsByItem(int itemNo);
 
 }

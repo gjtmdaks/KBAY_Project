@@ -142,4 +142,9 @@ public class ItemServiceImpl implements ItemService {
     public Item selectItemByNo(int itemNo) {
         return id.selectItemByNo(itemNo); 
     }
+
+    @Override
+    public int checkWishlist(Map<String, Object> map) {
+        return id.checkWishlist(map);
+    }
 }

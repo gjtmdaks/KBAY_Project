@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.kbay.bid.model.vo.Bid;
+import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
@@ -166,6 +167,7 @@ public class AdminDaoImpl implements AdminDao {
 	    return session.update("adminMapper.insertInquiryAnswer", paramMap);
 	}
 
+
 	// 경매 관리(종료 및 취소) 영역
 	@Override
 	public int selectAuctionListCount() {
@@ -184,5 +186,14 @@ public class AdminDaoImpl implements AdminDao {
 	}
 
 	
+	@Override
+    public List<Map<String, Object>> selectItemListForAdmin() {
+        return session.selectList("adminMapper.selectItemListForAdmin");
+    }
+
+	@Override
+    public List<BidLogVo> selectBidLogsByItem(int itemNo) {
+        return session.selectList("adminMapper.selectBidLogsByItem", itemNo);
+    }
 	
 }

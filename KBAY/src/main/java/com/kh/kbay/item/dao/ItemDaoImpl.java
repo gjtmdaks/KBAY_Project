@@ -83,4 +83,9 @@ public class ItemDaoImpl implements ItemDao {
     public Item selectItemByNo(int itemNo) {
         return session.selectOne("item.selectItemByNo",itemNo);
     }
+
+	@Override
+	public int checkWishlist(Map<String, Object> map) {
+		return session.selectOne("item.checkWishlist", map);
+	}
 }

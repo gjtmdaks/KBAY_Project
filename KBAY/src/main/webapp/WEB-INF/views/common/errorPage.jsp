@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>잘못된 접근입니다.</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/headerFooterCss/footer.css">
 <link rel="stylesheet"

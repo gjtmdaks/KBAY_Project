@@ -15,14 +15,14 @@ public class BidListDto {
 
     private String status;      // Y/N/E
     private String statusText;  // 시작 전 / 진행 중 / 종료
-
     private int bidCount;
     private int views;
     private Date endTime;
-
+    private String payStatus;
     private String sellerId;
 
     private String imgUrl;
-
+    
     private String rankingText; // 최고입찰자 / 차순위입찰자
+    
 }
