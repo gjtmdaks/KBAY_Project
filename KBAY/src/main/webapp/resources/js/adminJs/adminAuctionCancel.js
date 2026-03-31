@@ -126,6 +126,27 @@ function closeBidModal() {
 // 6. 강제 취소 처리
 function processAuction(itemNo, status) {
     if(confirm(`${itemNo}번 경매를 정말로 강제 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
-        alert("취소 로직 준비중입니다!");
+        
+        // 서버로 취소 요청 보내기 (POST 방식)
+        fetch(`${contextPath}/admin/auctionCancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `itemNo=${itemNo}&status=${status}` // 아이템 번호와 'C'를 보냄
+        })
+        .then(response => response.text()) // 컨트롤러가 보내는 문자열(success 등) 받기
+        .then(result => {
+            if(result === "success") {
+                alert("경매가 성공적으로 취소되었습니다.");
+                location.reload(); // 💡 화면을 새로고침해서 취소된 내역을 목록에서 지움!
+            } else {
+                alert("취소 처리에 실패했습니다. 다시 시도해 주세요.");
+            }
+        })
+        .catch(error => {
+            console.error("Fetch 에러:", error);
+            alert("서버와 통신 중 문제가 발생했습니다.");
+        });
     }
 }

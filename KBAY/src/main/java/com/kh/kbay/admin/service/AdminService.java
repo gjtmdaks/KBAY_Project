@@ -70,7 +70,9 @@ public interface AdminService {
 	int selectAuctionListCount();
 	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
 	List<Bid> selectBidHistory(int itemNo);// 입찰 기록 전용 컨트롤러
+	int updateAuctionStatus(int itemNo); // n -> c
   
+	
     List<Map<String, Object>> selectItemListForAdmin();
     
     List<BidLogVo> selectBidLogsByItem(int itemNo);

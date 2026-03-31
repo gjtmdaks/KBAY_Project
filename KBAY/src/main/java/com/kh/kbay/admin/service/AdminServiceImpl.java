@@ -195,6 +195,12 @@ public class AdminServiceImpl implements AdminService {
 		// TODO Auto-generated method stub
 		return ad.selectBidHistory(itemNo);
 	}
+	@Override
+	public int updateAuctionStatus(int itemNo) {
+		// TODO Auto-generated method stub 
+		return ad.updateAuctionStatus(itemNo);
+	}// n -> c
+	
 
 	
 
