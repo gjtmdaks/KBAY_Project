@@ -49,10 +49,12 @@
 	</select>
 	
 	<select id="selectWishList" resultType="Item">
-    SELECT i.*, i.pay_status  FROM WISHLIST w
+    SELECT i.*, i.pay_status 
+    FROM WISHLIST w
     JOIN ITEM i ON w.item_no = i.item_no
     WHERE w.user_no = #{userNo}
-		</select>
+      AND i.STATUS != 'D'
+</select>
 	
 	<select id="selectBoardList" resultType="BoardPost">
 		SELECT *
