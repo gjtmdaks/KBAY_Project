@@ -18,4 +18,5 @@ public class Faq {
 	private Date answerDate;
     private String categoryName;
     private String userName;
+    private String userId;
 }

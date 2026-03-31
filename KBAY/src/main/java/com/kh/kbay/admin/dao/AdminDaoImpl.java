@@ -10,6 +10,8 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -138,7 +140,29 @@ public class AdminDaoImpl implements AdminDao {
 		return session.update("adminMapper.updateReportKeepStatus",paramMap);
 	}
 
-	
-	
+	@Override
+	public int selectInquiryListCount(Map<String, Object> paramMap) {
+	    return session.selectOne("adminMapper.selectInquiryListCount", paramMap);
+	}
+
+	@Override
+	public List<Faq> selectInquiryList(Map<String, Object> paramMap) {
+	    return session.selectList("adminMapper.selectInquiryList", paramMap);
+	}
+
+	@Override
+	public Faq selectInquiryDetail(int faqId) {
+	    return session.selectOne("adminMapper.selectInquiryDetail", faqId);
+	}
+
+	@Override
+	public List<FaqImg> selectInquiryFiles(int faqId) {
+	    return session.selectList("adminMapper.selectInquiryFiles", faqId);
+	}
+
+	@Override
+	public int insertInquiryAnswer(Map<String, Object> paramMap) {
+	    return session.update("adminMapper.insertInquiryAnswer", paramMap);
+	}
 	
 }

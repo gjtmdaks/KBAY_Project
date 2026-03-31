@@ -7,6 +7,8 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.report.model.vo.Report;
 
 public interface AdminService {
@@ -47,6 +49,19 @@ public interface AdminService {
 	
 	int updateReportProcess(Map<String, Object> paramMap);
 
-	
+	// count
+	int selectInquiryListCount(Map<String, Object> paramMap);
+
+	// list
+	List<Faq> selectInquiryList(Map<String, Object> paramMap);
+
+	// detail
+	Faq selectInquiryDetail(int faqId);
+
+	// file
+	List<FaqImg> selectInquiryFiles(int faqId);
+
+	// answer
+	int insertInquiryAnswer(Map<String, Object> paramMap);
 
 }

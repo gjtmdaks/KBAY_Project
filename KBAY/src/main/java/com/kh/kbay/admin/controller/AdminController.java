@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +20,8 @@ import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.common.template.Pagination;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -238,6 +241,61 @@ public class AdminController {
         // 서비스 호출 (성공하면 1 이상 반환)
         int result = adminService.updateReportProcess(paramMap);
         
+        return result > 0 ? "SUCCESS" : "FAIL";
+    }
+    
+    // 문의 리스트
+    @GetMapping("/adminInquiryList")
+    public String adminInquiryList(
+            @RequestParam(value="cpage", defaultValue="1") int currentPage,
+            @RequestParam(value="status", defaultValue="ALL") String status,
+            Model model) {
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("status", status);
+
+        int boardLimit = 10;
+        int pageLimit = 5;
+
+        int listCount = adminService.selectInquiryListCount(paramMap);
+
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, pageLimit, boardLimit);
+
+        int offset = (currentPage - 1) * boardLimit + 1;
+        int limit = currentPage * boardLimit;
+
+        paramMap.put("offset", offset);
+        paramMap.put("limit", limit);
+
+        List<Faq> list = adminService.selectInquiryList(paramMap);
+
+        model.addAttribute("list", list);
+        model.addAttribute("pi", pi);
+
+        return "admin/adminInquiryList";
+    }
+
+    // 문의 상세
+    @ResponseBody
+    @GetMapping("/inquiryDetail")
+    public Map<String, Object> inquiryDetail(@RequestParam("faqId") int faqId) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        Faq faq = adminService.selectInquiryDetail(faqId);
+        List<FaqImg> fileList = adminService.selectInquiryFiles(faqId);
+
+        result.put("faq", faq);
+        result.put("fileList", fileList);
+
+        return result;
+    }
+
+    // 답변 등록
+    @PostMapping("/insertInquiryAnswer")
+    @ResponseBody
+    public String insertInquiryAnswer(@RequestBody Map<String, Object> param){
+        int result = adminService.insertInquiryAnswer(param);
         return result > 0 ? "SUCCESS" : "FAIL";
     }
 }
