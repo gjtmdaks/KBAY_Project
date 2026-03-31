@@ -331,14 +331,6 @@
 	    FROM FAQ_IMG
 	    WHERE FAQ_ID = #{faqId}
 	</select>
-	
-	<!-- answer -->
-	<update id="insertInquiryAnswer">
-	    UPDATE FAQ
-	    SET ANSWER_CONTENT = #{answerContent},
-	        STATUS = 'DONE'
-	    WHERE FAQ_ID = #{faqId}
-	</update>
 
     <!-- 아이템 리스트 -->
     <select id="selectItemListForAdmin" resultType="map">
