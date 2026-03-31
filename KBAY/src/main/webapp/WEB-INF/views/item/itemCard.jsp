@@ -36,7 +36,14 @@
 		            </c:when>
 		
 		            <c:when test="${type eq 'endDeal'}">
-		                낙찰가 
+		                <c:choose>
+					        <c:when test="${item.status eq 'C'}">
+					            취소 당시 가격 
+					        </c:when>
+					        <c:otherwise>
+					            낙찰가 
+					        </c:otherwise>
+					    </c:choose> 
 		                <strong>
 		                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
 		                </strong>
@@ -62,7 +69,14 @@
 				    <c:choose>
 				
 				        <c:when test="${type eq 'endDeal' || remain <= 0}">
-				            <strong style="color:red;">종료</strong>
+				            <c:choose>
+				                <c:when test="${item.status eq 'C'}">
+				                    <strong style="color:#7f8c8d;">강제 취소됨</strong>
+				                </c:when>
+				                <c:otherwise>
+				                    <strong style="color:red;">종료</strong>
+				                </c:otherwise>
+				            </c:choose>
 				        </c:when>
 				
 				        <c:otherwise>
