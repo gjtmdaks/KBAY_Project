@@ -17,6 +17,7 @@
 	            </when>
 	            <when test="type == 'search' and keyword != null and keyword != ''">
 	                ITEM_TITLE LIKE '%' || #{keyword} || '%'
+	                AND STATUS != 'D'
 	            </when>
 	        </choose>
 	    </where>
@@ -103,12 +104,13 @@
 	</insert>
 	
 	<select id="selectItemDetail" resultType="item">
-		    SELECT 
+	SELECT 
         I.*, 
         M.USER_NAME
     FROM ITEM I
     JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
     WHERE I.ITEM_NO = #{itemNo}
+    AND I.STATUS != 'D'
 </select>
 	<select id="selectItemCategory" resultType="itemCategory">
 		SELECT *
@@ -165,7 +167,7 @@
 		    WHEN SYSDATE >= START_TIME THEN 'N'
 		    ELSE 'Y'
 		END
-		WHERE STATUS != 'E'
+		WHERE STATUS NOT IN ('E', 'D')
 		AND STATUS != CASE
 		    WHEN SYSDATE >= END_TIME THEN 'E'
 		    WHEN SYSDATE >= START_TIME THEN 'N'
@@ -185,7 +187,7 @@
 	    WHERE ITEM_NO = #{itemNo}
 	</update>
 	
-	            <select id="selectItemByNo" resultType="item">
+	<select id="selectItemByNo" resultType="item">
     SELECT 
         I.*, 
         M.USER_NAME 
