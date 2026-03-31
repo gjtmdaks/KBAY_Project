@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
@@ -37,7 +38,9 @@
 		            <td>${f.title}</td>
 		            <td>${f.userId}</td>
 		            <td>${f.status}</td>
-		            <td>${f.createDate}</td>
+		            <td>
+			            <fmt:formatDate value="${f.createDate}" pattern="MM-dd HH:mm"/>
+		            </td>
 		        </tr>
 		    </c:forEach>
 		</table>
@@ -77,6 +80,8 @@ function openDetail(faqId){
         	fileHtml += '<img src="' + f.filePath + '" style="max-width:200px;"><br>';
         });
         document.getElementById("files").innerHTML = fileHtml;
+
+        document.getElementById("answerBox").innerHTML = data.faq.answerContent;
 
         document.getElementById("detailModal").style.display = "block";
     });

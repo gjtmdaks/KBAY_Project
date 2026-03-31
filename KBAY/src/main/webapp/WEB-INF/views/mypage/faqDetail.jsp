@@ -56,34 +56,29 @@
 		
 		        <!-- 첨부파일 -->
 				<c:if test="${not empty fileList}">
-				    <div class="faq-file-preview">
-				
-				        <c:forEach var="f" items="${fileList}">
-				            <c:set var="ext" value="${fn:toLowerCase(f.filePath)}" />
-				
-				            <!-- 이미지 -->
-				            <c:if test="${fn:endsWith(ext, '.jpg') 
-				                      || fn:endsWith(ext, '.png') 
-				                      || fn:endsWith(ext, '.gif')}">
-				
-				                <img src="${f.filePath}" class="preview-image">
-				            </c:if>
-				
-				            <!-- PDF -->
-				            <c:if test="${fn:endsWith(ext, '.pdf')}">
-				                <iframe src="${f.filePath}" class="preview-pdf"></iframe>
-				            </c:if>
-				
-				            <!-- 다운로드 -->
-				            <div class="download-box">
-				                <a href="${f.filePath}" download>
-				                    ${f.originName}
-				                </a>
-				            </div>
-				
-				        </c:forEach>
-				
-				    </div>
+					<div class="faq-file-preview">
+					    <c:forEach var="f" items="${fileList}">
+					        <c:set var="ext" value="${fn:toLowerCase(f.filePath)}" />
+					
+					        <!-- 이미지 -->
+					        <c:if test="${fn:endsWith(ext, '.jpg') 
+					                  || fn:endsWith(ext, '.png') 
+					                  || fn:endsWith(ext, '.gif')}">
+					
+					            <img src="${f.filePath}" 
+					                 class="preview-image"
+					                 onclick="openImageModal(this.src)">
+					        </c:if>
+					
+					        <!-- 다운로드 -->
+					        <div class="download-box">
+					            <a href="${f.filePath}" download>
+					                ${f.originName}
+					            </a>
+					        </div>
+					
+					    </c:forEach>
+					</div>
 				</c:if>
 		
 		    </div>
