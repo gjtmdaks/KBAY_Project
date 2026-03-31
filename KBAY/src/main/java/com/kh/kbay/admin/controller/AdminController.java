@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.kbay.admin.service.AdminService;
+
+import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
@@ -281,7 +283,7 @@ public class AdminController {
     @ResponseBody
     @GetMapping("/inquiryDetail")
     public Map<String, Object> inquiryDetail(@RequestParam("faqId") int faqId) {
-
+    	
         Map<String, Object> result = new HashMap<>();
 
         Faq faq = adminService.selectInquiryDetail(faqId);
@@ -301,6 +303,44 @@ public class AdminController {
         return result > 0 ? "SUCCESS" : "FAIL";
     }
     
+
+    
+    //경매 관리(종료 및 취소)
+    @GetMapping("/adminAuctionCancel")
+    public String adminAuctionCancel(
+    		@RequestParam(value="cp", defaultValue="1") int cp, // 페이지 번호
+            Model model) {
+        
+    	int boardLimit = 10;
+        int pageLimit = 5;
+    	
+        int listCount = adminService.selectAuctionListCount();
+        
+        PageInfo pi = Pagination.getPageInfo(listCount, cp, pageLimit, boardLimit);
+        
+        int offset = (cp - 1) * boardLimit + 1;
+        int limit = cp * boardLimit;
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("offset", offset);
+        paramMap.put("limit", limit);
+
+        // 💡 paramMap을 괄호 안에 넣어서 서비스로 전달!
+        List<Item> itemList = adminService.selectAdminAuctionList(paramMap);
+        
+        // JSP로 데이터 전달
+        model.addAttribute("itemList", itemList);
+        model.addAttribute("pi", pi);
+        
+        return "admin/adminAuctionCancel";
+    }
+    // 입찰 기록 전용 컨트롤러
+    @GetMapping("/bidHistory")
+    @ResponseBody
+    public List<Bid> getBidHistory(@RequestParam("itemNo") int itemNo) {
+        return adminService.selectBidHistory(itemNo);
+      
+      
     // 아이템 리스트
     @GetMapping("/logs")
     public String bidLogsPage(Model model) {

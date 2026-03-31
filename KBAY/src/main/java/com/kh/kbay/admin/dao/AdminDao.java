@@ -3,6 +3,7 @@ package com.kh.kbay.admin.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.kh.kbay.bid.model.vo.Bid
 import org.mybatis.spring.SqlSessionTemplate;
 
 import com.kh.kbay.bid.model.vo.BidLogVo;
@@ -63,6 +64,11 @@ public interface AdminDao {
 	
 	int insertInquiryAnswer(Map<String, Object> paramMap);
 	
+	// 경매 관리(종료 및 취소) 영역
+	int selectAuctionListCount();
+	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
+	List<Bid> selectBidHistory(int itemNo);
+  
 	List<Map<String, Object>> selectItemListForAdmin();
 	
 	List<BidLogVo> selectBidLogsByItem(int itemNo);
