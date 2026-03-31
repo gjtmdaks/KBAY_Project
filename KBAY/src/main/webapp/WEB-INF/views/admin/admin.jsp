@@ -58,7 +58,7 @@
                         <i class="fas fa-file-signature"></i>
                         <span>낙찰 취하 신청 및<br>낙찰 승계관리</span>
                     </a>
-                    <a href="${contextPath}/admin/adminBidLog" class="square-btn">
+                    <a href="${contextPath}/admin/logs" class="square-btn">
                         <i class="fas fa-chart-line"></i>
                         <span>입찰 로그 확인</span>
                     </a>

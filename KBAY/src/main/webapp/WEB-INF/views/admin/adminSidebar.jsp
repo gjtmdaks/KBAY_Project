@@ -20,7 +20,7 @@
         <li><a href="${pageContext.request.contextPath}/admin/adminPaymentList">회원 결제 내역 관리</a></li>
         <li><a href="${pageContext.request.contextPath}/admin/adminAuctionCancel">경매 강제 종료 및 취소</a></li>
         <li><a href="${pageContext.request.contextPath}/admin/adminSuccession">낙찰 취하 신청 및 낙찰 승계관리</a></li>
-        <li><a href="${pageContext.request.contextPath}/admin/adminBidLog">입찰 로그 확인</a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/logs">입찰 로그 확인</a></li>
     </ul>
 </aside>
 <script src="${pageContext.request.contextPath}/resources/js/adminJs/adminSidebar.js"></script>

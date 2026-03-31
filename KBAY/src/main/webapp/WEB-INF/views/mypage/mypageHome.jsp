@@ -23,7 +23,6 @@
                 <div class="mypage-actions">
                 	<a href="${pageContext.request.contextPath}/mypage/updateStatus" class="card-btn">내 정보 수정</a>
                 	<a href="${pageContext.request.contextPath}/mypage/wishList" class="card-btn">찜 목록</a>
-                	<a href="${pageContext.request.contextPath}/mypage/payList" class="card-btn">결제 정보</a>
                 </div>
             </div>
 

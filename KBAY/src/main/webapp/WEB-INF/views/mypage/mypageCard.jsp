@@ -9,7 +9,7 @@
             <h4>구매 관리</h4>
             <div class="card-buttons">
                 <a href="${pageContext.request.contextPath}/mypage/bidList" class="card-btn">입찰 현황</a>
-                <a href="${pageContext.request.contextPath}/mypage/paymentList" class="card-btn">결제 현황</a>
+                <a href="${pageContext.request.contextPath}/mypage/wonList" class="card-btn">결제 현황</a>
             </div>
         </c:when>
         <c:when test="${type == 'sale'}">

@@ -104,9 +104,7 @@ public class MypageController {
     public String bidList(Authentication auth, Model model) {
         Member user = (Member) auth.getPrincipal();
         
-        System.out.println(user);
         List<BidListDto> list = ms.getBidList(user.getUserNo());
-        System.out.println(list);
         model.addAttribute("list", list);
         return "mypage/bidList";
     }
