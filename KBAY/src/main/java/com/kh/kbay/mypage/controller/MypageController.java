@@ -1,6 +1,8 @@
 package com.kh.kbay.mypage.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.board.model.vo.BoardPost;
+import com.kh.kbay.item.model.vo.Item;
+import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.BidListDto;
 import com.kh.kbay.mypage.model.vo.Faq;
@@ -34,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MypageController {
 
     private final MypageService ms;
+    private final ItemService is;
 
     // 메인
     @GetMapping("mypage.me")
@@ -99,8 +104,9 @@ public class MypageController {
     public String bidList(Authentication auth, Model model) {
         Member user = (Member) auth.getPrincipal();
         
+        System.out.println(user);
         List<BidListDto> list = ms.getBidList(user.getUserNo());
-        
+        System.out.println(list);
         model.addAttribute("list", list);
         return "mypage/bidList";
     }
@@ -234,4 +240,34 @@ public class MypageController {
 
         return "mypage/faqDetail";
     }
+ // 낙찰 물품 조회
+    @GetMapping("wonList")
+    public String wonList(
+            Authentication auth, 
+            @RequestParam(value="sort", defaultValue="latest") String sort, 
+            Model model) {
+        
+        Member user = (Member) auth.getPrincipal();
+        
+        // 정렬 정보를 담은 Map 생성
+        Map<String, Object> map = new HashMap<>();
+        map.put("userNo", user.getUserNo());
+        map.put("sort", sort);
+        
+        List<BidListDto> list = ms.getWonList(map);
+        
+        model.addAttribute("list", list);
+        return "mypage/wonList";
+    }
+    
+ // 결제 페이지 이동
+    @GetMapping("checkout")
+    public String checkout(@RequestParam("itemNo") int itemNo, Authentication auth, Model model) {
+    	Item item = is.selectItemByNo(itemNo); 
+        model.addAttribute("item", item);
+        model.addAttribute("loginUser", (Member) auth.getPrincipal());
+        return "mypage/checkout";
+    }
+
+    
 }
