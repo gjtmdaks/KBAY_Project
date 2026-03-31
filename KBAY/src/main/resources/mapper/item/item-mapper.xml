@@ -197,4 +197,10 @@
     WHERE I.ITEM_NO = #{itemNo}
     AND I.STATUS != 'D'
 </select>
+
+<select id="checkWishlist" resultType="_int">
+    SELECT COUNT(*) 
+    FROM WISHLIST 
+    WHERE USER_NO = #{userNo} AND ITEM_NO = #{itemNo}
+</select>
 </mapper>
