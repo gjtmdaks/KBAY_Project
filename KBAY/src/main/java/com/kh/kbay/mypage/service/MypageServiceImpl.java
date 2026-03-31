@@ -8,10 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.bid.dao.BidDao;
@@ -42,7 +39,6 @@ public class MypageServiceImpl implements MypageService {
 	private final MypageDao md;
 	private final ItemDao id;
 	private final BidDao bd;
-	private final ServletContext application;
     
     @Override
     public int getAccidentCount(int userNo) {

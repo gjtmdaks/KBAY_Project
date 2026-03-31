@@ -339,7 +339,7 @@ public class AdminController {
     @ResponseBody
     public List<Bid> getBidHistory(@RequestParam("itemNo") int itemNo) {
         return adminService.selectBidHistory(itemNo);
-      
+    }
       
     // 아이템 리스트
     @GetMapping("/logs")

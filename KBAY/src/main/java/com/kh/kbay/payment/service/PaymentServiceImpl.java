@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kh.kbay.payment.dao.PaymentDao;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
