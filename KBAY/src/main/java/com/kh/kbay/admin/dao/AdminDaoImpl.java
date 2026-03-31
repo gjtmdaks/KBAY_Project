@@ -184,7 +184,11 @@ public class AdminDaoImpl implements AdminDao {
 		// TODO Auto-generated method stub
 		return session.selectList("adminMapper.selectBidHistory", itemNo);
 	}
-
+	@Override
+	public int updateAuctionStatus(int itemNo) {
+	    return session.update("adminMapper.updateAuctionStatus", itemNo);
+	}// n -> c
+	
 	
 	@Override
     public List<Map<String, Object>> selectItemListForAdmin() {
@@ -195,5 +199,7 @@ public class AdminDaoImpl implements AdminDao {
     public List<BidLogVo> selectBidLogsByItem(int itemNo) {
         return session.selectList("adminMapper.selectBidLogsByItem", itemNo);
     }
+
+	
 	
 }

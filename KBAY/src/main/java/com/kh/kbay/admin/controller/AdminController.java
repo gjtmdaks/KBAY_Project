@@ -340,7 +340,25 @@ public class AdminController {
     public List<Bid> getBidHistory(@RequestParam("itemNo") int itemNo) {
         return adminService.selectBidHistory(itemNo);
     }
-      
+    // 경매 강제 취소 (AJAX 처리)
+    @PostMapping("/auctionCancel")
+    @ResponseBody
+    public String auctionCancel(
+    		@RequestParam("itemNo") int itemNo
+    		) {
+        
+        // 서비스 호출 (상태를 'C'로 업데이트)
+        int result = adminService.updateAuctionStatus(itemNo);
+        
+        // DB 업데이트가 1줄 이상 성공했다면 "success" 리턴
+        if(result > 0) {
+            return "success";
+        } else {
+            return "fail";
+        }
+    }
+    
+    // 입찰 로그 영역
     // 아이템 리스트
     @GetMapping("/logs")
     public String bidLogsPage(Model model) {

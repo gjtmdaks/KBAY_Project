@@ -66,6 +66,7 @@ public interface AdminDao {
 	int selectAuctionListCount();
 	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
 	List<Bid> selectBidHistory(int itemNo);
+	int updateAuctionStatus(int itemNo); // n -> c
   
 	List<Map<String, Object>> selectItemListForAdmin();
 	

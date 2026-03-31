@@ -17,7 +17,7 @@
 
     <main class="main-content">
         <div class="page-header">
-            <h2 class="page-title">🔨 경매 강제 관리 (종료 및 취소)</h2>
+            <h2 class="page-title">경매 강제 관리 (종료 및 취소)</h2>
         </div>
         
         <table class="admin-table">

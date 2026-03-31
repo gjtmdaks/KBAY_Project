@@ -382,7 +382,7 @@
             FROM ITEM I
             JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
             JOIN ITEM_CD C ON (I.ITEM_CD_NO = C.ITEM_CATEGORY_NO) 
-            WHERE I.STATUS != 'D' 
+            WHERE I.STATUS = 'N' 
             <if test="searchKeyword != null and searchKeyword != ''">
                 AND I.ITEM_TITLE LIKE '%' || #{searchKeyword} || '%'
             </if>
@@ -406,6 +406,11 @@
     WHERE B.ITEM_NO = #{itemNo}
     ORDER BY B.BID_PRICE DESC, B.BID_TIME ASC
 </select>
+<update id="updateAuctionStatus">
+    UPDATE ITEM
+    SET STATUS = 'C'   
+    WHERE ITEM_NO = #{itemNo} 
+   	</update>
   
   
     <!-- 입찰 로그 상세 -->
