@@ -276,4 +276,65 @@
     WHERE TARGET_TYPE = #{targetType} 
       AND TARGET_NO = #{targetNo}
 </update>
+
+<!-- count -->
+<select id="selectInquiryListCount" resultType="_int" parameterType="map">
+    SELECT COUNT(*)
+    FROM FAQ
+    <where>
+        <if test="status != 'ALL'">
+            STATUS = #{status}
+        </if>
+    </where>
+</select>
+
+<!-- list -->
+<select id="selectInquiryList" parameterType="map" resultType="Faq">
+    SELECT * FROM (
+        SELECT ROWNUM RNUM, A.* FROM (
+            SELECT 
+                F.FAQ_ID as faqId,
+                F.TITLE as title,
+                F.STATUS as status,
+                F.CREATE_DATE as createDate,
+                M.USER_ID as userId
+            FROM FAQ F
+            JOIN MEMBER M ON F.USER_NO = M.USER_NO
+            <where>
+                <if test="status != 'ALL'">
+                    F.STATUS = #{status}
+                </if>
+            </where>
+            ORDER BY F.CREATE_DATE DESC
+        ) A
+    )
+    WHERE RNUM BETWEEN #{offset} AND #{limit}
+</select>
+
+<!-- detail -->
+<select id="selectInquiryDetail" resultType="Faq">
+    SELECT 
+        F.*, 
+        M.USER_ID,
+        C.CATEGORY_NAME
+    FROM FAQ F
+    JOIN MEMBER M ON F.USER_NO = M.USER_NO
+    JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
+    WHERE F.FAQ_ID = #{faqId}
+</select>
+
+<!-- files -->
+<select id="selectInquiryFiles" resultType="FaqImg">
+    SELECT *
+    FROM FAQ_IMG
+    WHERE FAQ_ID = #{faqId}
+</select>
+
+<!-- answer -->
+<update id="insertInquiryAnswer">
+    UPDATE FAQ
+    SET ANSWER_CONTENT = #{answerContent},
+        STATUS = 'DONE'
+    WHERE FAQ_ID = #{faqId}
+</update>
 </mapper>

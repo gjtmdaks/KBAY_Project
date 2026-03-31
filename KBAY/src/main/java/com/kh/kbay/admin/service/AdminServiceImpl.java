@@ -11,6 +11,8 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -141,6 +143,29 @@ public class AdminServiceImpl implements AdminService {
 		return result + reportResult;
 	}
 
-	
+	@Override
+	public int selectInquiryListCount(Map<String, Object> paramMap) {
+	    return ad.selectInquiryListCount(paramMap);
+	}
+
+	@Override
+	public List<Faq> selectInquiryList(Map<String, Object> paramMap) {
+	    return ad.selectInquiryList(paramMap);
+	}
+
+	@Override
+	public Faq selectInquiryDetail(int faqId) {
+	    return ad.selectInquiryDetail(faqId);
+	}
+
+	@Override
+	public List<FaqImg> selectInquiryFiles(int faqId) {
+	    return ad.selectInquiryFiles(faqId);
+	}
+
+	@Override
+	public int insertInquiryAnswer(Map<String, Object> paramMap) {
+	    return ad.insertInquiryAnswer(paramMap);
+	}
 
 }

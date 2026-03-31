@@ -7,6 +7,8 @@ import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
+import com.kh.kbay.mypage.model.vo.Faq;
+import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.report.model.vo.Report;
 
 public interface AdminDao {
@@ -48,5 +50,14 @@ public interface AdminDao {
 	int updateTargetDeleteStatus(Map<String, Object> paramMap);
 	int updateReportKeepStatus(Map<String, Object> paramMap);
 
-
+	int selectInquiryListCount(Map<String, Object> paramMap);
+	
+	List<Faq> selectInquiryList(Map<String, Object> paramMap);
+	
+	Faq selectInquiryDetail(int faqId);
+	
+	List<FaqImg> selectInquiryFiles(int faqId);
+	
+	int insertInquiryAnswer(Map<String, Object> paramMap);
+	
 }
