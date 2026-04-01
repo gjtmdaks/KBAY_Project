@@ -20,7 +20,10 @@ public class Bid {
 	private int ranking;
 	private String bidIp;
 	private String itemTitle;
-
+	
+	private String bidStatus; // 낙찰 포기/박탈 여부 (N, F 등)
+    private String bidType;   // 입찰 타입 (NORMAL/NOW)
+	
 	public Bid(int itemNo, int bidPrice, int userNo, int ranking) {
 		this.itemNo = itemNo;
 		this.bidPrice = bidPrice;

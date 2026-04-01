@@ -425,16 +425,27 @@
 	            SELECT 
 	                i.ITEM_NO, i.ITEM_TITLE, i.START_PRICE, i.CURRENT_PRICE, 
 	                i.END_TIME, i.PAYMENT_DEADLINE, i.STATUS,
+	                
 	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS SELLER_NAME,
-	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = (
-	                    SELECT USER_NO FROM (
-	                        SELECT USER_NO FROM BID 
-	                        WHERE ITEM_NO = i.ITEM_NO AND BID_STATUS = 'N' 
-	                        ORDER BY BID_PRICE DESC
-	                    ) WHERE ROWNUM = 1
-	                )) AS BUYER_NAME,
-	                (SELECT BOARD_CATEGORY FROM ITEM_TYPE WHERE ITEM_CATEGORY_NO = i.ITEM_CD_NO) AS ITEM_CATEGORY
+	                
+	                TB.BUYER_NAME,
+	                
+	                i.ITEM_CD_NO AS ITEM_CATEGORY 
+	                
 	            FROM ITEM i
+	            LEFT JOIN (
+	                SELECT ITEM_NO, USER_NAME AS BUYER_NAME
+	                FROM (
+	                    SELECT B.ITEM_NO, M.USER_NAME,
+	                           ROW_NUMBER() OVER(PARTITION BY B.ITEM_NO ORDER BY B.BID_PRICE DESC) as rn
+	                    FROM BID B
+	                    
+	                    JOIN MEMBER M ON B.USER_NO = M.USER_NO
+	                    
+	                    WHERE B.BID_STATUS = 'N'
+	                )
+	                WHERE rn = 1
+	            ) TB ON i.ITEM_NO = TB.ITEM_NO
 	            WHERE i.STATUS = 'E'
 	            ORDER BY i.PAYMENT_DEADLINE ASC, i.ITEM_NO DESC
 	        ) A

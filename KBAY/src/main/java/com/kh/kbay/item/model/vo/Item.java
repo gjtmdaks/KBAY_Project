@@ -42,4 +42,11 @@ public class Item {
     
     private String categoryName; // 카테고리 이름
     private String userId; // 유저 아이디
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private Date paymentDeadline; // 결제 마감일
+    
+    private String sellerName;    // 판매자 이름 (쿼리의 SELLER_NAME과 매칭)
+    private String buyerName;     // 낙찰자/승계자 이름 (쿼리의 BUYER_NAME과 매칭)
+    private String itemCategory;  // 쿼리에서 조회한 ITEM_CATEGORY
 }
