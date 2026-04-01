@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,23 +12,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
-import com.kh.kbay.payment.model.vo.Payment;
 import com.kh.kbay.payment.service.PaymentService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
 @Controller
 @RequestMapping("/payment")
 @RequiredArgsConstructor
@@ -64,98 +59,43 @@ public class PaymentController {
             @RequestParam String orderId,
             @RequestParam String amount,
             @RequestParam int itemNo,
-            Model model) {
+            Model model) throws Exception {
 
-        try {
-            String basicAuth = "Basic " + Base64.getEncoder().encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
-            
-            JSONObject obj = new JSONObject();
-            obj.put("orderId", orderId);
-            obj.put("amount", Long.parseLong(amount)); 
-            obj.put("paymentKey", paymentKey);
+        // 2. 이제 필드에 주입된 secretKey를 사용하므로 에러가 사라집니다.
+        String basicAuth = "Basic " + Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
+        
+        JSONObject obj = new JSONObject();
+        obj.put("orderId", orderId);
+        obj.put("amount", amount);
+        obj.put("paymentKey", paymentKey);
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
-                    .header("Authorization", basicAuth)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(obj.toString()))
-                    .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
+                .header("Authorization", basicAuth)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(obj.toString()))
+                .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
-                JSONObject jsonResponse = new JSONObject(response.body());
-                
-                // VO 세팅
-                Payment pay = new Payment();
-                pay.setItemNo(itemNo);
-                pay.setOrderId(orderId);
-                pay.setPaymentKey(paymentKey);
-                pay.setTotalAmount(jsonResponse.getLong("totalAmount"));
-                pay.setMethod(jsonResponse.getString("method"));
-                pay.setApprovedAt(jsonResponse.getString("approvedAt"));
-                
-                // 영수증 URL 추출
-                String receiptUrl = "";
-                if(jsonResponse.has("receipt")) {
-                    receiptUrl = jsonResponse.getJSONObject("receipt").optString("url");
-                }
-                pay.setReceiptUrl(receiptUrl);
-
-                // 단일 서비스 호출로 트랜잭션 처리 (Insert + Update)
-                ps.insertPayment(pay); 
-                
-                model.addAttribute("receiptUrl", receiptUrl);
-                model.addAttribute("paymentData", jsonResponse.toMap());
-                
-                return "payment/receipt"; 
-            }else {
-                JSONObject errorObj = new JSONObject(response.body());
-                model.addAttribute("errorMsg", "결제 승인 실패: " + errorObj.optString("message"));
-                return "common/errorPage";
-            }
-        } catch (Exception e) {
-            log.error("결제 승인 중 오류 발생", e);
-            model.addAttribute("errorMsg", "처리 중 오류가 발생했습니다.");
+        if (response.statusCode() == 200) {
+            // 결제 서비스 호출하여 DB 업데이트
+            ps.updatePaymentStatus(itemNo);
+            return "redirect:/mypage/wonList"; // 성공 후 다시 마이페이지로
+        } else {
+            model.addAttribute("message", "결제 승인 실패: " + response.body());
             return "common/errorPage";
         }
     }
-    
  // 결제 실패 처리
     @GetMapping("/fail")
     public String paymentFail(
             @RequestParam String message,
             @RequestParam String code,
             Model model) {
-        
-        log.error("결제 실패 - 코드: {}, 메시지: {}", code, message);
-        
         model.addAttribute("errorMsg", "결제 실패: " + message + " (에러코드: " + code + ")");
-        return "common/errorPage"; 
-    }
-    
-    //상세 페이지 이동
-    @GetMapping("/receipt/{itemNo}")
-    public String viewReceipt(@PathVariable("itemNo") int itemNo, Model model) {
-        Payment pay = ps.selectPaymentByItemNo(itemNo);
-        
-        if (pay == null) {
-            model.addAttribute("errorMsg", "결제 내역을 찾을 수 없습니다.");
-            return "common/errorPage";
-        }
-        
-        model.addAttribute("paymentData", pay);
-        model.addAttribute("receiptUrl", pay.getReceiptUrl());
-        
-        return "payment/receipt";
-    }
-
-    // 모달로 결제 내역 조회(AJAX)
-    @GetMapping(value="/api/receipt/{itemNo}", produces="application/json; charset=utf-8")
-    @ResponseBody
-    public Payment getReceiptApi(@PathVariable("itemNo") int itemNo) {
-        return ps.selectPaymentByItemNo(itemNo);
+        return "common/errorPage";
     }
 }
 

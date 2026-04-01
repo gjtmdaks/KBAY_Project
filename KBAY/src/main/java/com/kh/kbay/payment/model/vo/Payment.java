@@ -8,16 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class Payment {
-    private int payNo;
-    private int itemNo;
-    private String orderId;
-    private String paymentKey;
-    private long totalAmount;
-    private String method;
-    private String receiptUrl;
-    private String approvedAt;
-    private String payStatus;
-    private String createDate;
-    
-    private String orderName;
+	private int paymentNo;
+	private int resultNo;
+	private String paymentMethod;
+	private String paymentStatus;
+	private Date paymentTime;
+	private String payCode;
 }

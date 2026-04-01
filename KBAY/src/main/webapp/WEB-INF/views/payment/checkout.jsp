@@ -17,37 +17,33 @@
 
 <script src="https://js.tosspayments.com/v2/standard"></script>
 <script>
-async function initPayment() {
-    const tossPayments = TossPayments("test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm");
-    const widgets = tossPayments.widgets({ customerKey: "USER_${loginUser.userNo}" });
+    async function initPayment() {
+        const tossPayments = TossPayments("test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"); // 테스트 클라이언트 키
+        const widgets = tossPayments.widgets({ customerKey: "USER_${loginUser.userNo}" });
 
-    const price = parseInt("${item.currentPrice}".replace(/,/g, ""));
+        // 결제 금액 설정
+        await widgets.setAmount({
+            currency: "KRW",
+            value: ${item.currentPrice}
+        });
 
-    await widgets.setAmount({
-        currency: "KRW",
-        value: price
-    });
-
-    try {
+        // 위젯 렌더링
         await Promise.all([
             widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
             widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" })
         ]);
-    } catch (error) {
-        console.error("위젯 렌더링 실패:", error);
-    }
 
-    document.getElementById("payment-request-button").addEventListener("click", async () => {
-        await widgets.requestPayment({
-            orderId: "ORDER_${item.itemNo}_" + new Date().getTime(), 
-            orderName: `${item.itemTitle}`, 
-            successUrl: window.location.origin + "${pageContext.request.contextPath}/payment/success?itemNo=${item.itemNo}",
-            failUrl: window.location.origin + "${pageContext.request.contextPath}/payment/fail",
-            customerEmail: "${loginUser.userEmail}",
-            customerName: "${loginUser.userName}"
+        document.getElementById("payment-request-button").addEventListener("click", async () => {
+            await widgets.requestPayment({
+                orderId: "ORDER_" + ${item.itemNo} + "_" + new Date().getTime(),
+                orderName: "${item.itemTitle}",
+                successUrl: window.location.origin + "${pageContext.request.contextPath}/payment/success?itemNo=${item.itemNo}",
+                failUrl: window.location.origin + "${pageContext.request.contextPath}/payment/fail",
+                customerEmail: "${loginUser.userEmail}",
+                customerName: "${loginUser.userName}"
+            });
         });
-    });
-}
-initPayment();
+    }
+    initPayment();
 </script>
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
