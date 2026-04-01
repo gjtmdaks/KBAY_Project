@@ -205,36 +205,61 @@ public class AdminServiceImpl implements AdminService {
     }
     
  // 낙찰 취하 페이지
-	@Override
-	public int selectSuccessionCount() {
-		// TODO Auto-generated method stub
-		return ad.selectSuccessionCount();
-	}
-	@Override
-	public List<Item> selectSuccessionList(PageInfo pi) {
-		// TODO Auto-generated method stub
-		return ad.selectSuccessionList(pi);
-	}
-	@Override
-	public int updateForceFail(int itemNo) {
-		// TODO Auto-generated method stub
-		return ad.updateForceFail(itemNo);
-	}
-	@Transactional // 둘 중 하나라도 실패하면 원상복구!
-	@Override
-	public int updateForceSuccession(int itemNo) {
-	    // 1. 현재 1등 입찰자를 박탈('F') 시킴
-	    int result1 = ad.updateCurrentBidderFail(itemNo);
-	    
-	    // 2. 해당 아이템의 결제 기한을 7일 연장
-	    int result2 = ad.updateDeadlineExtend(itemNo);
-	    
-	    // 두 작업이 모두 성공해야만 최종 성공(1)으로 판정
-	    if (result1 > 0 && result2 > 0) {
-	        return 1; 
-	    } else {
-	    	throw new RuntimeException("승계 처리 중 문제가 발생하여 롤백합니다.");
-	    }
-	}
+    @Override
+    public int selectSuccessionCount() {
+        return ad.selectSuccessionCount();
+    }
+
+    @Override
+    public List<Item> selectSuccessionList(PageInfo pi) {
+        return ad.selectSuccessionList(pi);
+    }
+
+    @Override
+    public int updateForceFail(int itemNo) {
+        return ad.updateForceFail(itemNo);
+    }
+
+    // 🚨 업그레이드된 사령관 로직 (차순위 승계 처리)
+    @Transactional // 예외 발생 시 무조건 DB 원상복구(롤백)!
+    @Override
+    public int updateForceSuccession(int itemNo) {
+        
+        // 1. 현재 1등 입찰의 타입 확인 (즉시 낙찰 NOW 인지 확인)
+        String topBidType = ad.selectTopBidType(itemNo);
+
+        // 2. 현재 1등 유저의 모든 입찰 내역을 박탈('F') 시킴
+        int result1 = ad.updateCurrentBidderFail(itemNo);
+        
+        // 🚨 3-A. [즉시 낙찰(NOW) 방어 로직] 
+        // 즉시 낙찰건이면 차순위 확인 없이 바로 아이템 유찰('O') 처리!
+        if ("NOW".equalsIgnoreCase(topBidType)) {
+            int result3 = ad.updateForceFail(itemNo);
+            if (result1 > 0 && result3 > 0) {
+                return 3; // 👉 컨트롤러가 받아서 "now_fail"로 변환
+            }
+            throw new RuntimeException("즉시 낙찰 유찰 처리 중 예외 발생");
+        }
+
+        // 3-B. 일반 입찰(NORMAL)인 경우 기존대로 남은 차순위 유저 수 확인
+        int remainCount = ad.selectNextBidderCount(itemNo);
+        
+        if (remainCount > 0) {
+            // 남은 사람이 있다면 결제 기한 7일 연장
+            int result2 = ad.updateDeadlineExtend(itemNo);
+            if (result1 > 0 && result2 > 0) {
+                return 1; // 👉 컨트롤러가 받아서 "success"로 변환
+            }
+        } else {
+            // 남은 사람이 아무도 없다면 해당 경매를 강제 유찰('O') 처리
+            int result3 = ad.updateForceFail(itemNo);
+            if (result1 > 0 && result3 > 0) {
+                return 2; // 👉 컨트롤러가 받아서 "empty"로 변환
+            }
+        }
+        
+        // 여기까지 왔는데 return을 못 했다면 뭔가 꼬인 것이므로 강제 에러 발생 및 롤백!
+        throw new RuntimeException("승계 처리 중 문제가 발생하여 롤백합니다.");
+    }
 
 }
