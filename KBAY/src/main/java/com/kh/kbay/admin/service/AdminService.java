@@ -44,9 +44,11 @@ public interface AdminService {
 	
 	// 신고 내역 처리 부분
 	int selectReportListCount(Map<String, Object> paramMap);
+	
 	List<Report> selectReportList(Map<String, Object> paramMap);
 	
 	Map<String, Object> selectReportTargetInfo(Map<String, Object> paramMap);
+	
 	List<Map<String, Object>> selectReportStats(Map<String, Object> paramMap);
 	
 	int updateReportProcess(Map<String, Object> paramMap);
@@ -68,13 +70,19 @@ public interface AdminService {
 	
 	//경매 관리(종료 및 취소)
 	int selectAuctionListCount();
-	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
-	List<Bid> selectBidHistory(int itemNo);// 입찰 기록 전용 컨트롤러
-	int updateAuctionStatus(int itemNo); // n -> c
-  
 	
+	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
+	
+	List<Bid> selectBidHistory(int itemNo);// 입찰 기록 전용 컨트롤러
+	
+	int updateAuctionStatus(int itemNo); // n -> c
+
     List<Map<String, Object>> selectItemListForAdmin();
     
     List<BidLogVo> selectBidLogsByItem(int itemNo);
+    
+    List<Member> getUserList();
+    
+    List<Bid> getUserBidLogs(int userNo);
 
 }

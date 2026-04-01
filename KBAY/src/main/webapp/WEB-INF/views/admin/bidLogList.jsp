@@ -23,8 +23,14 @@
     <main class="main-content">
         
 		<h2>입찰 로그 관리</h2>
+		<div style="margin-bottom:15px;">
+		    <select id="viewMode" onchange="changeMode()">
+		        <option value="item">상품 기준</option>
+		        <option value="user">사용자 기준</option>
+		    </select>
+		</div>
 		
-		<table class="item-table">
+		<table id="itemTable" class="item-table">
 		    <tr>
 		        <th>상품번호</th>
 		        <th>상품명</th>
@@ -44,6 +50,18 @@
 		    </c:forEach>
 		</table>
 		
+		<table id="userTable" class="item-table" style="display:none;">
+		    <thead>
+		        <tr>
+		            <th>유저번호</th>
+		            <th>아이디</th>
+		            <th>이메일</th>
+		            <th>입찰횟수</th>
+		        </tr>
+		    </thead>
+		    <tbody></tbody>
+		</table>
+		
 		<!-- 모달 -->
 		<div id="bidModal" class="modal" style="display:none">
 		    <div class="modal-content">
@@ -51,14 +69,7 @@
 		        <h3>입찰 로그</h3>
 		
 		        <table id="bidTable" class="bidTable">
-		            <thead>
-		                <tr>
-		                    <th>시간</th>
-		                    <th>유저</th>
-		                    <th>입찰가</th>
-		                    <th>순위</th>
-		                    <th>IP</th>
-		                </tr>
+		            <thead id="bidTableHead">
 		            </thead>
 		            <tbody></tbody>
 		        </table>
@@ -73,6 +84,7 @@
 const contextPath = "${contextPath}";
 
 window.openBidLog = function(itemNo) {
+	setItemModeHeader();
     $.ajax({
         url: contextPath + "/admin/logs/" + itemNo,
         method: "GET",
@@ -120,6 +132,102 @@ function formatTime(time) {
 function formatPrice(price) {
     if (!price) return '-';
     return price.toLocaleString() + "원";
+}
+
+function changeMode() {
+    let mode = $("#viewMode").val();
+
+    if (mode === "item") {
+        $("#itemTable").show();
+        $("#userTable").hide();
+    } else {
+        $("#itemTable").hide();
+        $("#userTable").show();
+        loadUserList();
+    }
+}
+
+function loadUserList() {
+    $.ajax({
+        url: contextPath + "/admin/users",
+        method: "GET",
+        dataType: "json",
+        success: function(data) {
+            let tbody = $("#userTable tbody");
+            tbody.empty();
+
+            data.forEach(u => {
+            	let row = $(`
+            			<tr data-userno="\${u.userNo}">
+            			    <td>\${u.userNo}</td>
+            			    <td>\${u.userId}</td>
+            			    <td>\${u.userEmail ?? '-'}</td>
+            			    <td>\${u.bidCount}</td>
+            			</tr>
+            			`);
+
+            	row.click(function() {
+            		openUserLog($(this).data("userno"));
+            	});
+
+            	tbody.append(row);
+            });
+        }
+    });
+}
+
+function openUserLog(userNo) {
+	setUserModeHeader();
+    $.ajax({
+        url: contextPath + "/admin/logs/user/" + userNo,
+        method: "GET",
+        success: function(data) {
+            let tbody = $("#bidTable tbody");
+            tbody.empty();
+
+            data.forEach(b => {
+                let timeStr = formatTime(b.bidTime);
+                let priceStr = formatPrice(b.bidPrice);
+
+                let row = `
+                <tr>
+                    <td>\${timeStr}</td>
+                    <td>\${b.itemTitle}</td>
+                    <td>\${priceStr}</td>
+                    <td>\${b.ranking ?? '-'}</td>
+                    <td>\${b.bidIp}</td>
+                </tr>
+                `;
+                tbody.append(row);
+            });
+
+            $("#bidModal").show();
+        }
+    });
+}
+
+function setItemModeHeader() {
+    $("#bidTableHead").html(`
+        <tr>
+            <th>시간</th>
+            <th>유저</th>
+            <th>입찰가</th>
+            <th>순위</th>
+            <th>IP</th>
+        </tr>
+    `);
+}
+
+function setUserModeHeader() {
+    $("#bidTableHead").html(`
+        <tr>
+            <th>시간</th>
+            <th>상품명</th>
+            <th>입찰가</th>
+            <th>순위</th>
+            <th>IP</th>
+        </tr>
+    `);
 }
 </script>
 </body>

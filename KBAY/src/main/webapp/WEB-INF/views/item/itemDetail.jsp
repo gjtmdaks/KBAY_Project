@@ -132,6 +132,16 @@
                 <span class="unit">원</span>
             </div>
 
+			<c:if test="${item.directBuy eq 'Y'}">
+				<div class="price-header">
+					<span class="price-label">즉시 구매가</span>
+            	</div>
+	            <div class="price-amount-wrapper">
+	                <strong id="currentPrice"><fmt:formatNumber value="${item.buyNowPrice}" pattern="#,###" /></strong>
+	                <span class="unit">원</span>
+	            </div>
+			</c:if>
+
             <c:if test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
                 <div class="bid-form">
                     <div class="input-group">

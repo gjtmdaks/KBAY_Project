@@ -42,12 +42,12 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
         // 강제 탈퇴 및 임시 정
 
         // 영구 정지 (강제 탈퇴) 계정 확인
-        if (loginUser.getUserDeleteYn() == 'Y') {
+        if (loginUser.getUserDeleteYn() == "Y") {
             throw new DisabledException("이 계정은 영구 정지된 계정입니다.");
         }
 
         // 임시 정지 계정 확인 및 자동 해제 로직
-        if (loginUser.getUserStatus() == 'Y') {
+        if (loginUser.getUserStatus() == "Y") {
             Date suspendEndDate = md.selectSuspendEndDate(loginUser.getUserNo());
 
             if (suspendEndDate != null) {
@@ -56,7 +56,7 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
                 if (today.after(suspendEndDate)) {
                     // ✅ [자동 해제]
                     md.updateReleaseSuspend(loginUser.getUserNo());
-                    loginUser.setUserStatus('N'); 
+                    loginUser.setUserStatus("N"); 
                 } else {
                     // ❌ [로그인 차단]
                     throw new LockedException("이 계정은 임시 정지된 계정입니다."); 

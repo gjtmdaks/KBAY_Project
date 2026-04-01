@@ -26,11 +26,12 @@ public class Member implements UserDetails , Serializable{
 	private String userPhone;
 	private String userEmail;
 	private Date userEnrollDate;
-	private char userDeleteYn;
+	private String userDeleteYn;
 	private String userLoginIp;
 	private int likeCount;
 	private int noPayCount;
-	private char userStatus;
+	private String userStatus;
+	private int bidCount;
 
 	
 	public String getUserName() {
