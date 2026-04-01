@@ -346,7 +346,7 @@
     margin-bottom: 15px;
 }
 
-/* 결제 버튼 디자인 개선 */
+/* 결제 버튼 디자인 */
 .pay-btn {
     width: 100%;
     padding: 12px;
@@ -358,7 +358,23 @@
     transition: 0.2s;
 }
 
-/* 결제하기 버튼 (토스 블루) */
+.pay-btn-view {
+    background-color: #ffffff;
+    color: #3282f6;
+    border: 1px solid #3282f6;
+    cursor: pointer;
+}
+.pay-btn-view:hover {
+    background-color: #f0f7ff;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+/* 결제하기 버튼 */
 .pay-btn-ready {
     background-color: #3282f6;
     color: white;
@@ -369,9 +385,186 @@
     transform: translateY(-1px);
 }
 
-/* 결제완료 버튼 (차분한 그레이) */
+/* 결제완료 버튼 */
 .pay-btn-done {
     background-color: #f2f4f6;
     color: #8b95a1;
     cursor: default;
 }
+
+
+/* ----------------- 모달 내부 영수증 상세 디자인 --------------------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 450px;
+    margin: 0;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 30px;
+    color: #999;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+
+
+/* 영수증 카드  */
+.receipt-card {
+    background: #ffffff;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.receipt-header {
+    text-align: center;
+    padding: 30px 20px 10px;
+}
+
+.success-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #3282f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+}
+
+.success-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+.receipt-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin: 0;
+}
+
+.receipt-body {
+    padding: 0 30px;
+}
+
+.item-summary {
+    border-top: 1px solid #eee;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.item-summary .label {
+    font-size: 12px;
+    color: #999;
+}
+
+.item-summary .value {
+    font-size: 16px;
+    color: #333;
+}
+
+/* 가격 강조 박스 */
+.price-major {
+    background-color: #f0f7ff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.price-major .label {
+    font-weight: 600;
+    color: #3282f6;
+    font-size: 14px;
+}
+
+.price-major .amount {
+    font-size: 20px;
+    color: #3282f6;
+}
+
+.price-major .unit {
+    font-size: 14px;
+    margin-left: 2px;
+}
+
+/* 상세 리스트 */
+.detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 30px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.d-label {
+    color: #888;
+}
+
+.d-value {
+    color: #333;
+    font-weight: 500;
+}
+
+/* 푸터 버튼 영역 */
+.receipt-footer {
+    padding: 20px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #fafafa;
+}
+
+.receipt-footer button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #3282f6;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #666;
+    border: 1px solid #ddd !important;
+}
+
+/* ----------------- 모달 내부 영수증 상세 디자인 끝 --------------------- */
