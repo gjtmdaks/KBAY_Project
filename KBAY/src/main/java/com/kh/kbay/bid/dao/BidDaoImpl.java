@@ -41,15 +41,14 @@ public class BidDaoImpl implements BidDao {
 	        throw new IllegalArgumentException("현재가보다 높은 금액을 입력하세요.");
 	    }
 
-	    // 5. ranking 계산
-	    int ranking = session.selectOne("bid.selectNextRanking", req.getItemNo());
-
-	    // 6. req 세팅
-	    req.setRanking(ranking);
+	    // 5. ranking 세팅 제거
 	    req.setBidType("NORMAL");
 
-	    // 7. insert
+	    // 6. insert 먼저
 	    session.insert("bid.insertBid", req);
+
+	    // 7. 진짜 ranking 계산 (가격 기준)
+	    int ranking = session.selectOne("bid.selectRanking", req);
 
 	    // 🔥 8. 현재가 재계산
 	    int newCurrentPrice = session.selectOne("bid.selectCurrentPrice", req.getItemNo());

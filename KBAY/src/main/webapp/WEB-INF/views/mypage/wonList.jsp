@@ -31,7 +31,8 @@
                     <div class="won-item-list">
                         <c:forEach var="item" items="${list}">
                             <div class="won-item-card" onclick="location.href='${pageContext.request.contextPath}/auction/detail/${item.itemNo}'">
-                                <img src="${item.imgUrl}" class="won-thumb" onerror="this.src='${pageContext.request.contextPath}/resources/images/no-image.png'">
+                                <img src="${item.imgUrl}" class="won-thumb"
+                                     onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
                                 
                                 <div class="won-info">
                                     <span class="won-badge">낙찰</span>
