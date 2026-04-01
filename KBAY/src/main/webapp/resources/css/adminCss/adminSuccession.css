@@ -1,0 +1,150 @@
+/* 1. 기본 레이아웃 구성 */
+.admin-wrap {
+    display: flex;
+    max-width: 1400px; /* 테이블 정보가 많으므로 조금 더 여유 있게 설정 */
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 30px;
+    min-height: 800px;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 2. 페이지 상단 헤더 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.page-title {
+    font-size: 22px;
+    color: #2c3e50;
+    font-weight: 800;
+}
+
+/* 3. 승계 관리 테이블 스타일 */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-top: 1px solid #2c3e50;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-table th {
+    background-color: #f8f9fa;
+    padding: 15px 10px;
+    border-bottom: 2px solid #dee2e6;
+    color: #333;
+    font-weight: 700;
+}
+
+.admin-table td {
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #444;
+}
+
+/* 상품명 셀 강조 */
+.title-cell {
+    text-align: left !important;
+    font-weight: 600;
+    color: #2980b9;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.title-cell:hover {
+    color: #3498db;
+    text-decoration: underline;
+}
+
+/* 4. 결제 마감일 & 가격 강조 */
+.deadline-text {
+    color: #e74c3c; /* 마감이 임박했으므로 레드 계열 강조 */
+    font-weight: bold;
+}
+
+.price-text {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+}
+
+/* 5. 관리용 버튼 스타일 (승계/유찰) */
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.btn-action {
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* 차순위 승계 버튼 (신뢰감 있는 블루) */
+.btn-succession {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.btn-succession:hover {
+    background-color: #2980b9;
+}
+
+/* 강제 유찰 버튼 (경고 의미의 다크 그레이 -> 레드) */
+.btn-force-fail {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.btn-force-fail:hover {
+    background-color: #e74c3c;
+}
+
+/* 6. 페이징 처리 */
+.pagination-area {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    display: flex;
+    list-style: none;
+    gap: 5px;
+}
+
+.pagination-list li a {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.pagination-list li.active a {
+    background-color: #2c3e50;
+    color: #fff;
+    border-color: #2c3e50;
+}
+
+.pagination-list li a:hover:not(.active) {
+    background-color: #f1f1f1;
+}
