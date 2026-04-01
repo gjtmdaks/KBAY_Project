@@ -98,21 +98,64 @@
 
     <%-- 버튼 클릭 시 작동할 자바스크립트 함수 (AJAX 처리 예정) --%>
     <script>
-        // 1. 차순위 강제 승계 버튼
-        function forceSuccession(itemNo) {
-            if(confirm(itemNo + "번 경매의 현재 낙찰자를 박탈하고 차순위에게 넘기시겠습니까?")) {
-                alert("승계 로직 연결 준비 중입니다!");
-                // 추후 여기에 fetch() 로직 작성
-            }
-        }
+    // 현재 프로젝트의 루트 경로(Context Path)를 가져옵니다.
+    const contextPath = "${pageContext.request.contextPath}";
 
-        // 2. 강제 유찰 버튼
-        function forceFail(itemNo) {
-            if(confirm(itemNo + "번 경매를 강제 유찰(완전 종료) 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) {
-                alert("유찰 로직 연결 준비 중입니다!");
-                // 추후 여기에 fetch() 로직 작성
-            }
+    // 1. 차순위 강제 승계 버튼
+    function forceSuccession(itemNo) {
+        if(confirm(itemNo + "번 경매의 현재 낙찰자를 박탈하고 차순위에게 넘기시겠습니까?")) {
+            
+            // fetch로 컨트롤러에 POST 요청 보내기
+            // 🚨 주의: 컨트롤러의 @RequestMapping 경로에 따라 '/admin/forceSuccession' 등 알맞게 조절하세요!
+            fetch(contextPath + '/forceSuccession', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'itemNo=' + itemNo
+            })
+            .then(response => response.text())
+            .then(data => {
+                if(data === 'success') {
+                    alert("성공적으로 차순위 승계 처리가 완료되었습니다.");
+                    location.reload(); // 화면 새로고침하여 변경된 데이터(새로운 1등, 늘어난 마감일) 반영!
+                } else {
+                    alert("승계 처리에 실패했습니다. (서버 오류 또는 남은 차순위 입찰자가 없습니다.)");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("서버와 통신 중 오류가 발생했습니다.");
+            });
         }
-    </script>
+    }
+
+    // 2. 강제 유찰 버튼
+    function forceFail(itemNo) {
+        if(confirm(itemNo + "번 경매를 강제 유찰(완전 종료) 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) {
+            
+            fetch(contextPath + '/forceFail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'itemNo=' + itemNo
+            })
+            .then(response => response.text())
+            .then(data => {
+                if(data === 'success') {
+                    alert(itemNo + "번 경매가 강제 유찰(O) 처리되었습니다.");
+                    location.reload(); // 유찰되었으므로 리스트에서 사라지게 새로고침!
+                } else {
+                    alert("강제 유찰 처리에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("서버와 통신 중 오류가 발생했습니다.");
+            });
+        }
+    }
+</script>
 </body>
 </html>
