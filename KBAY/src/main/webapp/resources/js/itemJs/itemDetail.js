@@ -1,0 +1,264 @@
+const ITEM_NO = SERVER_DATA.itemNo;
+const CONTEXT_PATH = SERVER_DATA.contextPath;
+const CURRENT_USER_NO = SERVER_DATA.currentUserNo;
+const INITIAL_PRICE = parseInt(SERVER_DATA.currentPrice) || 0;
+const MAX_BID = 1000000000;
+
+let stompClient = null;
+
+function changeImage(el) {
+    const mainImg = document.getElementById("mainImg");
+    document.querySelectorAll('.thumb').forEach(thumb => thumb.classList.remove('active'));
+    el.classList.add('active');
+    mainImg.classList.add("fade-out");
+    setTimeout(() => {
+        mainImg.src = el.src;
+        mainImg.onload = () => mainImg.classList.remove("fade-out");
+    }, 300);
+}
+
+function moveImage(dir) {
+    const thumbs = document.querySelectorAll('.thumb');
+    let activeIndex = Array.from(thumbs).findIndex(thumb => thumb.classList.contains('active'));
+    if (activeIndex === -1) activeIndex = 0;
+    let newIndex = activeIndex + dir;
+    if (newIndex >= 0 && newIndex < thumbs.length) {
+        changeImage(thumbs[newIndex]);
+        thumbs[newIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+}
+
+function toggleWishlist(itemNo) {
+    const wishBtn = document.getElementById("wishBtn");
+    const heartIcon = wishBtn.querySelector(".heart-icon");
+    fetch(`${CONTEXT_PATH}/wishlist/toggle`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemNo: itemNo })
+    })
+    .then(res => {
+        if (res.status === 401) {
+            alert("로그인이 필요합니다.");
+            location.href = `${CONTEXT_PATH}/member/login`;
+            return;
+        }
+        return res.json();
+    })
+    .then(data => {
+        if (data.result === "INSERT") {
+            wishBtn.classList.add("active");
+            heartIcon.innerText = "❤️";
+        } else if (data.result === "DELETE") {
+            wishBtn.classList.remove("active");
+            heartIcon.innerText = "🤍";
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+function updateTimer() {
+    const el = document.getElementById("timer");
+    if (!el) return;
+    const now = new Date().getTime();
+    const end = parseInt(el.dataset.end);
+    const start = parseInt(el.dataset.start);
+    let diff;
+    if (now < start) {
+        diff = (start - now) / 1000;
+        el.innerText = "시작까지 " + formatTime(diff);
+    } else if (now > end) {
+        el.innerText = "종료";
+    } else {
+        diff = (end - now) / 1000;
+        el.innerText = "종료까지 " + formatTime(diff);
+    }
+}
+
+function formatTime(sec) {
+    sec = Math.floor(sec);
+    const d = Math.floor(sec / 86400);
+    const h = Math.floor((sec % 86400) / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    if (d > 0) return d + "일 " + h + "시간 " + m + "분 " + s + "초";
+    if (h > 0) return h + "시간 " + m + "분 " + s + "초";
+    return m + "분 " + s + "초";
+}
+
+function formatBidPrice(el) {
+    let value = el.value.replace(/[^0-9]/g, '');
+    if (value) {
+        let numValue = parseInt(value, 10);
+        if (numValue > MAX_BID) {
+            numValue = MAX_BID;
+            alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+        }
+        el.value = numValue.toLocaleString();
+    } else {
+        el.value = '';
+    }
+}
+
+function changeBidAmount(step) {
+    const bidPriceInput = document.getElementById("bidPrice");
+    if (!bidPriceInput) return;
+    let currentVal = parseInt(bidPriceInput.value.replace(/,/g, "")) || 0;
+    let newVal;
+    if (currentVal % 1000 !== 0) {
+        newVal = (step > 0) ? Math.ceil(currentVal / 1000) * 1000 : Math.floor(currentVal / 1000) * 1000;
+    } else {
+        newVal = currentVal + step;
+    }
+    if (newVal < 0) newVal = 0;
+    if (newVal > MAX_BID) newVal = MAX_BID;
+    bidPriceInput.value = newVal.toLocaleString();
+}
+
+function submitBid(e, itemNo) {
+    const btn = e.target;
+    const bidPriceInput = document.getElementById("bidPrice");
+    const bidPrice = parseInt(bidPriceInput.value.replace(/,/g, ""), 10);
+    if (!bidPrice || isNaN(bidPrice)) {
+        alert("올바른 금액을 입력하세요.");
+        return;
+    }
+    if (bidPrice % 1000 !== 0) {
+        alert("입찰 금액은 1,000원 단위로만 입력 가능합니다.");
+        bidPriceInput.focus();
+        return;
+    }
+    if (bidPrice > MAX_BID) {
+        alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+        return;
+    }
+    openConfirmModal(bidPrice, function() {
+        btn.disabled = true;
+        fetch(`${CONTEXT_PATH}/bid`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ itemNo: itemNo, bidPrice: bidPrice })
+        })
+        .then(res => res.status === 401 ? (location.href = `${CONTEXT_PATH}/member/login`) : res.json())
+        .then(data => {
+            if (data && data.result === "SUCCESS") {
+                data.ranking === 1 ? openFirstBidderModal() : openSecondBidderModal();
+            } else if (data) {
+                alert(data.message || "입찰 실패");
+            }
+        })
+        .catch(err => console.error(err))
+        .finally(() => btn.disabled = false);
+    });
+}
+
+function openConfirmModal(bidPrice, onConfirm) {
+    const modal = document.getElementById("confirmModal");
+    if (!modal) return;
+    modal.style.display = "block";
+    document.getElementById("confirmPrice").innerText = bidPrice.toLocaleString();
+    const confirmBtn = document.getElementById("confirmBtn");
+    confirmBtn.onclick = () => {
+        modal.style.display = "none";
+        onConfirm();
+    };
+    document.getElementById("cancelBtn").onclick = () => modal.style.display = "none";
+}
+
+function openFirstBidderModal() { document.getElementById("firstModal").style.display = "block"; }
+function openSecondBidderModal() { document.getElementById("secondModal").style.display = "block"; }
+function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+function connect() {
+    const socket = new SockJS(`${CONTEXT_PATH}/ws`);
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+        stompClient.subscribe('/topic/bid/' + ITEM_NO, function(response) {
+            updateRealTimeUI(JSON.parse(response.body));
+        });
+    }, function(error) {
+        setTimeout(connect, 5000);
+    });
+}
+
+function updateRealTimeUI(data) {
+    const priceEl = document.getElementById("currentPrice");
+    const bidCountEl = document.getElementById("bidCount");
+    const topMsg = document.getElementById("topBidderMsg");
+    const bidPriceInput = document.getElementById("bidPrice");
+    const prevPrice = parseInt(priceEl.innerText.replace(/,/g, '')) || 0;
+
+    priceEl.innerText = data.bidPrice.toLocaleString();
+    if (bidCountEl) {
+        let count = parseInt(bidCountEl.innerText.replace(/[^0-9]/g, "")) || 0;
+        bidCountEl.innerText = (count + 1) + "회";
+    }
+    if (bidPriceInput && document.activeElement !== bidPriceInput) {
+        bidPriceInput.value = (data.bidPrice + 1000).toLocaleString();
+    }
+    if (data.bidPrice > prevPrice) {
+        priceEl.classList.add("price-up");
+        setTimeout(() => priceEl.classList.remove("price-up"), 800);
+    }
+    if (topMsg) {
+        topMsg.style.display = (String(data.userNo) === String(CURRENT_USER_NO)) ? "block" : "none";
+    }
+    if (document.getElementById("bidModal").style.display === "flex") {
+        openBidModal(ITEM_NO);
+    }
+}
+
+function openBidModal(itemNo) {
+    const modal = document.getElementById("bidModal");
+    const tbody = document.getElementById("bidHistoryBody");
+    tbody.innerHTML = '<tr><td colspan="5">데이터를 불러오는 중...</td></tr>';
+    modal.style.display = "flex";
+    fetch(CONTEXT_PATH + "/bid/history/" + itemNo)
+        .then(res => res.json())
+        .then(list => {
+            tbody.innerHTML = "";
+            list.forEach(b => {
+                const isMine = (String(CURRENT_USER_NO) === String(b.userNo));
+                let displayIp = "정보 없음";
+                if (b.bidIp) {
+                    const parts = b.bidIp.split('.');
+                    displayIp = isMine ? b.bidIp : (parts.length === 4 ? `${parts[0]}.${parts[1]}.***.${parts[3]}` : b.bidIp.substring(0, b.bidIp.lastIndexOf(":") + 1) + "***");
+                }
+                const d = new Date(b.bidTime);
+                const bidDateFull = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}:${String(d.getMilliseconds()).padStart(3, '0')}`;
+                tbody.innerHTML += `<tr class="${isMine ? 'my-bid-row' : ''}"><td>${b.ranking}</td><td>${isMine ? b.userId : b.ranking + '번 입찰자'}</td><td>${isMine ? b.bidPrice.toLocaleString() + '원' : '***원'}</td><td>${bidDateFull}</td><td>${displayIp}</td></tr>`;
+            });
+        });
+}
+
+function closeBidModal() { document.getElementById("bidModal").style.display = "none"; }
+
+document.addEventListener("DOMContentLoaded", function() {
+    connect();
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    const initialPrice = parseInt(SERVER_DATA.currentPrice) || 0;
+    
+    const bidPriceInput = document.getElementById("bidPrice");
+    if (bidPriceInput) bidPriceInput.value = (initialPrice + 1000).toLocaleString();
+    
+    const firstThumb = document.querySelector('.thumb');
+    if (firstThumb) firstThumb.classList.add('active');
+
+    const thumbList = document.getElementById("thumbList");
+    let isDown = false, startX, scrollLeft;
+    thumbList.addEventListener("mousedown", (e) => {
+        isDown = true; startX = e.pageX - thumbList.offsetLeft; scrollLeft = thumbList.scrollLeft; thumbList.style.cursor = "grabbing";
+    });
+    thumbList.addEventListener("mouseleave", () => isDown = false);
+    thumbList.addEventListener("mouseup", () => { isDown = false; thumbList.style.cursor = "grab"; });
+    thumbList.addEventListener("mousemove", (e) => {
+        if (!isDown) return; e.preventDefault();
+        const x = e.pageX - thumbList.offsetLeft;
+        thumbList.scrollLeft = scrollLeft - (x - startX) * 2;
+    });
+});
+
+window.onclick = function(event) {
+    const modal = document.getElementById("bidModal");
+    if (event.target == modal) modal.style.display = "none";
+};

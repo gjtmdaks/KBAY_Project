@@ -1,9 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="payment">
-    <update id="updatePaymentStatus">
+
+    <insert id="insertPayment" parameterType="Payment">
+        INSERT INTO PAYMENT (
+            PAY_NO,
+            ITEM_NO,
+            ORDER_ID,
+            PAYMENT_KEY,
+            TOTAL_AMOUNT,
+            METHOD,
+            RECEIPT_URL,
+            APPROVED_AT,
+            PAY_STATUS,
+            CREATE_DATE
+        ) VALUES (
+            SEQ_PAY_NO.NEXTVAL,
+            #{itemNo},
+            #{orderId},
+            #{paymentKey},
+            #{totalAmount},
+            #{method},
+            #{receiptUrl},
+            #{approvedAt},
+            'Y',
+            SYSDATE
+        )
+    </insert>
+
+    <update id="updatePaymentStatus" parameterType="_int">
         UPDATE ITEM 
-        SET PAY_STATUS = 'Y' 
-        WHERE ITEM_NO = #{itemNo}
+           SET PAY_STATUS = 'Y' 
+         WHERE ITEM_NO = #{itemNo}
     </update>
+    
+    <select id="selectPaymentByItemNo" parameterType="_int" resultType="Payment">
+    SELECT 
+        P.PAY_NO as payNo,
+        P.ITEM_NO as itemNo,
+        P.ORDER_ID as orderId,
+        P.TOTAL_AMOUNT as totalAmount,
+        P.METHOD as method,
+        P.RECEIPT_URL as receiptUrl,
+        P.APPROVED_AT as approvedAt,
+        P.PAY_STATUS as payStatus,
+        I.ITEM_TITLE as orderName  FROM PAYMENT P
+    JOIN ITEM I ON (P.ITEM_NO = I.ITEM_NO)
+    WHERE P.ITEM_NO = #{itemNo}
+      AND P.PAY_STATUS = 'Y'
+</select>
+
 </mapper>
