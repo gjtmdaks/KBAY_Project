@@ -91,5 +91,6 @@ public interface AdminService {
 	List<Item> selectSuccessionList(PageInfo pi);
 	int updateForceFail(int itemNo);
 	int updateForceSuccession(int itemNo);
+	List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap);
 
 }

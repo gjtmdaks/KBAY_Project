@@ -262,4 +262,8 @@ public class AdminServiceImpl implements AdminService {
         throw new RuntimeException("승계 처리 중 문제가 발생하여 롤백합니다.");
     }
 
+    @Override
+    public List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap) {
+        return ad.selectPaymentList(paramMap);
+    }
 }

@@ -68,10 +68,6 @@
 
     <div class="nav-buttons">
         <button type="button" onclick="goToList()">목록으로</button>
-        <div>
-            <button type="button" onclick="">이전 글</button>
-            <button type="button" onclick="">다음 글</button>
-        </div>
     </div>
 
     <!-- 댓글 기능 등록(여기서는  )-->

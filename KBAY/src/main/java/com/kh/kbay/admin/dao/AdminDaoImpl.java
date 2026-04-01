@@ -228,4 +228,8 @@ public class AdminDaoImpl implements AdminDao {
 		return session.selectOne("adminMapper.selectNextBidderCount", itemNo);
 	}
 	
+	@Override
+	public List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap) {
+	    return session.selectList("adminMapper.selectPaymentList", paramMap);
+	}
 }
