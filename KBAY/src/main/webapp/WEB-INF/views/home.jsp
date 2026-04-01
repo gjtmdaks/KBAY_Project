@@ -14,6 +14,7 @@
 <title>K-Bay Auction</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/home.css">
+	<link rel="stylesheet"href="${pageContext.request.contextPath}/resources/css/main.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
