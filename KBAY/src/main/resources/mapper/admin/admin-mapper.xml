@@ -346,73 +346,72 @@
         ORDER BY i.ITEM_NO DESC
     </select>
 
-<!-- answer -->
-<update id="insertInquiryAnswer">
-    UPDATE FAQ
-    SET ANSWER_CONTENT = #{answerContent},
-        STATUS = 'DONE'
-    WHERE FAQ_ID = #{faqId}
-</update>
+	<!-- answer -->
+	<update id="insertInquiryAnswer">
+	    UPDATE FAQ
+	    SET ANSWER_CONTENT = #{answerContent},
+	        STATUS = 'DONE'
+	    WHERE FAQ_ID = #{faqId}
+	</update>
+	
+	<!-- 경매 관리(종료 및 취소) 영역 -->
+	<select id="selectAuctionListCount" parameterType="map" resultType="_int">
+	    SELECT COUNT(*) 
+	    FROM ITEM 
+	    WHERE STATUS = 'N'
+	    <if test="searchKeyword != null and searchKeyword != ''">
+	        AND ITEM_TITLE LIKE '%' || #{searchKeyword} || '%'
+	    </if>
+	</select>
+	<select id="selectAdminAuctionList" parameterType="map" resultType="Item">
+	    SELECT * FROM (
+	        SELECT ROWNUM RNUM, A.* FROM (
+	            SELECT 
+	                I.ITEM_NO,
+	                C.ITEM_CATEGORY AS categoryName,
+	                I.ITEM_TITLE,
+	                M.USER_ID AS userId,
+	                I.START_PRICE,
+	                I.CURRENT_PRICE,
+	                I.START_TIME,
+	                I.END_TIME,
+	                I.STATUS,
+	                I.CREATE_AT,
+	                (SELECT COUNT(*) FROM BID B WHERE B.ITEM_NO = I.ITEM_NO) AS bidCount,
+	                (SELECT IMG_URL FROM ITEM_IMG WHERE ITEM_NO = I.ITEM_NO AND ROWNUM = 1) AS mainImg
+	            FROM ITEM I
+	            JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
+	            JOIN ITEM_CD C ON (I.ITEM_CD_NO = C.ITEM_CATEGORY_NO) 
+	            WHERE I.STATUS = 'N' 
+	            <if test="searchKeyword != null and searchKeyword != ''">
+	                AND I.ITEM_TITLE LIKE '%' || #{searchKeyword} || '%'
+	            </if>
+	            ORDER BY I.ITEM_NO DESC
+	        ) A
+	    )
+	    WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+	<select id="selectBidHistory" resultType="Bid">
+	    SELECT 
+	        B.BID_NO AS bidNo,
+	        B.ITEM_NO AS itemNo,
+	        B.USER_NO AS userNo,
+	        M.USER_ID AS userId,
+	        B.BID_PRICE AS bidPrice,
+	        B.BID_TIME AS bidTime,
+	        B.RANKING AS ranking,
+	        B.BID_IP AS bidIp
+	    FROM BID B
+	    JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
+	    WHERE B.ITEM_NO = #{itemNo}
+	    ORDER BY B.BID_PRICE DESC, B.BID_TIME ASC
+	</select>
+	<update id="updateAuctionStatus">
+	    UPDATE ITEM
+	    SET STATUS = 'C'   
+	    WHERE ITEM_NO = #{itemNo} 
+	</update>
 
-<!-- 경매 관리(종료 및 취소) 영역 -->
-<select id="selectAuctionListCount" parameterType="map" resultType="_int">
-    SELECT COUNT(*) 
-    FROM ITEM 
-    WHERE STATUS = 'N'
-    <if test="searchKeyword != null and searchKeyword != ''">
-        AND ITEM_TITLE LIKE '%' || #{searchKeyword} || '%'
-    </if>
-</select>
-<select id="selectAdminAuctionList" parameterType="map" resultType="Item">
-    SELECT * FROM (
-        SELECT ROWNUM RNUM, A.* FROM (
-            SELECT 
-                I.ITEM_NO,
-                C.ITEM_CATEGORY AS categoryName,
-                I.ITEM_TITLE,
-                M.USER_ID AS userId,
-                I.START_PRICE,
-                I.CURRENT_PRICE,
-                I.START_TIME,
-                I.END_TIME,
-                I.STATUS,
-                I.CREATE_AT,
-                (SELECT COUNT(*) FROM BID B WHERE B.ITEM_NO = I.ITEM_NO) AS bidCount,
-                (SELECT IMG_URL FROM ITEM_IMG WHERE ITEM_NO = I.ITEM_NO AND ROWNUM = 1) AS mainImg
-            FROM ITEM I
-            JOIN MEMBER M ON (I.USER_NO = M.USER_NO)
-            JOIN ITEM_CD C ON (I.ITEM_CD_NO = C.ITEM_CATEGORY_NO) 
-            WHERE I.STATUS = 'N' 
-            <if test="searchKeyword != null and searchKeyword != ''">
-                AND I.ITEM_TITLE LIKE '%' || #{searchKeyword} || '%'
-            </if>
-            ORDER BY I.ITEM_NO DESC
-        ) A
-    )
-    WHERE RNUM BETWEEN #{offset} AND #{limit}
-</select>
-<select id="selectBidHistory" resultType="Bid">
-    SELECT 
-        B.BID_NO AS bidNo,
-        B.ITEM_NO AS itemNo,
-        B.USER_NO AS userNo,
-        M.USER_ID AS userId,
-        B.BID_PRICE AS bidPrice,
-        B.BID_TIME AS bidTime,
-        B.RANKING AS ranking,
-        B.BID_IP AS bidIp
-    FROM BID B
-    JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
-    WHERE B.ITEM_NO = #{itemNo}
-    ORDER BY B.BID_PRICE DESC, B.BID_TIME ASC
-</select>
-<update id="updateAuctionStatus">
-    UPDATE ITEM
-    SET STATUS = 'C'   
-    WHERE ITEM_NO = #{itemNo} 
-   	</update>
-  
-  
     <!-- 입찰 로그 상세 -->
     <select id="selectBidLogsByItem" resultType="com.kh.kbay.bid.model.vo.BidLogVo">
         SELECT 
@@ -428,5 +427,30 @@
         JOIN MEMBER m ON b.USER_NO = m.USER_NO
         WHERE b.ITEM_NO = #{itemNo}
         ORDER BY b.BID_TIME DESC
+    </select>
+    
+        <select id="getUserList" resultType="member">
+		SELECT 
+		    m.user_no,
+		    m.user_id,
+		    m.user_email,
+		    COUNT(b.bid_no) AS bidCount
+        FROM member m
+        LEFT JOIN bid b ON m.user_no = b.user_no
+        GROUP BY m.user_no, m.user_id, m.user_email
+        ORDER BY bidCount DESC
+    </select>
+    
+    <select id="getUserBidLogs" resultType="bid">
+        SELECT 
+            b.bid_time,
+            b.bid_price,
+            b.ranking,
+            b.bid_ip,
+            i.item_title
+        FROM bid b
+        JOIN item i ON b.item_no = i.item_no
+        WHERE b.user_no = #{userNo}
+        ORDER BY b.bid_time DESC
     </select>
 </mapper>

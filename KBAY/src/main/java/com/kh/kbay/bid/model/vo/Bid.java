@@ -19,6 +19,7 @@ public class Bid {
 	private Date bidTime;
 	private int ranking;
 	private String bidIp;
+	private String itemTitle;
 
 	public Bid(int itemNo, int bidPrice, int userNo, int ranking) {
 		this.itemNo = itemNo;

@@ -374,4 +374,17 @@ public class AdminController {
     public List<BidLogVo> getBidLogs(@PathVariable int itemNo) {
         return adminService.selectBidLogsByItem(itemNo);
     }
+    
+    @GetMapping(value="/users", produces="application/json; charset=UTF-8")
+    @ResponseBody
+    public List<Member> getUserList() {
+        return adminService.getUserList();
+    }
+    
+    @GetMapping(value="/logs/user/{userNo}", produces="application/json; charset=UTF-8")
+    @ResponseBody
+    public List<Bid> getUserBidLogs(@PathVariable int userNo) {
+    	List<Bid> list = adminService.getUserBidLogs(userNo);
+        return list;
+    }
 }

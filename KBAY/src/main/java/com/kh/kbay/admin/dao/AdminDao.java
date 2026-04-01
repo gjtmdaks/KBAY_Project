@@ -17,7 +17,9 @@ public interface AdminDao {
 
 	// 가입자수, 진행중인 경매, 신고 내역
 	int selectTotalMemberCount();
+	
 	int selectActiveAuctionsCount();
+	
 	int selectUnprocessedReportsCount();
 	
 	int selectMemberListCount(Map<String, Object> safeMap);
@@ -34,6 +36,7 @@ public interface AdminDao {
 
 	// USER_SANCTION에 기록
 	int insertSuspendUserSanctionRecord(Map<String, Object> paramMap);
+	
 	// MEMBER의 제제 상태 여부 변경
 	int updateSuspendUserStatusUpdate(Map<String, Object> paramMap);
 	
@@ -44,12 +47,15 @@ public interface AdminDao {
 	
 	// 신고 내역 처리 부분
 	int selectReportListCount(Map<String, Object> paramMap);
+	
 	List<Report> selectReportList(Map<String, Object> paramMap);
 	
 	Map<String, Object> selectReportTargetInfo(Map<String, Object> paramMap);
+	
 	List<Map<String, Object>> selectReportStats(Map<String, Object> paramMap);
 	
 	int updateTargetDeleteStatus(Map<String, Object> paramMap);
+	
 	int updateReportKeepStatus(Map<String, Object> paramMap);
 
 	int selectInquiryListCount(Map<String, Object> paramMap);
@@ -64,12 +70,19 @@ public interface AdminDao {
 	
 	// 경매 관리(종료 및 취소) 영역
 	int selectAuctionListCount();
+	
 	List<Item> selectAdminAuctionList(Map<String, Object> paramMap);
+	
 	List<Bid> selectBidHistory(int itemNo);
+	
 	int updateAuctionStatus(int itemNo); // n -> c
   
 	List<Map<String, Object>> selectItemListForAdmin();
 	
 	List<BidLogVo> selectBidLogsByItem(int itemNo);
 	
+    List<Member> getUserList();
+    
+    List<Bid> getUserBidLogs(int userNo);
+    
 }
