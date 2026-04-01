@@ -11,6 +11,7 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
+import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
@@ -202,5 +203,38 @@ public class AdminServiceImpl implements AdminService {
     public List<Bid> getUserBidLogs(int userNo) {
         return ad.getUserBidLogs(userNo);
     }
+    
+ // 낙찰 취하 페이지
+	@Override
+	public int selectSuccessionCount() {
+		// TODO Auto-generated method stub
+		return ad.selectSuccessionCount();
+	}
+	@Override
+	public List<Item> selectSuccessionList(PageInfo pi) {
+		// TODO Auto-generated method stub
+		return ad.selectSuccessionList(pi);
+	}
+	@Override
+	public int updateForceFail(int itemNo) {
+		// TODO Auto-generated method stub
+		return ad.updateForceFail(itemNo);
+	}
+	@Transactional // 둘 중 하나라도 실패하면 원상복구!
+	@Override
+	public int updateForceSuccession(int itemNo) {
+	    // 1. 현재 1등 입찰자를 박탈('F') 시킴
+	    int result1 = ad.updateCurrentBidderFail(itemNo);
+	    
+	    // 2. 해당 아이템의 결제 기한을 7일 연장
+	    int result2 = ad.updateDeadlineExtend(itemNo);
+	    
+	    // 두 작업이 모두 성공해야만 최종 성공(1)으로 판정
+	    if (result1 > 0 && result2 > 0) {
+	        return 1; 
+	    } else {
+	    	throw new RuntimeException("승계 처리 중 문제가 발생하여 롤백합니다.");
+	    }
+	}
 
 }

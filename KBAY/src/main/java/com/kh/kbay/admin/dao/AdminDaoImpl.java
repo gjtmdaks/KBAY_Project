@@ -10,6 +10,7 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
+import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
@@ -187,5 +188,32 @@ public class AdminDaoImpl implements AdminDao {
     public List<Bid> getUserBidLogs(int userNo) {
         return session.selectList("adminMapper.getUserBidLogs", userNo);
     }
+    
+ // 낙찰 취하 페이지
+	@Override
+	public int selectSuccessionCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectSuccessionCount");
+	}
+	@Override
+	public List<Item> selectSuccessionList(PageInfo pi) {
+		// TODO Auto-generated method stub
+		return session.selectList("adminMapper.selectSuccessionList", pi);
+	}
+	@Override
+	public int updateForceFail(int itemNo) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateForceFail", itemNo);
+	}
+	@Override
+	public int updateCurrentBidderFail(int itemNo) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateCurrentBidderFail", itemNo);
+	}
+	@Override
+	public int updateDeadlineExtend(int itemNo) {
+		// TODO Auto-generated method stub
+		return session.update("adminMapper.updateDeadlineExtend", itemNo);
+	}
 	
 }
