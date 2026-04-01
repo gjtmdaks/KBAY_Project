@@ -41,12 +41,12 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public int placeBid(Bid req) {
         Bid previousTopBid = bd.findTopBid(req.getItemNo());
+        
         // 1. Redis가 없는 경우 (Fallback)
         if (redissonClient == null) {
             checkSelfOutbidding(req); // 공통 로직으로 분리 권장
-            int ranking = bd.placeBid(req);
             log.info("Redis 없음 → DB 기반 입찰 처리");
-            return ranking;
+            return bd.placeBid(req);
         }
 
         // 2. Redis가 있는 경우
@@ -57,44 +57,82 @@ public class BidServiceImpl implements BidService {
             boolean available = lock.tryLock(3, 5, TimeUnit.SECONDS);
             if (!available) throw new IllegalStateException("입찰 폭주");
 
-            // 락을 잡은 직후, 최신 상태에서 본인 체크를 수행
+            // 🔥 최신 상태 기준 자기입찰 방지
             checkSelfOutbidding(req);
 
-            // 입찰 실행 및 랭킹 확인
+            // 🔥 =========================
+            // 🔥 1. 즉시구매 분기 (여기가 핵심)
+            // 🔥 =========================
+            if ("BUY_NOW".equals(req.getBidType())) {
+
+                // 상태 재확인 (락 이후 반드시!)
+                Item item = is.selectItemByNo(req.getItemNo());
+                if (!"N".equals(item.getStatus())) {
+                    throw new IllegalStateException("이미 종료된 상품");
+                }
+
+                // 1. bid insert
+                req.setRanking(1);
+                bd.insertBid(req);
+
+                // 2. item 즉시 종료
+                Map<String, Object> param = new HashMap<>();
+                param.put("itemNo", req.getItemNo());
+                param.put("price", req.getBidPrice());
+                bd.endByBuyNow(param);
+
+                log.info("즉시구매 완료 - itemNo: {}", req.getItemNo());
+
+                // 🔥 Redis 알림 (즉시 종료 이벤트)
+                Bid msg = new Bid(
+                        req.getItemNo(),
+                        req.getBidPrice(), // 즉시구매가
+                        req.getUserNo(),
+                        1
+                );
+
+                if (redisPublisher != null) {
+                    redisPublisher.publish("bid-channel", msg);
+                }
+
+                return 1;
+            }
+
+            // 🔥 =========================
+            // 🔥 2. 일반 입찰 흐름
+            // 🔥 =========================
             int ranking = bd.placeBid(req);
+
             bd.updateRanking(req.getItemNo());
-            
-            // 2. [비동기 메일 발송 조건]
-            // 내가 1등이 되었고, 이전 1등이 존재하며, 그게 내가 아닐 때
+
+            // 🔥 메일 알림
             if (ranking == 1 && previousTopBid != null && previousTopBid.getUserNo() != req.getUserNo()) {
-                log.info("메일 발송 조건 충족! 이전 1등 번호: {}", previousTopBid.getUserNo());
-                // 이전 1등의 유저 정보(이메일) 조회
-                Member outbidUser = md.selectMemberByUserNo(previousTopBid.getUserNo()); 
-                
+
+                Member outbidUser = md.selectMemberByUserNo(previousTopBid.getUserNo());
+
                 if (outbidUser != null && outbidUser.getUserEmail() != null) {
-                    // 1. 아이템 번호로 실제 아이템 정보를 조회해옵니다. (ItemService 주입 필요)
-                    Item item = is.selectItemByNo(req.getItemNo()); 
+
+                    Item item = is.selectItemByNo(req.getItemNo());
                     String itemTitle = (item != null) ? item.getItemTitle() : "경매 상품";
 
-                    log.info("메일 발송 시도 - 수신자: {}, 상품명: {}", outbidUser.getUserEmail(), itemTitle);
-                    
-                    // 2. "상품알림" 대신 실제 itemTitle을 넘깁니다.
-                    ms.sendOutbidEmail(outbidUser.getUserEmail(), itemTitle, req.getBidPrice());
+                    ms.sendOutbidEmail(
+                            outbidUser.getUserEmail(),
+                            itemTitle,
+                            req.getBidPrice()
+                    );
                 }
             }
-            
-            // 갱신된 '2등 가격'(Vickrey 현재가) 조회
+
+            // 현재가 계산
             int vickreyCurrentPrice = bd.selectCurrentPrice(req.getItemNo());
-            
-            // 🔥현재 1등이 누구인지 다시 확인
+
             Bid finalTopBid = bd.findTopBid(req.getItemNo());
             int topUserNo = (finalTopBid != null) ? finalTopBid.getUserNo() : req.getUserNo();
-            
-            // 메시지 생성 
+
             Bid msg = new Bid(
                     req.getItemNo(),
                     vickreyCurrentPrice,
-                    topUserNo, 
+                    topUserNo,
                     ranking
             );
 
@@ -167,6 +205,48 @@ public class BidServiceImpl implements BidService {
 		param.put("status", status);
 		
 		bd.updateBidStatus(param);
+	}
+	
+	@Transactional
+	public void buyNow(Bid req) {
+
+	    String lockKey = "bid:item:" + req.getItemNo();
+	    RLock lock = redissonClient.getLock(lockKey);
+
+	    try {
+	        lock.lock();
+
+	        Item item = is.selectItemByNo(req.getItemNo());
+
+	        if (!"N".equals(item.getStatus())) {
+	            throw new IllegalStateException("이미 종료된 경매입니다.");
+	        }
+
+	        if (!"Y".equals(item.getDirectBuy())) {
+	            throw new IllegalStateException("즉시구매 불가 상품입니다.");
+	        }
+
+	        int buyNowPrice = item.getBuyNowPrice();
+
+	        // 🔥 1. 즉시구매 입찰 INSERT
+	        req.setBidPrice(buyNowPrice);
+	        req.setBidType("NOW");
+
+	        bd.insertBid(req);
+
+	        // 🔥 2. ranking = 1 강제
+	        Map<String, Object> param = new HashMap<>();
+	        param.put("itemNo", req.getItemNo());
+	        param.put("bidNo", req.getBidNo());
+	        
+	        bd.forceTopRanking(param);
+
+	        // 🔥 3. item 종료 처리
+	        is.endByBuyNow(req.getItemNo(), buyNowPrice);
+
+	    } finally {
+	        lock.unlock();
+	    }
 	}
 	
 }

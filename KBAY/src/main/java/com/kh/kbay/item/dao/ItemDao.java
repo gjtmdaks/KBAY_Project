@@ -36,4 +36,6 @@ public interface ItemDao {
     Item selectItemByNo(int itemNo);
 
 	int checkWishlist(Map<String, Object> map);
+
+	void endByBuyNow(Map<String, Object> param);
 }

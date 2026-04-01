@@ -32,4 +32,6 @@ public interface ItemService {
     Item selectItemByNo(int itemNo);
 
 	int checkWishlist(Map<String, Object> map);
+
+	void endByBuyNow(int itemNo, int buyNowPrice);
 }

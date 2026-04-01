@@ -3,6 +3,7 @@ const CONTEXT_PATH = SERVER_DATA.contextPath;
 const CURRENT_USER_NO = SERVER_DATA.currentUserNo;
 const INITIAL_PRICE = parseInt(SERVER_DATA.currentPrice) || 0;
 const MAX_BID = 1000000000;
+const BUY_NOW_PRICE = SERVER_DATA.buyNowPrice;
 
 let stompClient = null;
 
@@ -99,25 +100,12 @@ function formatBidPrice(el) {
     }
 }
 
-function changeBidAmount(step) {
-    const bidPriceInput = document.getElementById("bidPrice");
-    if (!bidPriceInput) return;
-    let currentVal = parseInt(bidPriceInput.value.replace(/,/g, "")) || 0;
-    let newVal;
-    if (currentVal % 1000 !== 0) {
-        newVal = (step > 0) ? Math.ceil(currentVal / 1000) * 1000 : Math.floor(currentVal / 1000) * 1000;
-    } else {
-        newVal = currentVal + step;
-    }
-    if (newVal < 0) newVal = 0;
-    if (newVal > MAX_BID) newVal = MAX_BID;
-    bidPriceInput.value = newVal.toLocaleString();
-}
-
 function submitBid(e, itemNo) {
     const btn = e.target;
     const bidPriceInput = document.getElementById("bidPrice");
     const bidPrice = parseInt(bidPriceInput.value.replace(/,/g, ""), 10);
+    const BUY_NOW_PRICE = SERVER_DATA.buyNowPrice;
+    
     if (!bidPrice || isNaN(bidPrice)) {
         alert("올바른 금액을 입력하세요.");
         return;
@@ -127,6 +115,10 @@ function submitBid(e, itemNo) {
         bidPriceInput.focus();
         return;
     }
+	if (BUY_NOW_PRICE > 0 && bidPrice >= BUY_NOW_PRICE) {
+	    alert("즉시구매가 이상으로는 입찰할 수 없습니다.\n즉시구매를 이용해주세요.");
+	    return;
+	}
     if (bidPrice > MAX_BID) {
         alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
         return;
@@ -262,3 +254,63 @@ window.onclick = function(event) {
     const modal = document.getElementById("bidModal");
     if (event.target == modal) modal.style.display = "none";
 };
+
+function changeBidAmount(step) {
+    const input = document.getElementById("bidPrice");
+    if (!input) return;
+
+    let currentVal = parseInt(input.value.replace(/,/g, "")) || 0;
+
+    let newVal;
+
+    // 1000단위 보정
+    if (currentVal % 1000 !== 0) {
+        if (step > 0) {
+            newVal = Math.ceil(currentVal / 1000) * 1000;
+        } else {
+            newVal = Math.floor(currentVal / 1000) * 1000;
+        }
+    } else {
+        newVal = currentVal + step;
+    }
+
+    if (newVal < 0) newVal = 0;
+    if (newVal > MAX_BID) newVal = MAX_BID;
+
+    // 🔥 즉시구매가 제한
+    if (BUY_NOW_PRICE > 0 && newVal >= BUY_NOW_PRICE) {
+        newVal = BUY_NOW_PRICE;
+    }
+
+    input.value = newVal.toLocaleString();
+}
+
+function buyNow(itemNo) {
+
+    if (!confirm("즉시구매 하시겠습니까?")) return;
+
+    fetch(`${CONTEXT_PATH}/bid/buyNow`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            itemNo: itemNo
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.result === "SUCCESS") {
+            alert("즉시구매 완료");
+            location.reload(); // 종료 상태 반영
+        } else {
+            alert(data.message || "즉시구매 실패");
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert("에러 발생");
+    });
+}

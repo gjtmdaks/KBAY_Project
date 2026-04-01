@@ -68,13 +68,13 @@ public class schedulingController {
 	        return;
 	    }
 
-	    // 1️⃣ DB에 있는 파일명
+	    // 1️. DB에 있는 파일명
 	    List<String> dbImages = boards.getAllImageNames();
 
 	    // 빠른 탐색용
 	    Set<String> dbSet = new HashSet<>(dbImages);
 
-	    // 2️⃣ 서버 파일 목록
+	    // 2️. 서버 파일 목록
 	    File[] files = folder.listFiles();
 
 	    if (files == null) return;
@@ -85,7 +85,7 @@ public class schedulingController {
 
 	        String fileName = file.getName();
 
-	        // 3️⃣ DB에 없는 파일이면 삭제
+	        // 3️. DB에 없는 파일이면 삭제
 	        if (!dbSet.contains(fileName)) {
 
 	            boolean deleted = file.delete();
