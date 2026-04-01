@@ -113,6 +113,7 @@
                     location.href = "${contextPath}/member/login";
                 }
             });
+            
         }
 
         // 2. 오류 메시지 처리
@@ -125,6 +126,24 @@
                 confirmButtonText: '확인'
             });
         }
+		
+        // 헤더 메뉴 바에 내가 보고 있는 메뉴 표시
+        const currentPath = window.location.pathname; 
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach(item => {
+            const itemHref = item.getAttribute("href");
+            
+            // /auction/주소 에 따라 현재 보고 있는 메뉴 활성화
+            if (currentPath.includes(itemHref)) {
+                item.classList.add("active");
+            }
+            
+            // 뒤에 숫자가 붙는 경우
+            if (itemHref.includes("community.me") && currentPath.includes("community.me")) {
+                item.classList.add("active");
+            }
+        });
     });
 </script>
 
