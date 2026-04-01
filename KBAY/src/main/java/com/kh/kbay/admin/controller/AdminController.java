@@ -358,6 +358,14 @@ public class AdminController {
         }
     }
     
+    // 낙찰 취하 페이지
+    @GetMapping("/adminSuccession")
+    public String adminSuccession() {
+    	return "admin/adminSuccession";
+    }
+    
+    // 낙찰 취하 페이지 끝
+    
     // 입찰 로그 영역
     // 아이템 리스트
     @GetMapping("/logs")
