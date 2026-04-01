@@ -66,58 +66,57 @@
         </div>
         
         <div id="receiptModal" class="modal-overlay">
-    <div class="receipt-card modal-content">
-        <div class="receipt-header">
-            <div class="success-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            </div>
-            <h2>결제 내역 상세</h2>
-            <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
-        </div>
+    		<div class="receipt-card modal-content">
+		        <div class="receipt-header">
+		            <div class="success-icon">
+		                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+		                    <polyline points="20 6 9 17 4 12"></polyline>
+		                </svg>
+		            </div>
+		            <h2>결제 내역 상세</h2>
+		            <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
+		        </div>
 
-        <div class="receipt-body">
-            <div class="item-summary">
-                <span class="label">결제 상품</span>
-                <strong id="m-orderName" class="value"></strong>
-            </div>
-            
-            <div class="price-major">
-                <span class="label">최종 결제 금액</span>
-                <strong class="amount">
-                    <span id="m-totalAmount"></span>
-                    <span class="unit">원</span>
-                </strong>
-            </div>
-
-            <div class="detail-list">
-                <div class="detail-item">
-                    <span class="d-label">주문번호</span>
-                    <span id="m-orderId" class="d-value"></span>
-                </div>
-                <div class="detail-item">
-                    <span class="d-label">결제수단</span>
-                    <span id="m-method" class="d-value"></span>
-                </div>
-                <div class="detail-item">
-                    <span class="d-label">결제일시</span>
-                    <span id="m-approvedAt" class="d-value"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="receipt-footer">
-            <button type="button" class="btn-secondary" id="m-receiptUrlBtn">
-                공식 영수증 확인
-            </button>
-            <button type="button" class="btn-primary" onclick="closeReceiptModal()">
-                닫기
-            </button>
-        </div>
-    </div>
-</div>
-
+		        <div class="receipt-body">
+		            <div class="item-summary">
+		                <span class="label">결제 상품</span>
+		                <strong id="m-orderName" class="value"></strong>
+		            </div>
+		            
+		            <div class="price-major">
+		                <span class="label">최종 결제 금액</span>
+		                <strong class="amount">
+		                    <span id="m-totalAmount"></span>
+		                    <span class="unit">원</span>
+		                </strong>
+		            </div>
+		
+		            <div class="detail-list">
+		                <div class="detail-item">
+		                    <span class="d-label">주문번호</span>
+		                    <span id="m-orderId" class="d-value"></span>
+		                </div>
+		                <div class="detail-item">
+		                    <span class="d-label">결제수단</span>
+		                    <span id="m-method" class="d-value"></span>
+		                </div>
+		                <div class="detail-item">
+		                    <span class="d-label">결제일시</span>
+		                    <span id="m-approvedAt" class="d-value"></span>
+		                </div>
+		            </div>
+		        </div>
+		
+		        <div class="receipt-footer">
+		            <button type="button" class="btn-secondary" id="m-receiptUrlBtn">
+		                공식 영수증 확인
+		            </button>
+		            <button type="button" class="btn-primary" onclick="closeReceiptModal()">
+		                닫기
+		            </button>
+		        </div>
+		    </div>
+		</div>
     </main>
 </div>
 

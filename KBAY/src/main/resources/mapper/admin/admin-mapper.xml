@@ -505,7 +505,7 @@
         ORDER BY b.BID_TIME DESC
     </select>
     
-        <select id="getUserList" resultType="member">
+    <select id="getUserList" resultType="member">
 		SELECT 
 		    m.user_no,
 		    m.user_id,
@@ -529,4 +529,84 @@
         WHERE b.user_no = #{userNo}
         ORDER BY b.bid_time DESC
     </select>
+    
+	<select id="selectPaymentList" parameterType="map" resultType="map">
+	
+	    SELECT 
+	        P.PAY_NO,
+	        P.ITEM_NO,
+	        P.ORDER_ID,
+	        P.TOTAL_AMOUNT,
+	        P.METHOD,
+	        P.RECEIPT_URL,
+	        P.APPROVED_AT,
+	        I.ITEM_TITLE,
+	        IMG.IMG_URL,
+	        M.USER_NO,
+	        M.USER_NAME
+	
+	    FROM PAYMENT P
+	
+	    JOIN ITEM I 
+	        ON P.ITEM_NO = I.ITEM_NO
+	
+	    /* 대표 이미지 (첫 번째 이미지 1개) */
+	    LEFT JOIN (
+	        SELECT ITEM_NO, MIN(IMG_URL) AS IMG_URL
+	        FROM ITEM_IMG
+	        GROUP BY ITEM_NO
+	    ) IMG
+	        ON I.ITEM_NO = IMG.ITEM_NO
+	
+	    /* 🔥 핵심: 구매자 계산 */
+	    LEFT JOIN (
+	        SELECT 
+	            ITEM_NO,
+	            COALESCE(
+	                /* 1순위: 즉시구매 */
+	                MAX(CASE WHEN BID_TYPE = 'NOW' THEN USER_NO END),
+	
+	                /* 2순위: 정상 1등 */
+	                MAX(CASE WHEN RANKING = 1 AND NVL(BID_STATUS, 'N') != 'F' THEN USER_NO END),
+	
+	                /* 3순위: 2등 */
+	                MAX(CASE WHEN RANKING = 2 THEN USER_NO END)
+	            ) AS BUYER_NO
+	        FROM BID
+	        GROUP BY ITEM_NO
+	    ) B
+	        ON P.ITEM_NO = B.ITEM_NO
+	
+	    /* 구매자 정보 */
+	    LEFT JOIN MEMBER M
+	        ON B.BUYER_NO = M.USER_NO
+	
+	    WHERE P.PAY_STATUS = 'Y'
+	
+	    <if test="keyword != null and keyword != ''">
+	        AND (
+	            M.USER_NAME LIKE '%' || #{keyword} || '%'
+	            OR TO_CHAR(M.USER_NO) = #{keyword}
+	        )
+	    </if>
+	
+	    <choose>
+	        <when test="sort == 'latest'">
+	            ORDER BY P.CREATE_DATE DESC
+	        </when>
+	        <when test="sort == 'oldest'">
+	            ORDER BY P.CREATE_DATE ASC
+	        </when>
+	        <when test="sort == 'priceDesc'">
+	            ORDER BY P.TOTAL_AMOUNT DESC
+	        </when>
+	        <when test="sort == 'priceAsc'">
+	            ORDER BY P.TOTAL_AMOUNT ASC
+	        </when>
+	        <otherwise>
+	            ORDER BY P.CREATE_DATE DESC
+	        </otherwise>
+	    </choose>
+	
+	</select>
 </mapper>

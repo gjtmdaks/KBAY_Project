@@ -440,4 +440,24 @@ public class AdminController {
     	List<Bid> list = adminService.getUserBidLogs(userNo);
         return list;
     }
+    
+    // 관리자 결제 리스트 페이지
+    @GetMapping("/adminPaymentList")
+    public String adminPaymentList(
+            @RequestParam(value="sort", defaultValue="latest") String sort,
+            @RequestParam(value="keyword", required=false) String keyword,
+            Model model) {
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("sort", sort);
+        paramMap.put("keyword", keyword);
+
+        List<Map<String, Object>> list = adminService.selectPaymentList(paramMap);
+
+        model.addAttribute("list", list);
+        model.addAttribute("sort", sort);
+        model.addAttribute("keyword", keyword);
+
+        return "admin/adminPaymentList";
+    }
 }

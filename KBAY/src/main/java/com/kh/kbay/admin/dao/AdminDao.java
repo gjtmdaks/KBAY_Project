@@ -95,7 +95,6 @@ public interface AdminDao {
 	int updateCurrentBidderFail(int itemNo);
 	int updateDeadlineExtend(int itemNo);
 
-
-
-    
+	List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap);
+	
 }
