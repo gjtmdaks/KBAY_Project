@@ -203,4 +203,14 @@
     FROM WISHLIST 
     WHERE USER_NO = #{userNo} AND ITEM_NO = #{itemNo}
 </select>
+
+<update id="endByBuyNow">
+    UPDATE ITEM
+    SET 
+        STATUS = 'E',
+        END_TIME = SYSDATE,
+        CURRENT_PRICE = #{price},
+        WINNER_PROCESSED = 'Y'
+    WHERE ITEM_NO = #{itemNo}
+</update>
 </mapper>

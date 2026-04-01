@@ -24,5 +24,11 @@ public interface BidDao {
 	void updateRanking(int itemNo);
 
 	void updateBidStatus(Map<String,Object> param);
+
+	void insertBid(Bid req);
+
+	void forceTopRanking(Map<String, Object> param);
+
+	void endByBuyNow(Map<String, Object> param);
 	
 }

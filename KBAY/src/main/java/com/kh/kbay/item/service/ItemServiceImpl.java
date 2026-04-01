@@ -147,4 +147,13 @@ public class ItemServiceImpl implements ItemService {
     public int checkWishlist(Map<String, Object> map) {
         return id.checkWishlist(map);
     }
+
+	@Override
+	public void endByBuyNow(int itemNo, int buyNowPrice) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("itemNo", itemNo);
+		param.put("price", buyNowPrice);
+		
+		id.endByBuyNow(param);
+	}
 }

@@ -24,4 +24,6 @@ public interface BidService {
 
 	void updateBidStatus(int bidNo, String status);
 
+	void buyNow(Bid req);
+
 }
