@@ -2,8 +2,9 @@ package com.kh.kbay.payment.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.kh.kbay.payment.dao.PaymentDao;
-import com.kh.kbay.payment.model.vo.Payment;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -11,17 +12,9 @@ import lombok.RequiredArgsConstructor;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentDao pd;
 
-    @Transactional 
+    @Transactional
     @Override
-    public void insertPayment(Payment pay) {
-        pd.insertPayment(pay);
-        
-        pd.updatePaymentStatus(pay.getItemNo());
+    public void updatePaymentStatus(int itemNo) {
+        pd.updatePaymentStatus(itemNo);
     }
-    
-    @Override
-    public Payment selectPaymentByItemNo(int itemNo) {
-        return pd.selectPaymentByItemNo(itemNo);
-    }
-	
 }

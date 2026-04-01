@@ -188,6 +188,7 @@
     </div>
 </div>
 
+	</div>
 	
 	<!-- 상세 설명 -->
 	<div class="description">
@@ -199,15 +200,430 @@
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 	
 	<script>
-	 const SERVER_DATA = {
-		        itemNo: ${item.itemNo},
-		        contextPath: "${pageContext.request.contextPath}",
-		        // 로그인 안했을 경우를 대비해 기본값 0 설정
-		        currentUserNo: '<sec:authorize access="isAuthenticated()"><sec:authentication property="principal.userNo" /></sec:authorize>' || '0',
-		        currentPrice: "${currentPrice}".replace(/,/g, "")
-		    };
+	// 이미지 변경
+	function changeImage(el) {
+    const mainImg = document.getElementById("mainImg");
+    
+    document.querySelectorAll('.thumb').forEach(thumb => thumb.classList.remove('active'));
+    el.classList.add('active');
+    
+    mainImg.classList.add("fade-out");
+    setTimeout(() => {
+        mainImg.src = el.src;
+        mainImg.onload = () => {
+            mainImg.classList.remove("fade-out");
+        };
+    }, 300);
+}
+	
+    function moveImage(dir) {
+        const thumbs = document.querySelectorAll('.thumb');
+        let activeIndex = -1;
+
+        thumbs.forEach((thumb, index) => {
+            if (thumb.classList.contains('active')) activeIndex = index;
+        });
+
+        if (activeIndex === -1) activeIndex = 0;
+
+        let newIndex = activeIndex + dir;
+        
+        if (newIndex >= 0 && newIndex < thumbs.length) {
+            changeImage(thumbs[newIndex]);
+            thumbs[newIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    
+    // 찜목록 위시리스트
+    function toggleWishlist(itemNo) {
+        const wishBtn = document.getElementById("wishBtn");
+        const heartIcon = wishBtn.querySelector(".heart-icon");
+
+        // 로그인 여부는 서버(Controller)에서 401로 응답받아 처리하는 게 깔끔합니다.
+        fetch(`${pageContext.request.contextPath}/wishlist/toggle`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ itemNo: itemNo })
+        })
+        .then(res => {
+            if (res.status === 401) {
+                alert("로그인이 필요합니다.");
+                location.href = "${pageContext.request.contextPath}/member/login";
+                return;
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.result === "INSERT") {
+                wishBtn.classList.add("active");
+                heartIcon.innerText = "❤️";
+            } else if (data.result === "DELETE") {
+                wishBtn.classList.remove("active");
+                heartIcon.innerText = "🤍";
+            }
+        })
+        .catch(err => console.error(err));
+    }
+    
+	// 타이머
+	function updateTimer(){
+	    const el = document.getElementById("timer");
+	    const now = new Date().getTime();
+	    const end = parseInt(el.dataset.end);
+	    const start = parseInt(el.dataset.start);
+	
+	    let diff;
+	
+	    if(now < start){
+	        diff = (start - now) / 1000;
+	        el.innerText = "시작까지 " + formatTime(diff);
+	    }else if(now > end){
+	        el.innerText = "종료";
+	    }else{
+	        diff = (end - now) / 1000;
+	        el.innerText = "종료까지 " + formatTime(diff);
+	    }
+	}
+	
+	function formatTime(sec){
+	    sec = Math.floor(sec);
+	    const d = Math.floor(sec / 86400);
+	    const h = Math.floor((sec % 86400)/3600);
+	    const m = Math.floor((sec % 3600)/60);
+	    const s = sec % 60;
+	
+	    if(d > 0) return d+"일 "+h+"시간 "+m+"분 "+s+"초";
+	    if(h > 0) return h+"시간 "+m+"분 "+s+"초";
+	    return m+"분 "+s+"초";
+	}
+	
+	setInterval(updateTimer,1000);
+	updateTimer();
+	
+	function formatBidPrice(el) {
+	    let value = el.value.replace(/[^0-9]/g, '');
+        const MAX_BID = 1000000000; // 10억 상한선
+        
+	    if (value) {
+            let numValue = parseInt(value, 10);
+            
+            if (numValue > MAX_BID) {
+                numValue = MAX_BID; 
+                alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+            }
+            
+            el.value = numValue.toLocaleString();
+        }else {
+	        el.value = '';
+	    }
+	}
+
+    const MAX_BID = 1000000000;
+    let newVal;
+
+    if (currentVal % 1000 !== 0) {
+        if (step > 0) {
+            newVal = Math.ceil(currentVal / 1000) * 1000;
+        } else {
+            newVal = Math.floor(currentVal / 1000) * 1000;
+        }
+    } else {
+        newVal = currentVal + step;
+    }
+
+    if (newVal < 0) newVal = 0;
+    if (newVal > MAX_BID) newVal = MAX_BID;
+	// 입찰
+    function submitBid(e, itemNo){
+    const btn = event.target; // 클릭한 버튼
+    const bidPriceInput = document.getElementById("bidPrice");
+    const bidPrice = parseInt(bidPriceInput.value.replace(/,/g, ""), 10);
+    const MAX_BID = 1000000000;
+    
+    if(!bidPrice || isNaN(bidPrice)){
+        alert("올바른 금액을 입력하세요.");
+        return;
+    }
+    
+    if (bidPrice % 1000 !== 0) {
+        alert("입찰 금액은 1,000원 단위로만 입력 가능합니다.");
+        bidPriceInput.focus();
+        return;
+    }
+   
+    if (bidPrice > MAX_BID) {
+        alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
+        return;
+    }
+	    // 1차 확인 팝업
+  openConfirmModal(bidPrice, function() {
+	    	btn.disabled = true;
+
+	        fetch(`${pageContext.request.contextPath}/bid`, {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json"
+	            },
+	            body: JSON.stringify({
+	                itemNo: itemNo,
+	                bidPrice: bidPrice
+	            })
+	        })
+	        .then(res => {
+	            if (res.status === 401) {
+	                alert("로그인이 필요합니다.");
+	                location.href = "/kbay/member/login";
+	                return;
+	            }
+	            return res.json();
+	        })
+	        .then(data => {
+	            if (!data) return;
+
+	            if (data.result === "SUCCESS") {
+	                if (data.ranking === 1) {
+	                    openFirstBidderModal();
+	                } else {
+	                    openSecondBidderModal();
+	                }
+	            } else {
+	                // 서버에서 "현재가보다 높은 금액을 입력하세요" 등의 메시지를 그대로 전달
+	                alert(data.message || "입찰 실패");
+	            }
+	        })
+	        .catch(err => {
+	            console.error(err);
+	            alert("에러 발생");
+	        })
+	        .finally(() => {
+	            // [추가] 통신 완료 후 버튼 다시 활성화
+	            btn.disabled = false;
+	        });
+	    });
+	}
+	 
+	function openConfirmModal(bidPrice, onConfirm){
+
+		
+	    const modal = document.getElementById("confirmModal");
+
+	    if(!modal){
+	        console.error("confirmModal 없음");
+	        return;
+	    }
+	    modal.style.display = "block";
+
+	    document.getElementById("confirmPrice").innerText = bidPrice.toLocaleString();
+
+	    // 입찰하기 버튼
+	    const confirmBtn = document.getElementById("confirmBtn");
+
+	    confirmBtn.onclick = null; // 초기화
+	    confirmBtn.onclick = function(){
+	        modal.style.display = "none";
+	        onConfirm();
+	    };
+
+	    // 취소 버튼
+	    document.getElementById("cancelBtn").onclick = function(){
+	        modal.style.display = "none";
+	    };
+	}
+	
+	function openFirstBidderModal(){
+	    document.getElementById("firstModal").style.display = "block";
+	}
+
+	function openSecondBidderModal(){
+	    document.getElementById("secondModal").style.display = "block";
+	}
+	
+	function closeModal(id){
+	    document.getElementById(id).style.display = "none";
+	}
+	
+	const thumbList = document.getElementById("thumbList");
+
+
+	// 드래그 스크롤
+	let isDown = false;
+	let startX, scrollLeft;
+
+	thumbList.addEventListener("mousedown", (e)=>{
+	    isDown = true;
+	    startX = e.pageX - thumbList.offsetLeft;
+	    scrollLeft = thumbList.scrollLeft;
+	    thumbList.style.cursor = "grabbing";
+	});
+
+	thumbList.addEventListener("mouseleave", ()=> isDown = false);
+	thumbList.addEventListener("mouseup", ()=> {
+	    isDown = false;
+	    thumbList.style.cursor = "grab";
+	});
+
+	thumbList.addEventListener("mousemove", (e)=>{
+	    if(!isDown) return;
+	    e.preventDefault();
+	    const x = e.pageX - thumbList.offsetLeft;
+	    const walk = (x - startX) * 2;
+	    thumbList.scrollLeft = scrollLeft - walk;
+	});
+	
+	
+	let stompClient = null;
+	const itemNo = ${item.itemNo};
+
+	function connect() {
+	    // 1. WebSocket 연결 (WebSocketConfig에서 설정한 엔드포인트)
+	    const socket = new SockJS('${pageContext.request.contextPath}/ws');
+	    stompClient = Stomp.over(socket);
+
+	    // 디버그 로그가 너무 많으면 아래 주석 해제
+	    // stompClient.debug = null; 
+
+	    stompClient.connect({}, function (frame) {
+	        console.log('Connected: ' + frame);
+
+	        // 2. 해당 상품의 채널 구독 (RedisSubscriber에서 보내는 경로)
+	        stompClient.subscribe('/topic/bid/' + itemNo, function (response) {
+	            const bidData = JSON.parse(response.body);
+	            
+	            // 3. 실시간 UI 업데이트 실행
+	            updateRealTimeUI(bidData);
+	        });
+	    }, function(error) {
+	        console.log('STOMP error: ' + error);
+	        // 연결 끊김 시 5초 후 재연결 시도
+	        setTimeout(connect, 5000);
+	    });
+	}
+
+	// 실시간 UI 갱신 함수
+	function updateRealTimeUI(data) {
+	    // 현재가 갱신 (애니메이션 효과 추가 권장)
+	    const priceEl = document.getElementById("currentPrice");
+	    const bidCountEl = document.getElementById("bidCount");
+	    const topMsg = document.getElementById("topBidderMsg");
+	    const bidPriceInput = document.getElementById("bidPrice");
+	    
+	    // 1. 현재가(2등 가격) 갱신
+	    const prevPrice = parseInt(priceEl.innerText.replace(/,/g, '')) || 0;
+	    priceEl.innerText = data.bidPrice.toLocaleString();
+	    
+	    // 입찰금액 = 현재가 + 1000
+	  if(bidPriceInput && document.activeElement !== bidPriceInput) {
+    // 숫자를 넣을 때 toLocaleString()을 붙여주세요
+    bidPriceInput.value = (data.bidPrice + 1000).toLocaleString();
+}
+	    
+	 // 2. 가격 상승 시 시각적 효과
+	    if(data.bidPrice > prevPrice) {
+	        priceEl.classList.add("price-up"); // CSS로 빨간색 깜빡임 효과
+	        setTimeout(() => priceEl.classList.remove("price-up"), 800);
+	    }
+	    
+
+	    // 입찰수 갱신 (data에 bidCount가 포함되어야 함, 없다면 기존처럼 fetch 호출 가능)
+	    // 여기서는 간단하게 기존 숫자에 +1을 하거나 최신 정보를 다시 가져옵니다.
+	    let count = parseInt(bidCountEl.innerText)|| 0 ;
+	    bidCountEl.innerText = (count + 1) + "회";
+	    
+	    if (String(data.userNo) === String(currentUserNo)) {
+	        if(topMsg) topMsg.style.display = "block";
+	    } else {
+	        if(topMsg) topMsg.style.display = "none";
+	    }
+	    
+	    // 만약 입찰 기록 모달이 열려있다면 즉시 새로고침
+	    if(document.getElementById("bidModal").style.display === "flex") {
+	        openBidModal(itemNo);
+	    }
+	}
+
+	// 기존 setInterval은 삭제하고 connect() 호출
+	document.addEventListener("DOMContentLoaded", function() {
+	    connect();
+        const firstThumb = document.querySelector('.thumb');
+        if(firstThumb) firstThumb.classList.add('active');
+	    const initialPrice = parseInt("${currentPrice}") || 0;
+	    const bidPriceInput = document.getElementById("bidPrice");
+	    if(bidPriceInput) {
+	        bidPriceInput.value = (initialPrice + 1000).toLocaleString();
+	    }
+	});
+	</script>
+	
+	
+	<script>
+	// 입찰 기록 조회
+	const contextPath = "${pageContext.request.contextPath}";
+	const currentUserNo = '<sec:authorize access="isAuthenticated()"><sec:authentication property="principal.userNo" /></sec:authorize>';
+
+	function openBidModal(itemNo) {
+	    var modal = document.getElementById("bidModal");
+	    var tbody = document.getElementById("bidHistoryBody");
+	    
+	    tbody.innerHTML = '<tr><td colspan="5">데이터를 불러오는 중...</td></tr>';
+	    modal.style.display = "flex"; 
+
+	    fetch(contextPath + "/bid/history/" + itemNo)
+	        .then(function(res) { return res.json(); })
+	        .then(function(list) {
+	            tbody.innerHTML = "";
+	            
+	            // 입찰 기록 조회하는 유저와 동일한 정보가 있는지 확인
+	            list.forEach(function(b) {
+	                var isMine = (String(currentUserNo) === String(b.userNo));
+	                
+	                
+	                // 내가 입찰한 기록이 아니라면 마스킹
+	                var displayIp = "정보 없음";
+	                if (b.bidIp) {
+	                    if (isMine) {
+	                        displayIp = b.bidIp;
+	                    } else {
+	                        var parts = b.bidIp.split('.');
+	                        if (parts.length === 4) {
+	                            displayIp = parts[0] + "." + parts[1] + ".***." + parts[3];
+	                        } else {
+	                            displayIp = b.bidIp.substring(0, b.bidIp.lastIndexOf(":") + 1) + "***";
+	                        }
+	                    }
+	                }
+
+	                var d = new Date(b.bidTime);
+	                var bidDateFull = d.getFullYear() + "-" 
+	                    + String(d.getMonth() + 1).padStart(2, '0') + "-" 
+	                    + String(d.getDate()).padStart(2, '0') + " " 
+	                    + String(d.getHours()).padStart(2, '0') + ":" 
+	                    + String(d.getMinutes()).padStart(2, '0') + ":" 
+                        + String(d.getSeconds()).padStart(2, '0') + ":" 
+                        + String(d.getMilliseconds()).padStart(3, '0');
+					
+	                    // 내 입찰기록은 강조해서 표시
+	                var row = "<tr class='" + (isMine ? "my-bid-row" : "") + "'>" +
+	                          "<td>" + b.ranking + "</td>" +
+	                          "<td>" + (isMine ? b.userId : b.ranking + "번 입찰자") + "</td>" +
+	                          "<td>" + (isMine ? b.bidPrice.toLocaleString() + "원" : "***원") + "</td>" +
+	                          "<td>" + bidDateFull + "</td>" +
+	                          "<td>" + displayIp + "</td>" +
+	                          "</tr>";
+	                
+	                tbody.innerHTML += row;
+	            });
+	        });
+	}
+
+function closeBidModal() {
+    document.getElementById("bidModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("bidModal");
+    if (event.target == modal) modal.style.display = "none";
+}
 </script>
-<script src="${pageContext.request.contextPath}/resources/js/itemJs/itemDetail.js" defer></script>
 <script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
 </body>
 </html>
