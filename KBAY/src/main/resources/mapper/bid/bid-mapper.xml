@@ -63,8 +63,7 @@
 	        BID_PRICE,
 	        BID_TIME,
 	        BID_IP,
-	        BID_TYPE,
-	        RANKING
+	        BID_TYPE
 	    ) VALUES (
 	        #{bidNo},
 	        #{itemNo},
@@ -72,8 +71,7 @@
 	        #{bidPrice},
 	        SYSTIMESTAMP,
 	        #{bidIp},
-	        #{bidType},     <!-- NORMAL / BUY_NOW -->
-	        #{ranking}      <!-- 서비스에서 계산 -->
+	        #{bidType}     <!-- NORMAL / BUY_NOW -->
 	    )
 	</insert>
 	<select id="selectRanking" resultType="int">

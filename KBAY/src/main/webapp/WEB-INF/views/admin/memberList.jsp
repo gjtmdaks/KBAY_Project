@@ -71,7 +71,7 @@
                                 <td>
 								    <c:choose>
 								        <%-- 'Y'를 char형으로 비교하기 위해 .charAt(0) 사용! --%>
-								        <c:when test="${member.userStatus == 'Y'.charAt(0)}">
+								        <c:when test="${member.userStatus == 'Y'}">
 								            <span style="color:#e67e22; font-weight:bold;">정지됨</span>
 								        </c:when>
 								        <c:otherwise>
@@ -83,7 +83,7 @@
 								<td>
 								    <c:choose>
 								        <%-- 여기도 동일하게 .charAt(0) 적용! --%>
-								        <c:when test="${member.userDeleteYn == 'Y'.charAt(0)}">
+								        <c:when test="${member.userDeleteYn == 'Y'}">
 								            <span style="color:#c0392b; font-weight:bold;">탈퇴(영구정지)</span>
 								        </c:when>
 								        <c:otherwise>
