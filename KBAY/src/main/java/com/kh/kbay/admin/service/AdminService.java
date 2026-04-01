@@ -7,6 +7,7 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
+import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
@@ -84,5 +85,11 @@ public interface AdminService {
     List<Member> getUserList();
     
     List<Bid> getUserBidLogs(int userNo);
+    
+    // 낙찰 취하 페이지
+	int selectSuccessionCount();
+	List<Item> selectSuccessionList(PageInfo pi);
+	int updateForceFail(int itemNo);
+	int updateForceSuccession(int itemNo);
 
 }

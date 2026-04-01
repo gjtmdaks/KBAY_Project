@@ -411,7 +411,62 @@
 	    SET STATUS = 'C'   
 	    WHERE ITEM_NO = #{itemNo} 
 	</update>
-
+	
+	<!-- 낙찰 취하 페이지 -->
+	<select id="selectSuccessionCount" resultType="_int">
+	    SELECT COUNT(*)
+	    FROM ITEM
+	    WHERE STATUS = 'E'
+	</select>
+	
+	<select id="selectSuccessionList" resultType="item">
+	    SELECT * FROM (
+	        SELECT ROWNUM RNUM, A.* FROM (
+	            SELECT 
+	                i.ITEM_NO, i.ITEM_TITLE, i.START_PRICE, i.CURRENT_PRICE, 
+	                i.END_TIME, i.PAYMENT_DEADLINE, i.STATUS,
+	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS SELLER_NAME,
+	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = (
+	                    SELECT USER_NO FROM (
+	                        SELECT USER_NO FROM BID 
+	                        WHERE ITEM_NO = i.ITEM_NO AND BID_STATUS = 'N' 
+	                        ORDER BY BID_PRICE DESC
+	                    ) WHERE ROWNUM = 1
+	                )) AS BUYER_NAME,
+	                (SELECT BOARD_CATEGORY FROM ITEM_TYPE WHERE ITEM_CATEGORY_NO = i.ITEM_CD_NO) AS ITEM_CATEGORY
+	            FROM ITEM i
+	            WHERE i.STATUS = 'E'
+	            ORDER BY i.PAYMENT_DEADLINE ASC, i.ITEM_NO DESC
+	        ) A
+	    )
+	    WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+	
+	<update id="updateForceFail">
+	    UPDATE ITEM
+	    SET STATUS = 'O'
+	    WHERE ITEM_NO = #{itemNo}
+	</update>
+	
+	<update id="updateCurrentBidderFail">
+	    UPDATE BID
+	    SET BID_STATUS = 'F'
+	    WHERE BID_NO = (
+	        SELECT BID_NO FROM (
+	            SELECT BID_NO FROM BID 
+	            WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
+	            ORDER BY BID_PRICE DESC
+	        ) WHERE ROWNUM = 1
+	    )
+	</update>
+	
+	<update id="updateDeadlineExtend">
+	    UPDATE ITEM
+	    SET PAYMENT_DEADLINE = SYSDATE + 7
+	    WHERE ITEM_NO = #{itemNo}
+	</update>
+<!-- 낙찰 취하 페이지 끝 -->
+	
     <!-- 입찰 로그 상세 -->
     <select id="selectBidLogsByItem" resultType="com.kh.kbay.bid.model.vo.BidLogVo">
         SELECT 

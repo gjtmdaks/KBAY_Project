@@ -40,6 +40,9 @@
 					        <c:when test="${item.status eq 'C'}">
 					            취소 당시 가격 
 					        </c:when>
+					        <c:when test="${item.status eq 'O' or item.status eq 'F'}">
+					            유찰 당시 가격 
+					        </c:when>
 					        <c:otherwise>
 					            낙찰가 
 					        </c:otherwise>
@@ -72,6 +75,12 @@
 				            <c:choose>
 				                <c:when test="${item.status eq 'C'}">
 				                    <strong style="color:#7f8c8d;">강제 취소됨</strong>
+				                </c:when>
+				                <c:when test="${item.status eq 'F'}">
+				                    <strong style="color:#7f8c8d;">유찰(미결제)</strong>
+				                </c:when>
+				                <c:when test="${item.status eq 'O'}">
+				                    <strong style="color:#7f8c8d;">강제 유찰됨</strong>
 				                </c:when>
 				                <c:otherwise>
 				                    <strong style="color:red;">종료</strong>

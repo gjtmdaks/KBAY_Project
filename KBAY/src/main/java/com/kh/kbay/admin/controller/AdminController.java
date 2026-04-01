@@ -360,10 +360,46 @@ public class AdminController {
     
     // 낙찰 취하 페이지
     @GetMapping("/adminSuccession")
-    public String adminSuccession() {
-    	return "admin/adminSuccession";
+    public String adminSuccession(
+            @RequestParam(value="page", defaultValue="1") int page,
+            Model model) {
+        
+        // 1. 전체 개수 조회 (STATUS = 'E' 인 것들 중 결제 대기 중인 항목)
+        int totalCount = adminService.selectSuccessionCount();
+        
+        // 2. 페이징 처리 (10개씩 보기)
+        PageInfo pi = PageInfo.of(page, totalCount, 10);
+        
+        // 3. 승계 관리 리스트 조회 (중요: 여기서 현재 낙찰자와 결제마감일을 조인해서 가져옴)
+        List<Item> successionList = adminService.selectSuccessionList(pi);
+        
+        model.addAttribute("successionList", successionList);
+        model.addAttribute("pi", pi);
+        
+        return "admin/adminSuccession";
     }
-    
+    // 강제 유찰 처리 (상태를 'O'로 변경)
+    @PostMapping("/forceFail")
+    @ResponseBody
+    public String forceFail(@RequestParam("itemNo") int itemNo) {
+        
+        // 아이템 상태를 'O'로 바꾸고, 필요하다면 낙찰자들의 BID_STATUS도 정리
+        int result = adminService.updateForceFail(itemNo);
+        
+        return result > 0 ? "success" : "fail";
+    }
+
+    // 차순위 강제 승계 처리
+    @PostMapping("/forceSuccession")
+    @ResponseBody
+    public String forceSuccession(@RequestParam("itemNo") int itemNo) {
+        
+        // 1. 현재 1등을 'F'로 강등
+        // 2. 다음 2등이 있는지 확인 후 결제 마감일 7일 연장
+        int result = adminService.updateForceSuccession(itemNo);
+        
+        return result > 0 ? "success" : "fail";
+    }
     // 낙찰 취하 페이지 끝
     
     // 입찰 로그 영역
