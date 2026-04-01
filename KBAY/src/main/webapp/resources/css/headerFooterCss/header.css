@@ -115,5 +115,13 @@ nav { background: #fff; border-bottom: 2px solid #F4F4F4; sticky; top: 0; z-inde
     width: 100%;
 }
 
+/* 현재 선택된 메뉴 스타일 */
+.nav-item.active {
+    color: #E74C3C !important; 
+    font-weight: bold;
+    border-bottom: 3px solid #E74C3C; 
+    padding-bottom: 5px;
+}
+
 .btn-register:hover { background-color: #8b0000; 
 transition: background-color 0.2s, border-color 0.2s;}

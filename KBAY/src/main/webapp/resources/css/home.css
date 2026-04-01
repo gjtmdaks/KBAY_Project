@@ -1,59 +1,117 @@
-
-
-/* 배너 영역 */
-.banner { height: 300px; background: #34495E; color: #fff; display: flex; align-items: center; margin-bottom: 40px; }
-.banner-content h2 { font-size: 36px; margin-bottom: 10px; }
-
-/* 아이템 그리드 */
-.section-title { font-size: 24px; margin-bottom: 20px; border-left: 5px solid #2C3E50; padding-left: 10px; }
-.item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.item-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; transition: transform 0.3s; }
-.item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.item-img { height: 200px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: #ccc; font-weight: bold; overflow: hidden;}
-.item-info { padding: 15px; }
-.item-info h4 { font-size: 16px; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.price { font-size: 14px; color: #666; }
-.price strong { display: block; font-size: 18px; color: #E74C3C; }
-.item-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: #999; }
-.timer { color: #2C3E50; font-weight: bold; }
-/* --- BEST ITEM 가로 스크롤 설정 --- */
-.scroll-container {
-    width: 100%;
-    overflow-x: auto; /* 가로 스크롤 활성화 */
-    padding-top: 20px;
-    padding-bottom: 20px;
-    -ms-overflow-style: none; /* IE 스크롤바 숨기기 */
-    scrollbar-width: thin; /* 파이어폭스 스크롤바 얇게 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/* 스크롤바 디자인 (크롬, 사파리) */
-.scroll-container::-webkit-scrollbar {
-    height: 8px;
-}
-.scroll-container::-webkit-scrollbar-track {
-    background: #F1F1F1;
-    border-radius: 10px;
-}
-.scroll-container::-webkit-scrollbar-thumb {
-    background: #2C3E50;
-    border-radius: 10px;
+.container {
+    width: 1300px;
+    margin: 0 auto;
 }
 
-.item-grid {
-    display: flex; /* grid 대신 flex를 사용하여 가로로 나열 */
+.banner {
+    height: 300px;
+    background: #34495E;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.banner-content h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.section-title {
+    font-size: 24px;
+    margin-top: 15px; /* 위쪽 여백을 추가해서 상단 메뉴와 떨어뜨림 */
+    margin-bottom: 15px; /* 아래 카드들과의 간격도 살짝 조정 */
+    border-left: 5px solid #2C3E50;
+    padding-left: 15px;
+}
+
+.auction-list .item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 20px;
+    width: 100%;
+}
+
+.item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+    min-width: 0;
 }
 
 .item-card {
-    flex: 0 0 260px; /* 카드의 너비를 260px로 고정하고 줄어들지 않게 설정 */
     border: 1px solid #ddd;
     border-radius: 8px;
+    overflow: hidden;
     background: #fff;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;
 }
 
-
-/* 베스트 아이템 카드 호버 */
 .item-card:hover {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     border-color: #E74C3C;
 }
+
+.item-img {
+    height: 200px;
+    background: #F9F9F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.item-info h4 {
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+}
+
+.price {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.price strong {
+    display: block;
+    font-size: 18px;
+    color: #E74C3C;
+}
+
+.item-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 10px;
+    font-size:
