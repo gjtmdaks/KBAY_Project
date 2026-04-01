@@ -9,21 +9,35 @@
 	</select>
 	<select id="selectCurrentPrice" resultType="int">
 	    SELECT CASE
+	        -- 🔥 즉시구매가 존재하면 무조건 최고가
+	        WHEN EXISTS (
+	            SELECT 1 FROM BID 
+	            WHERE ITEM_NO = #{itemNo}
+	            AND BID_TYPE = 'BUY_NOW'
+	        )
+	        THEN (
+	            SELECT MAX(BID_PRICE)
+	            FROM BID
+	            WHERE ITEM_NO = #{itemNo}
+	        )
+	
+	        -- 🔥 일반 경매 (빅크리)
 	        WHEN bidCount <![CDATA[<=]]> 1 THEN
 	            (SELECT START_PRICE FROM ITEM WHERE ITEM_NO = #{itemNo})
+	
 	        ELSE
 	            (
-	            	SELECT BID_PRICE
-					FROM (
-					    SELECT ROWNUM AS rn, BID_PRICE
-					    FROM (
-					        SELECT BID_PRICE
-					        FROM BID
-					        WHERE ITEM_NO = #{itemNo}
-					        ORDER BY BID_PRICE DESC, BID_TIME ASC
-					    )
-					)
-					WHERE rn = 2
+	                SELECT BID_PRICE
+	                FROM (
+	                    SELECT ROWNUM AS rn, BID_PRICE
+	                    FROM (
+	                        SELECT BID_PRICE
+	                        FROM BID
+	                        WHERE ITEM_NO = #{itemNo}
+	                        ORDER BY BID_PRICE DESC, BID_TIME ASC
+	                    )
+	                )
+	                WHERE rn = 2
 	            )
 	    END AS CURRENT_PRICE
 	    FROM (
@@ -48,14 +62,18 @@
 	        USER_NO,
 	        BID_PRICE,
 	        BID_TIME,
-	        BID_IP
+	        BID_IP,
+	        BID_TYPE,
+	        RANKING
 	    ) VALUES (
 	        #{bidNo},
 	        #{itemNo},
 	        #{userNo},
 	        #{bidPrice},
 	        SYSTIMESTAMP,
-	        #{bidIp}
+	        #{bidIp},
+	        #{bidType},     <!-- NORMAL / BUY_NOW -->
+	        #{ranking}      <!-- 서비스에서 계산 -->
 	    )
 	</insert>
 	<select id="selectRanking" resultType="int">
@@ -145,4 +163,19 @@
 	    	AND BID_STATUS IS NULL
 	</update>
 	
+	<update id="forceTopRanking">
+	    UPDATE BID
+	    SET RANKING = 1
+	    WHERE BID_NO = #{bidNo}
+	</update>
+	
+	<update id="endByBuyNow">
+	    UPDATE ITEM
+	    SET 
+	        STATUS = 'E',
+	        END_TIME = SYSTIMESTAMP,
+	        CURRENT_PRICE = #{price},
+	        WINNER_PROCESSED = 'Y'
+	    WHERE ITEM_NO = #{itemNo}
+	</update>
 </mapper>

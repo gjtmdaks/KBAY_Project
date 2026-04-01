@@ -105,4 +105,37 @@ public class BidController {
 	public List<Bid> getBidHistory(@PathVariable int itemNo) {
 	    return bs.selectBidHistory(itemNo);
 	}
+	
+	@PostMapping("/buyNow")
+	public Map<String, Object> buyNow(
+	        @RequestBody Bid req,
+	        HttpServletRequest request,
+	        Authentication auth){
+
+	    Map<String, Object> result = new HashMap<>();
+
+	    if(auth == null || !auth.isAuthenticated()) {
+	        result.put("result", "FAIL");
+	        result.put("message", "LOGIN_REQUIRED");
+	        return result;
+	    }
+
+	    try {
+	        Member user = (Member) auth.getPrincipal();
+	        req.setUserNo(user.getUserNo());
+
+	        String ip = request.getRemoteAddr();
+	        req.setBidIp(ip);
+
+	        bs.buyNow(req);
+
+	        result.put("result", "SUCCESS");
+
+	    } catch (Exception e) {
+	        result.put("result", "FAIL");
+	        result.put("message", e.getMessage());
+	    }
+
+	    return result;
+	}
 }

@@ -88,4 +88,9 @@ public class ItemDaoImpl implements ItemDao {
 	public int checkWishlist(Map<String, Object> map) {
 		return session.selectOne("item.checkWishlist", map);
 	}
+
+	@Override
+	public void endByBuyNow(Map<String, Object> param) {
+		session.update("item.endByBuyNow", param);
+	}
 }

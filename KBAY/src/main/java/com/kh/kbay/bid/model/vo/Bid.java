@@ -20,6 +20,7 @@ public class Bid {
 	private int ranking;
 	private String bidIp;
 	private String itemTitle;
+	private String bidType;
 
 	public Bid(int itemNo, int bidPrice, int userNo, int ranking) {
 		this.itemNo = itemNo;

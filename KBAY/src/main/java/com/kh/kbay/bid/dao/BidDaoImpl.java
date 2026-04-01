@@ -41,16 +41,20 @@ public class BidDaoImpl implements BidDao {
 	        throw new IllegalArgumentException("현재가보다 높은 금액을 입력하세요.");
 	    }
 
-	    // 🔥 5. INSERT 먼저
+	    // 5. ranking 계산
+	    int ranking = session.selectOne("bid.selectNextRanking", req.getItemNo());
+
+	    // 6. req 세팅
+	    req.setRanking(ranking);
+	    req.setBidType("NORMAL");
+
+	    // 7. insert
 	    session.insert("bid.insertBid", req);
 
-	    // 🔥 6. ranking (INSERT 이후)
-	    int ranking = session.selectOne("bid.selectRanking", req);
-
-	    // 🔥 7. 현재가 재계산
+	    // 🔥 8. 현재가 재계산
 	    int newCurrentPrice = session.selectOne("bid.selectCurrentPrice", req.getItemNo());
 
-	    // 🔥 8. ITEM 업데이트
+	    // 🔥 9. ITEM 업데이트
 	    Map<String, Object> param = new HashMap<>();
 	    param.put("itemNo", req.getItemNo());
 	    param.put("currentPrice", newCurrentPrice);
@@ -98,5 +102,20 @@ public class BidDaoImpl implements BidDao {
 	@Override
 	public void updateBidStatus(Map<String, Object> param) {
 		session.update("bid.updateBidStatus", param);
+	}
+
+	@Override
+	public void insertBid(Bid req) {
+		session.insert("bid.insertBid", req);
+	}
+
+	@Override
+	public void forceTopRanking(Map<String, Object> param) {
+		session.update("bid.forceTopRanking", param);
+	}
+
+	@Override
+	public void endByBuyNow(Map<String, Object> param) {
+		session.update("bid.endByBuyNow", param);
 	}
 }
