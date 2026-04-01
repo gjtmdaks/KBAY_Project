@@ -3,3 +3,113 @@ body { font-family: 'Pretendard', sans-serif; color: #333; line-height: 1.6; }
 ul { list-style: none; }
 a { text-decoration: none; color: inherit; }
 .container { width: 1100px; margin: 0 auto; }
+
+/* 1. 메인 페이지 전용 컨테이너 고정 (1100px) */
+.best-items.container {
+    width: 1100px !important;
+    max-width: 1100px !important;
+    margin: 60px auto !important; /* 위쪽 메뉴와 간격을 띄우기 위해 60px 적용 */
+    padding: 0 !important;
+}
+
+/* 2. 스크롤 컨테이너 설정 */
+.best-items .scroll-container {
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding: 10px 0 20px 0 !important;
+    scrollbar-width: thin;
+}
+
+/* 스크롤바 디자인 */
+.best-items .scroll-container::-webkit-scrollbar { height: 7px; }
+.best-items .scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+.best-items .scroll-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+/* 3. 그리드를 Flex로 강제 변환 및 격리 (Grid 설정 무력화) */
+.best-items .item-grid {
+    display: flex !important; 
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 20px !important;
+    width: max-content !important;
+    grid-template-columns: none !important; /* Grid 속성 제거 */
+}
+
+/* 4. 카드 크기 완전 고정 (가로 260px / 세로 360px 정도로 제한) */
+.best-items .item-card {
+    flex: 0 0 260px !important; 
+    width: 260px !important;
+    height: 360px !important; /* 카드가 길어지지 않게 세로 높이 고정 */
+    background: #fff !important;
+    border: 1px solid #eee !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+/* 5. 이미지 영역 크기 고정 */
+.best-items .item-img {
+    height: 180px !important; /* 이미지 영역 높이 고정 */
+    width: 100% !important;
+    background: #f9f9f9 !important;
+}
+
+.best-items .item-img img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* 6. 정보 영역 (글자 넘침 방지 및 높이 조절) */
+.best-items .item-info {
+    padding: 15px !important;
+    height: auto !important;
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    min-width: 0 !important;
+}
+
+.best-items .item-info h4 {
+    font-size: 16px !important;
+    margin: 0 0 10px 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #222 !important;
+    display: block !important;
+    height: auto !important;
+}
+
+.best-items .price {
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+.best-items .price strong {
+    font-size: 18px !important;
+    color: #E74C3C !important;
+}
+
+/* 7. 메타 정보 및 타이머 하단 고정 */
+.best-items .item-meta {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-top: auto !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #f5f5f5 !important;
+    font-size: 12px !important;
+    color: #999 !important;
+}
+
+.main-timer {
+    font-size: 13px !important;
+    color: #2C3E50 !important;
+    font-weight: bold !important;
+}
