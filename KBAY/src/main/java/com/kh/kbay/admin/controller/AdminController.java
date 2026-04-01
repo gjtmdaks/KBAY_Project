@@ -358,7 +358,7 @@ public class AdminController {
         }
     }
     
-    // 낙찰 취하 페이지
+ // 낙찰 취하 페이지
     @GetMapping("/adminSuccession")
     public String adminSuccession(
             @RequestParam(value="page", defaultValue="1") int page,
@@ -378,6 +378,7 @@ public class AdminController {
         
         return "admin/adminSuccession";
     }
+
     // 강제 유찰 처리 (상태를 'O'로 변경)
     @PostMapping("/forceFail")
     @ResponseBody
@@ -389,16 +390,24 @@ public class AdminController {
         return result > 0 ? "success" : "fail";
     }
 
-    // 차순위 강제 승계 처리
+    // 🚨 차순위 강제 승계 처리 (수정됨!)
     @PostMapping("/forceSuccession")
     @ResponseBody
     public String forceSuccession(@RequestParam("itemNo") int itemNo) {
-        
-        // 1. 현재 1등을 'F'로 강등
-        // 2. 다음 2등이 있는지 확인 후 결제 마감일 7일 연장
-        int result = adminService.updateForceSuccession(itemNo);
-        
-        return result > 0 ? "success" : "fail";
+        try {
+            // 서비스에서 1, 2, 3 중 하나의 결과를 받아옵니다.
+            int result = adminService.updateForceSuccession(itemNo);
+            
+            // 우리가 설계한 3가지 응답 신호!
+            if (result == 1) return "success";   // 승계 성공
+            if (result == 2) return "empty";     // 일반 입찰인데 남은 사람이 없어 유찰됨
+            if (result == 3) return "now_fail";  // 즉시 낙찰자라 차순위 없이 바로 유찰됨
+            
+            return "fail";
+        } catch (Exception e) {
+            e.printStackTrace(); // 에러 로그 확인용
+            return "fail"; // 서비스에서 RuntimeException이 터지면 무조건 실패 처리
+        }
     }
     // 낙찰 취하 페이지 끝
     

@@ -90,8 +90,12 @@ public interface AdminDao {
 	int selectSuccessionCount();
 	List<Item> selectSuccessionList(PageInfo pi);
 	int updateForceFail(int itemNo);
+	String selectTopBidType(int itemNo);
+	int selectNextBidderCount(int itemNo);
 	int updateCurrentBidderFail(int itemNo);
 	int updateDeadlineExtend(int itemNo);
+
+
 
     
 }

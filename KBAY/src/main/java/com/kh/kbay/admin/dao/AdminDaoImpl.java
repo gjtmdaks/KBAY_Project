@@ -215,5 +215,17 @@ public class AdminDaoImpl implements AdminDao {
 		// TODO Auto-generated method stub
 		return session.update("adminMapper.updateDeadlineExtend", itemNo);
 	}
+
+	@Override
+	public String selectTopBidType(int itemNo) {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectTopBidType", itemNo);
+	}
+
+	@Override
+	public int selectNextBidderCount(int itemNo) {
+		// TODO Auto-generated method stub
+		return session.selectOne("adminMapper.selectNextBidderCount", itemNo);
+	}
 	
 }

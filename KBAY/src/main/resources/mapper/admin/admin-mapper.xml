@@ -425,23 +425,18 @@
 	            SELECT 
 	                i.ITEM_NO, i.ITEM_TITLE, i.START_PRICE, i.CURRENT_PRICE, 
 	                i.END_TIME, i.PAYMENT_DEADLINE, i.STATUS,
-	                
 	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS SELLER_NAME,
 	                
 	                TB.BUYER_NAME,
-	                
-	                i.ITEM_CD_NO AS ITEM_CATEGORY 
-	                
+	                TB.TOP_BID_TYPE, i.ITEM_CD_NO AS ITEM_CATEGORY 
 	            FROM ITEM i
 	            LEFT JOIN (
-	                SELECT ITEM_NO, USER_NAME AS BUYER_NAME
+	                SELECT ITEM_NO, USER_NAME AS BUYER_NAME, BID_TYPE AS TOP_BID_TYPE
 	                FROM (
-	                    SELECT B.ITEM_NO, M.USER_NAME,
+	                    SELECT B.ITEM_NO, M.USER_NAME, B.BID_TYPE,
 	                           ROW_NUMBER() OVER(PARTITION BY B.ITEM_NO ORDER BY B.BID_PRICE DESC) as rn
 	                    FROM BID B
-	                    
 	                    JOIN MEMBER M ON B.USER_NO = M.USER_NO
-	                    
 	                    WHERE B.BID_STATUS = 'N'
 	                )
 	                WHERE rn = 1
@@ -462,13 +457,14 @@
 	<update id="updateCurrentBidderFail">
 	    UPDATE BID
 	    SET BID_STATUS = 'F'
-	    WHERE BID_NO = (
-	        SELECT BID_NO FROM (
-	            SELECT BID_NO FROM BID 
-	            WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
-	            ORDER BY BID_PRICE DESC
-	        ) WHERE ROWNUM = 1
-	    )
+	    WHERE ITEM_NO = #{itemNo}
+	      AND USER_NO = (
+	          SELECT USER_NO FROM (
+	              SELECT USER_NO FROM BID 
+	              WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
+	              ORDER BY BID_PRICE DESC
+	          ) WHERE ROWNUM = 1
+	      )
 	</update>
 	
 	<update id="updateDeadlineExtend">
@@ -476,6 +472,20 @@
 	    SET PAYMENT_DEADLINE = SYSDATE + 7
 	    WHERE ITEM_NO = #{itemNo}
 	</update>
+
+	<select id="selectTopBidType" resultType="string">
+	    SELECT BID_TYPE FROM (
+	        SELECT BID_TYPE FROM BID 
+	        WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
+	        ORDER BY BID_PRICE DESC
+	    ) WHERE ROWNUM = 1
+	</select>
+
+	<select id="selectNextBidderCount" resultType="_int">
+	    SELECT COUNT(DISTINCT USER_NO)
+	    FROM BID
+	    WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N'
+	</select>
 <!-- 낙찰 취하 페이지 끝 -->
 	
     <!-- 입찰 로그 상세 -->
