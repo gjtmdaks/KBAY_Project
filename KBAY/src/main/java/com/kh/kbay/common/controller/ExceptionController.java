@@ -10,11 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ExceptionController {
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception e) {
-        ModelAndView mav = new ModelAndView();
+    public ModelAndView handleException(Exception e) throws Exception {
+        log.error("에러 발생 원인 : ", e);
         
-        mav.addObject("errorMsg", "서비스 이용 중 예상치 못한 오류가 발생했습니다.");
+        if(true) throw e;
 
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("errorMsg", "서비스 이용 중 예상치 못한 오류가 발생했습니다.");
         mav.setViewName("common/errorPage");
         return mav;
     }
