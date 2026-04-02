@@ -125,7 +125,7 @@
         FROM ITEM i
         WHERE i.STATUS = 'E' 
           AND #{userNo} = (
-              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time DESC)
+              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
               FROM BID WHERE item_no = i.item_no
               AND BID_STATUS = 'N'
           )
