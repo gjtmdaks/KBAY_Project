@@ -76,8 +76,13 @@ public class BidDaoImpl implements BidDao {
 	}
 
 	@Override
-	public List<Bid> selectBidHistory(Object object, int itemNo) {
-		return session.selectList("bid.selectBidHistory", itemNo);
+	public List<Bid> selectBidHistory(int itemNo, com.kh.kbay.common.PageInfo pi) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("itemNo", itemNo);
+	    param.put("offset", pi.getOffset());
+	    param.put("limit", pi.getLimit());
+	    
+	    return session.selectList("bid.selectBidHistory", param);
 	}
 
 	@Override

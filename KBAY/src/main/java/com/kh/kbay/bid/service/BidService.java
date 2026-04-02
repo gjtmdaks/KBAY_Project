@@ -14,7 +14,7 @@ public interface BidService {
 
 	int selectMaxPrice(int itemNo);
 	
-	List<Bid> selectBidHistory(int itemNo);
+	List<Bid> selectBidHistory(int itemNo, com.kh.kbay.common.PageInfo pi);
 
 	Bid findTopBid(int itemNo);
 
