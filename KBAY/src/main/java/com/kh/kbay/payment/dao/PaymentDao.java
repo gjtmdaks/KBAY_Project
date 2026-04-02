@@ -9,4 +9,6 @@ public interface PaymentDao {
 	int  insertPayment(Payment pay);
 
 	Payment selectPaymentByItemNo(int itemNo);
+	
+
 }

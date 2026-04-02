@@ -15,6 +15,7 @@ import com.kh.kbay.mypage.model.vo.Faq;
 import com.kh.kbay.mypage.model.vo.FaqCategory;
 import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
+import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -111,4 +112,10 @@ public class MypageDaoImpl implements MypageDao {
     public List<BidListDto> getWonList(Map<String, Object> map) {
         return session.selectList("mypage.selectWonList", map);
     }
+
+	@Override
+	public List<SaleListDto> getSellerPaymentList(Map<String, Object> map) {
+		return session.selectList("mypage.getSellerPaymentList", map);
+	}
+	
 }

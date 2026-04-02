@@ -44,19 +44,22 @@
                                     <p class="won-price-label">최종 낙찰가</p>
                                     <strong class="won-price"><fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/> 원</strong>
                                     <div class="btn-group" style="display: flex; gap: 10px;">
-   									 <c:choose>
-      								  <c:when test="${item.payStatus eq 'Y'}">
-      								      <button class="pay-btn pay-btn-done" style="flex: 1;" disabled>결제 완료</button>
-     								      <button class="pay-btn pay-btn-view" style="flex: 1; background-color: #f2f4f6; color: #3282f6; border: 1px solid #3282f6;"
-       								             onclick="viewReceipt(event, ${item.itemNo})">내역 보기</button>
-     										 </c:when>
-  								  		  	   <c:otherwise>
-  						               		    <button class="pay-btn pay-btn-ready" onclick="proceedPayment(event, ${item.itemNo})">
-  								                 구매 확정/결제하기
-  								      		    </button>
-      	 	 	 	 			 	 	   </c:otherwise>
-					 	 	 	 	    </c:choose>
- 	 	 	 	 	 	 	 	 	</div>
+    							<c:choose>
+       							 <%-- 결제완료 또는 최종완료 --%>
+    							    <c:when test="${item.payStatus eq 'Y' or item.payStatus eq 'P'}">
+    							        <button class="pay-btn pay-btn-done" style="flex: 1;" disabled>결제 완료</button>
+    							        <button class="pay-btn pay-btn-view" 
+     							               style="flex: 1; background-color: #f2f4f6; color: #3282f6; border: 1px solid #3282f6;"
+     							               onclick="viewReceipt(event, ${item.itemNo})">내역 보기</button>
+   							     </c:when>
+        
+ 							       <%-- 결제 전 --%>
+ 							       <c:otherwise>
+   							         <button class="pay-btn pay-btn-ready" style="flex: 1;" onclick="proceedPayment(event, ${item.itemNo})">구매 확정/결제하기
+   							    	 	    </button>
+   							  			 	  </c:otherwise>
+  									  </c:choose>
+						   			</div>
                                 </div>
                             </div>
                         </c:forEach>

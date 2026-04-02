@@ -46,6 +46,9 @@ public class MypageController {
         Member user = (Member) auth.getPrincipal();
         model.addAttribute("user", user);
         model.addAttribute("accidentCount", ms.getAccidentCount(user.getUserNo()));
+        if (auth == null || auth.getPrincipal() == null) {
+    	    return "redirect:/member/login";
+    	}
         return "mypage/mypageHome";
     }
     
@@ -266,6 +269,22 @@ public class MypageController {
         model.addAttribute("loginUser", (Member) auth.getPrincipal());
         return "mypage/checkout";
     }
-
+    // 판매자 거래 현황 (결제 완료 내역)
+    @GetMapping("paymentList")
+    public String paymentList(
+            Authentication auth, 
+            @RequestParam(value="sort", defaultValue="latest") String sort, 
+            Model model) {
+        Member user = (Member) auth.getPrincipal();
+        
+        Map<String, Object> map = new HashMap<>();
+        map.put("userNo", user.getUserNo());
+        map.put("sort", sort);
+        
+        List<SaleListDto> list = ms.getSellerPaymentList(map);
+        
+        model.addAttribute("list", list);
+        return "mypage/paymentList"; 
+    }
     
 }

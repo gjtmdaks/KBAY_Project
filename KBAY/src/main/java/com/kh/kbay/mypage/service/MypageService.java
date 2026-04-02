@@ -51,5 +51,9 @@ public interface MypageService {
 	List<FaqImg> getFaqFiles(int id);
 	
 	List<BidListDto> getWonList(Map<String, Object> map);
+	
+	List<SaleListDto> getSellerPaymentList(Map<String, Object> map);
+
+	
 
 }

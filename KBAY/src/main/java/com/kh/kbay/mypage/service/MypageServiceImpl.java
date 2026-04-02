@@ -326,5 +326,12 @@ public class MypageServiceImpl implements MypageService {
         }
         return list;
     }
+	
+
+
+	@Override
+    public List<SaleListDto> getSellerPaymentList(Map<String, Object> map) {
+        return md.getSellerPaymentList(map);
+    }
 
 }
