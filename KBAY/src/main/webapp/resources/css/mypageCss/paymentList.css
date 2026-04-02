@@ -1,19 +1,188 @@
-/* 컨테이너 및 카드 레이아웃 */
-.container { display: flex; width: 85%; margin: 30px auto; gap: 20px; }
-.content { flex: 1; }
-.item-card { 
-    display: flex; align-items: center; background: white; 
-    padding: 20px; border-radius: 12px; margin-bottom: 15px; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;
-}
-.item-img { width: 100px; height: 100px; margin-right: 20px; border-radius: 8px; overflow: hidden; background: #f0f0f0; }
-.item-img img { width: 100%; height: 100%; object-fit: cover; }
-.item-info { flex: 1; }
-.badge { display: inline-block; padding: 4px 10px; background: #e74c3c; color: white; border-radius: 4px; font-size: 12px; margin-bottom: 8px; }
-.btn-group { display: flex; gap: 8px; }
-.btn-blue { background: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-.btn-gray { background: #f1f1f1; color: #666; border: 1px solid #ddd; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+@charset "UTF-8";
 
-/* 모달 애니메이션 */
-.modal { animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* 1. 전체 레이아웃 - 클래스명을 고유하게 지정하여 헤더와 충돌 방지 */
+.payment-list-wrapper {
+    display: flex;
+    width: 85%;
+    max-width: 1200px;
+    margin: 40px auto;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.payment-main-content {
+    flex: 1;
+    min-width: 0; /* 내부 요소가 삐져나가는 것 방지 */
+}
+
+/* 2. 타이틀 및 정렬 섹션 */
+.content-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+}
+
+.sort-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+/* 3. 아이템 카드 스타일 */
+.item-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s;
+}
+
+.item-card:hover {
+    transform: translateY(-3px);
+}
+
+.item-img {
+    width: 120px;
+    height: 120px;
+    margin-right: 25px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f8f8f8;
+    flex-shrink: 0;
+    border: 1px solid #eee;
+}
+
+.item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 4. 아이템 정보 영역 */
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.item-date {
+    color: #777;
+    font-size: 14px;
+}
+
+/* 5. 가격 및 버튼 영역 (가장 중요한 부분) */
+.item-price-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 오른쪽 정렬 */
+    gap: 12px;
+    min-width: 150px;
+}
+
+.price-label {
+    font-size: 13px;
+    color: #999;
+}
+
+.price-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: #333;
+}
+
+/* 버튼 그룹 세로 배치로 삐져나감 방지 */
+.btn-group {
+    display: flex;
+    flex-direction: column; 
+    gap: 8px;
+    width: 130px; /* 버튼 너비 고정 */
+}
+
+.btn-group button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    transition: all 0.2s;
+}
+
+/* 6. 버튼 색상 상세 정의 */
+.btn-blue {
+    background-color: #3282f6;
+    color: white;
+}
+.btn-blue:hover {
+    background-color: #0056cc;
+}
+
+.btn-gray {
+    background-color: #f1f3f5;
+    color: #495057;
+    border: 1px solid #dee2e6 !important;
+}
+.btn-gray:hover {
+    background-color: #e9ecef;
+}
+
+/* 매출전표 확인 전용 버튼 */
+.btn-receipt {
+    background-color: #fff;
+    color: #3282f6;
+    border: 1px solid #3282f6 !important;
+}
+.btn-receipt:hover {
+    background-color: #f0f7ff;
+}
+
+/* 7. 뱃지 스타일 */
+.badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.badge-y { background: #3282f6; color: #fff; } /* 결제완료 */
+.badge-s { background: #e74c3c; color: #fff; } /* 배송중 */
+.badge-p { background: #34495e; color: #fff; } /* 거래완료 */
+
+/* 8. 모달 스타일 (모달 내부 레이아웃 유지) */
+.modal-content {
+    background: white;
+    width: 450px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 5px;
+}

@@ -1,5 +1,7 @@
 package com.kh.kbay.payment.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,6 +9,7 @@ import com.kh.kbay.delivery.dao.DeliveryDao;
 import com.kh.kbay.delivery.model.vo.Delivery;
 import com.kh.kbay.payment.dao.PaymentDao;
 import com.kh.kbay.payment.model.vo.Payment;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,6 +43,11 @@ public class PaymentServiceImpl implements PaymentService {
         dd.insertDeliveryDetail(delivery.getDeliveryNo());
         
         pd.updatePaymentStatus(pay.getItemNo());
+    }
+    
+    @Override
+    public List<Payment> selectSellerPaymentList(int sellerNo) {
+        return pd.selectSellerPaymentList(sellerNo);
     }
 
 	

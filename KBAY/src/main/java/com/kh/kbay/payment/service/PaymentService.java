@@ -1,5 +1,7 @@
 package com.kh.kbay.payment.service;
 
+import java.util.List;
+
 import com.kh.kbay.delivery.model.vo.Delivery;
 import com.kh.kbay.payment.model.vo.Payment;
 
@@ -10,5 +12,6 @@ public interface PaymentService {
 	Payment selectPaymentByItemNo(int itemNo);
 
 	void insertPayment(Payment pay, Delivery delivery);
-	
+		
+	List<Payment> selectSellerPaymentList(int sellerNo);
 }

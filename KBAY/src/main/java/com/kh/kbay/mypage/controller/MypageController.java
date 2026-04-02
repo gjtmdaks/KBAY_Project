@@ -26,6 +26,8 @@ import com.kh.kbay.mypage.model.vo.ReplyListDto;
 import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.mypage.model.vo.WishListDto;
 import com.kh.kbay.mypage.service.MypageService;
+import com.kh.kbay.payment.model.vo.Payment;
+import com.kh.kbay.payment.service.PaymentService;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class MypageController {
 
     private final MypageService ms;
     private final ItemService is;
+    private final PaymentService ps;
 
     // 메인
     @GetMapping("mypage.me")
@@ -56,16 +59,15 @@ public class MypageController {
     @GetMapping("updateStatus")
     public String updateStatus(Authentication auth, Model model) {
     	// 로그인 유저 가져오기
-        Member loginUser = (Member) auth.getPrincipal();
-
-        if(loginUser == null) {
-            return "redirect:/login"; // 로그인 안했으면 튕김
+    	if (auth == null || auth.getPrincipal() == null) {
+            return "redirect:/member/login";
         }
 
-        // JSP로 전달
-        model.addAttribute("user", loginUser);
-
-        return "mypage/updateStatus";
+        Member user = (Member) auth.getPrincipal();
+        model.addAttribute("user", user);
+        model.addAttribute("accidentCount", ms.getAccidentCount(user.getUserNo()));
+        
+        return "mypage/mypageHome";
     }
     
     @PostMapping("updateStatus")
@@ -269,22 +271,31 @@ public class MypageController {
         model.addAttribute("loginUser", (Member) auth.getPrincipal());
         return "mypage/checkout";
     }
+    
     // 판매자 거래 현황 (결제 완료 내역)
     @GetMapping("paymentList")
     public String paymentList(
             Authentication auth, 
             @RequestParam(value="sort", defaultValue="latest") String sort, 
             Model model) {
+    	if (auth == null) {
+            return "redirect:/member/login";
+        }
         Member user = (Member) auth.getPrincipal();
         
+        //배송 관리용 리스트 
         Map<String, Object> map = new HashMap<>();
         map.put("userNo", user.getUserNo());
         map.put("sort", sort);
-        
         List<SaleListDto> list = ms.getSellerPaymentList(map);
         
+        // 매출전표 확인용 리스트
+        List<Payment> payList = ps.selectSellerPaymentList(user.getUserNo());
+        
         model.addAttribute("list", list);
+        model.addAttribute("paymentList", payList); 
         return "mypage/paymentList"; 
     }
+    
     
 }

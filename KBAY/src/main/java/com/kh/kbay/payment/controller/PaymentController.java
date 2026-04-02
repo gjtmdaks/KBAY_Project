@@ -180,5 +180,7 @@ public class PaymentController {
     public Payment getReceiptApi(@PathVariable("itemNo") int itemNo) {
         return ps.selectPaymentByItemNo(itemNo);
     }
+    
+    
 }
 
