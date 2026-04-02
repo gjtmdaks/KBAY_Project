@@ -68,7 +68,7 @@ public class MypageController {
         model.addAttribute("user", user);
         model.addAttribute("accidentCount", ms.getAccidentCount(user.getUserNo()));
         
-        return "mypage/mypageHome";
+        return "mypage/updateStatus";
     }
     
     @PostMapping("updateStatus")

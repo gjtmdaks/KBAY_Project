@@ -71,6 +71,67 @@
 			WHERE r.target_type = 'reply' AND r.user_no = #{userNo}
 	    ) t ORDER BY created_at DESC
 	</select>
+	
+	<select id="selectReportedList" resultType="Report">
+        SELECT *
+        FROM (
+            -- ITEM 신고
+            SELECT 
+                r.report_no,
+                r.target_type,
+                r.target_no,
+                r.status,
+                r.created_at,
+                c.REPORT_CATEGORY AS categoryName,
+                i.item_title AS targetTitle,
+                NULL AS replyContent,
+                NULL AS boardNo
+            FROM REPORT r
+            JOIN ITEM i ON r.target_no = i.item_no
+            JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+            WHERE r.target_type = 'item'
+              AND i.user_no = #{userNo}
+    
+            UNION ALL
+    
+            -- BOARD 신고
+            SELECT 
+                r.report_no,
+                r.target_type,
+                r.target_no,
+                r.status,
+                r.created_at,
+                c.REPORT_CATEGORY AS categoryName,
+                b.board_title AS targetTitle,
+                NULL AS replyContent,
+                NULL AS boardNo
+            FROM REPORT r
+            JOIN BOARD_POST b ON r.target_no = b.board_no
+            JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+            WHERE r.target_type = 'board'
+              AND b.user_no = #{userNo}
+    
+            UNION ALL
+    
+            -- REPLY 신고
+            SELECT 
+                r.report_no,
+                r.target_type,
+                r.target_no,
+                r.status,
+                r.created_at,
+                c.REPORT_CATEGORY AS categoryName,
+                NULL AS targetTitle,
+                rp.reply_content AS replyContent,
+                rp.board_no AS boardNo   -- 🔥 추가
+            FROM REPORT r
+            JOIN REPLY rp ON r.target_no = rp.reply_no
+            JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+            WHERE r.target_type = 'reply'
+              AND rp.user_no = #{userNo}
+        ) t
+        ORDER BY created_at DESC
+    </select>
 
     <update id="updateUser">
 	    UPDATE MEMBER SET user_name = #{userName}, user_address = #{userAddress},
