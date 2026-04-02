@@ -20,6 +20,10 @@
 	                AND STATUS != 'D'
 	            </when>
 	        </choose>
+			<!-- 카테고리 -->
+	        <if test="category != null">
+	            AND ITEM_CD_NO = #{category}
+	        </if>
 	    </where>
 	</select>
 	<select id="selectItemList" resultType="item">
@@ -28,10 +32,9 @@
 	        SELECT ROWNUM RNUM, A.*
 	        FROM (
 	            SELECT i.*,
-	                   (SELECT img_url
-	                    FROM ITEM_IMG
-	                    WHERE ITEM_NO = i.ITEM_NO
-	                    AND ROWNUM = 1) AS MAIN_IMG
+	                   (SELECT img_url FROM ITEM_IMG WHERE ITEM_NO = i.ITEM_NO AND ROWNUM = 1) AS MAIN_IMG,
+	                    (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS USER_NAME,
+	                    (SELECT ITEM_CATEGORY FROM ITEM_CD WHERE ITEM_CATEGORY_NO = i.ITEM_CD_NO) AS CATEGORY_NAME
 	            FROM ITEM i
 	            <where>
 	                <choose>
@@ -49,8 +52,37 @@
 	                        AND STATUS != 'D'
 	                    </when>
 	                </choose>
+	                <if test="category != null">
+	                    AND ITEM_CD_NO = #{category}
+	                </if>
 	            </where>
-	            ORDER BY ITEM_NO DESC
+	            <!-- ✅ 정렬 -->
+	            <choose>
+	                <!-- 시작 빠른순 -->
+	                <when test="sort == 'startAsc'">
+	                    ORDER BY START_TIME ASC
+	                </when>
+	                <!-- 시작 느린순 -->
+	                <when test="sort == 'startDesc'">
+	                    ORDER BY START_TIME DESC
+	                </when>
+	                <!-- 종료 빠른순 -->
+	                <when test="sort == 'endAsc'">
+	                    ORDER BY END_TIME ASC
+	                </when>
+	                <!-- 종료 느린순 -->
+	                <when test="sort == 'endDesc'">
+	                    ORDER BY END_TIME DESC
+	                </when>
+	                <!-- 조회수 -->
+	                <when test="sort == 'views'">
+	                    ORDER BY VIEWS DESC
+	                </when>
+	                <!-- 기본: 최신 등록순 -->
+	                <otherwise>
+	                    ORDER BY ITEM_NO DESC
+	                </otherwise>
+	            </choose>
 	        ) A
 	        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
 	    )

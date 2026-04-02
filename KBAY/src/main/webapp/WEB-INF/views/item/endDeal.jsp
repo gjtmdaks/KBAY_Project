@@ -15,7 +15,32 @@
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	
 	<section class="container auction-list">
-		<h3 class="section-title">경매 상품 목록</h3>
+		<h3 class="section-title">종료된 경매</h3>
+		<form method="get" action="">
+		    <div style="display:flex; gap:20px; margin-bottom:20px;">
+		
+		        <!-- 카테고리 -->
+		        <select name="category">
+		            <option value="">전체 카테고리</option>
+		            <option value="1" ${category == 1 ? 'selected' : ''}>디지털/가전</option>
+		            <option value="2" ${category == 2 ? 'selected' : ''}>예술</option>
+		            <option value="3" ${category == 3 ? 'selected' : ''}>도서/문헌</option>
+		            <option value="4" ${category == 4 ? 'selected' : ''}>근현대 생활사</option>
+		            <option value="5" ${category == 5 ? 'selected' : ''}>컬렉터블</option>
+		            <option value="6" ${category == 6 ? 'selected' : ''}>세컨핸드(중고)</option>
+		            <option value="7" ${category == 7 ? 'selected' : ''}>키덜트</option>
+		        </select>
+		
+		        <!-- 정렬 -->
+		        <select name="sort">
+		            <option value="">기본 정렬</option>
+		            <option value="views" ${sort == 'views' ? 'selected' : ''}>조회수순</option>
+		        </select>
+		
+		        <button type="submit">적용</button>
+		    </div>
+		</form>
+		
 		<div class="item-grid">
 			<c:forEach var="it" items="${itemList}">
 			    <c:set var="item" value="${it}" scope="request"/>

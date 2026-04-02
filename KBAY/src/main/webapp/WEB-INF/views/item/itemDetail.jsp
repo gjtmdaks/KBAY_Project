@@ -133,8 +133,9 @@
 					</div>
 				</c:if>
 
-				<c:if
-					test="${now.time >= item.startTime.time && now.time <= item.endTime.time}">
+				<c:if test="${now.time >= item.startTime.time 
+				          && now.time <= item.endTime.time 
+				          && loginUser.userNo != item.userNo}">
 					<div class="bid-form">
 						<div class="input-group">
 							<input type="text" id="bidPrice" placeholder="금액 입력"
@@ -156,6 +157,9 @@
 							style="${isTopBidder ? '' : 'display: none;'}">✓ 현재 회원님이 최고가
 							입찰자입니다.</p>
 					</div>
+				</c:if>
+				<c:if test="${loginUser.userNo == item.userNo}">
+				    <p class="seller-notice">본인이 등록한 상품에는 입찰할 수 없습니다.</p>
 				</c:if>
 			</div>
 		</div>
@@ -201,7 +205,8 @@
 			        // 로그인 안했을 경우를 대비해 기본값 0 설정
 			        currentUserNo: '<sec:authorize access="isAuthenticated()"><sec:authentication property="principal.userNo" /></sec:authorize>' || '0',
 			        currentPrice: "${currentPrice}".replace(/,/g, ""),
-			        buyNowPrice: "${item.buyNowPrice}"
+			        buyNowPrice: "${item.buyNowPrice}",
+			        sellerUserNo: "${item.userNo}"
 			    };
 	</script>
 	<script src="${pageContext.request.contextPath}/resources/js/itemJs/itemDetail.js" defer></script>

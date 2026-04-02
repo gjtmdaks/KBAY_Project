@@ -30,13 +30,23 @@
 	}
 }
 
-.price {
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.price-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-col .label {
     font-size: 14px;
     color: #666;
 }
 
-.price strong {
-    display: block;
+.price-col strong {
     font-size: 18px;
     color: #E74C3C;
 }

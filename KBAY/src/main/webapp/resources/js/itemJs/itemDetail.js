@@ -123,6 +123,10 @@ function submitBid(e, itemNo) {
         alert("입찰 금액은 최대 10억 원을 초과할 수 없습니다.");
         return;
     }
+    if (String(CURRENT_USER_NO) === String(SERVER_DATA.sellerUserNo)) {
+        alert("본인 상품에는 입찰할 수 없습니다.");
+        return;
+    }
     openConfirmModal(bidPrice, function() {
         btn.disabled = true;
         fetch(`${CONTEXT_PATH}/bid`, {
@@ -286,6 +290,10 @@ function changeBidAmount(step) {
 }
 
 function buyNow(itemNo) {
+    if (String(CURRENT_USER_NO) === String(SERVER_DATA.sellerUserNo)) {
+        alert("본인 상품은 구매할 수 없습니다.");
+        return;
+    }
 
     if (!confirm("즉시구매 하시겠습니까?")) return;
 
