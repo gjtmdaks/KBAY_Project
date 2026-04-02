@@ -361,20 +361,24 @@ public class AdminController {
  // 낙찰 취하 페이지
     @GetMapping("/adminSuccession")
     public String adminSuccession(
-            @RequestParam(value="page", defaultValue="1") int page,
+            @RequestParam(value="cpage", defaultValue="1") int currentPage, 
             Model model) {
         
-    	int totalCount = adminService.selectSuccessionCount();
+        int listCount = adminService.selectSuccessionCount();
         
-        // 2. 페이징 계산기 (무조건 pi 라는 이름으로 담으세요)
-        PageInfo pi = PageInfo.of(page, totalCount, 10);
+        int boardLimit = 10;
+        int pageLimit = 5;
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, pageLimit, boardLimit);
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("offset", (currentPage - 1) * boardLimit + 1);
+        paramMap.put("limit", currentPage * boardLimit);
         
-        // 3. 리스트 조회
-        List<Item> successionList = adminService.selectSuccessionList(pi);
+        List<Item> successionList = adminService.selectSuccessionList(paramMap);
         
-        // 🚨 [핵심] JSP가 읽을 수 있게 바구니에 담기
         model.addAttribute("successionList", successionList);
-        model.addAttribute("pi", pi);
+        model.addAttribute("pi", pi); // pi라는 이름으로 보냄
+        model.addAttribute("pageUrl", "adminSuccession?cpage=");
         
         return "admin/adminSuccession";
     }
@@ -387,10 +391,10 @@ public class AdminController {
         // 아이템 상태를 'O'로 바꾸고, 필요하다면 낙찰자들의 BID_STATUS도 정리
         int result = adminService.updateForceFail(itemNo);
         
-        return result > 0 ? "success" : "fail";
+        return result > 0 ? "success" : "cfail";
     }
 
-    // 🚨 차순위 강제 승계 처리 (수정됨!)
+    // 차순위 강제 승계 처리
     @PostMapping("/forceSuccession")
     @ResponseBody
     public String forceSuccession(@RequestParam("itemNo") int itemNo) {

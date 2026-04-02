@@ -39,21 +39,56 @@ public class BidServiceImpl implements BidService {
     private final RedisPublisher redisPublisher;
 	private final SqlSessionTemplate session;
 
+    private void internalPlaceBidWithLock(Bid req) {
+
+        Item item = is.selectItemByNo(req.getItemNo());
+        
+        long endTime = item.getEndTime().getTime(); // Date → long
+
+        // 🔥 1. 상태 체크
+        if(req.getRequestTime() > endTime){
+            throw new IllegalStateException("경매 종료 후 입찰");
+        }
+
+        // 🔥 2. 본인 상품 체크
+        if (item.getUserNo() == req.getUserNo()) {
+            throw new IllegalArgumentException("본인 상품 입찰 불가");
+        }
+
+        // 🔥 3. 현재가 조회
+        int currentPrice = bd.selectCurrentPrice(req.getItemNo());
+
+        // 🔥 4. 가격 검증
+        if (req.getBidPrice() <= currentPrice) {
+            throw new IllegalArgumentException("현재가보다 높은 금액 입력 필요");
+        }
+
+        // 🔥 5. 1000단위 검증
+        if (req.getBidPrice() % 1000 != 0) {
+            throw new IllegalArgumentException("1000원 단위만 가능");
+        }
+
+        // 🔥 6. 즉시구매가 제한
+        if ("Y".equals(item.getDirectBuy())) {
+            int buyNowPrice = item.getBuyNowPrice();
+
+            if (req.getBidPrice() >= buyNowPrice) {
+                throw new IllegalArgumentException("즉시구매가 이상 입찰 불가");
+            }
+        }
+
+        // 🔥 7. 자기 재입찰 방지
+        checkSelfOutbidding(req);
+    }
+    
     @Override
     @Transactional
     public int placeBid(Bid req) {
-        // 0. 본인 상품 체크
-        Item it = session.selectOne("item.selectItemDetail", req.getItemNo());
-
-        if (it.getUserNo() == req.getUserNo()) {
-            throw new RuntimeException("본인 상품에는 입찰할 수 없습니다.");
-        }
-        
-        Bid previousTopBid = bd.findTopBid(req.getItemNo());
         
         // 1. Redis가 없는 경우 (Fallback)
         if (redissonClient == null) {
-            checkSelfOutbidding(req); // 공통 로직으로 분리 권장
+    	    session.selectOne("bid.itemLock", req.getItemNo());
+        	internalPlaceBidWithLock(req);
             log.info("Redis 없음 → DB 기반 입찰 처리");
             return bd.placeBid(req);
         }
@@ -63,53 +98,15 @@ public class BidServiceImpl implements BidService {
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
-            boolean available = lock.tryLock(3, 5, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(10, 5, TimeUnit.SECONDS);
             if (!available) throw new IllegalStateException("입찰 폭주");
 
-            // 🔥 최신 상태 기준 자기입찰 방지
-            checkSelfOutbidding(req);
+            // 🔥 최신 상태 기준 보안 검증
+            internalPlaceBidWithLock(req);
+            
+            Bid previousTopBid = bd.findTopBid(req.getItemNo());
 
-            // 🔥 =========================
-            // 🔥 1. 즉시구매 분기 (여기가 핵심)
-            // 🔥 =========================
-            if ("BUY_NOW".equals(req.getBidType())) {
-
-                // 상태 재확인 (락 이후 반드시!)
-                Item item = is.selectItemByNo(req.getItemNo());
-                if (!"N".equals(item.getStatus())) {
-                    throw new IllegalStateException("이미 종료된 상품");
-                }
-
-                // 1. bid insert
-                req.setRanking(1);
-                bd.insertBid(req);
-
-                // 2. item 즉시 종료
-                Map<String, Object> param = new HashMap<>();
-                param.put("itemNo", req.getItemNo());
-                param.put("price", req.getBidPrice());
-                bd.endByBuyNow(param);
-
-                log.info("즉시구매 완료 - itemNo: {}", req.getItemNo());
-
-                // 🔥 Redis 알림 (즉시 종료 이벤트)
-                Bid msg = new Bid(
-                        req.getItemNo(),
-                        req.getBidPrice(), // 즉시구매가
-                        req.getUserNo(),
-                        1
-                );
-
-                if (redisPublisher != null) {
-                    redisPublisher.publish("bid-channel", msg);
-                }
-
-                return 1;
-            }
-
-            // 🔥 =========================
-            // 🔥 2. 일반 입찰 흐름
-            // 🔥 =========================
+            // 🔥 일반 입찰 흐름
             int ranking = bd.placeBid(req);
 
             bd.updateRanking(req.getItemNo());
@@ -220,6 +217,21 @@ public class BidServiceImpl implements BidService {
 		bd.updateBidStatus(param);
 	}
 	
+	private void validateBuyNow(Bid req, Item item) {
+
+	    if (!"N".equals(item.getStatus())) {
+	        throw new IllegalStateException("이미 종료된 경매");
+	    }
+
+	    if (!"Y".equals(item.getDirectBuy())) {
+	        throw new IllegalStateException("즉시구매 불가 상품");
+	    }
+
+	    if (item.getUserNo() == req.getUserNo()) {
+	        throw new IllegalArgumentException("본인 상품 구매 불가");
+	    }
+	}
+	
 	@Transactional
 	public void buyNow(Bid req) {
 
@@ -230,14 +242,7 @@ public class BidServiceImpl implements BidService {
 	        lock.lock();
 
 	        Item item = is.selectItemByNo(req.getItemNo());
-
-	        if (!"N".equals(item.getStatus())) {
-	            throw new IllegalStateException("이미 종료된 경매입니다.");
-	        }
-
-	        if (!"Y".equals(item.getDirectBuy())) {
-	            throw new IllegalStateException("즉시구매 불가 상품입니다.");
-	        }
+	        validateBuyNow(req, item);
 
 	        int buyNowPrice = item.getBuyNowPrice();
 
@@ -256,6 +261,18 @@ public class BidServiceImpl implements BidService {
 
 	        // 🔥 3. item 종료 처리
 	        is.endByBuyNow(req.getItemNo(), buyNowPrice);
+	        
+            // 🔥 Redis 알림 (즉시 종료 이벤트)
+            Bid msg = new Bid(
+                    req.getItemNo(),
+                    req.getBidPrice(), // 즉시구매가
+                    req.getUserNo(),
+                    1
+            );
+
+            if (redisPublisher != null) {
+                redisPublisher.publish("bid-channel", msg);
+            }
 
 	    } finally {
 	        lock.unlock();

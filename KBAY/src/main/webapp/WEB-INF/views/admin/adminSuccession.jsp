@@ -81,29 +81,41 @@
                     </c:choose>
                 </tbody>
             </table>
-            
-            <%-- 페이징 영역 (필요시 주석 해제하여 사용) --%>
             <%-- 페이징 영역 --%>
-            <div class="pagination-area">
-			    <c:if test="${not empty pi}">
-			        <ul class="pagination-list">
-			            
-			            <%-- 이전 버튼 --%>
-			            <li><a href="adminSuccession?page=${pi.currentPage - 1}" ${pi.currentPage eq 1 ? 'onclick="return false;" style="color:#ccc;"' : ''}>&lt;</a></li>
-			
-			            <%-- 숫자 반복 (여기가 중요!) --%>
-			            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-			                <li class="${p eq pi.currentPage ? 'active' : ''}">
-			                    <a href="adminSuccession?page=${p}">${p}</a>
-			                </li>
-			            </c:forEach>
-			
-			            <%-- 다음 버튼 --%>
-			            <li><a href="adminSuccession?page=${pi.currentPage + 1}" ${pi.currentPage eq pi.maxPage ? 'onclick="return false;" style="color:#ccc;"' : ''}>&gt;</a></li>
-			            
-			        </ul>
-			    </c:if>
-			</div>
+<div class="pagination-area">
+    <c:if test="${not empty pi and pi.maxPage > 0}">
+        <ul class="pagination-list">
+            
+            <%-- 1. 이전 페이지 (&lt;) --%>
+            <c:choose>
+                <c:when test="${pi.currentPage > 1}">
+                    <li><a href="${pageUrl}${pi.currentPage - 1}">&lt;</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="#" onclick="return false;" style="color:#ccc; cursor:not-allowed;">&lt;</a></li>
+                </c:otherwise>
+            </c:choose>
+
+            <%-- 2. 페이지 번호 (1, 2, 3...) --%>
+            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                <li class="${p eq currentPage ? 'active' : ''}">
+                    <a href="${pageUrl}${p}">${p}</a>
+                </li>
+            </c:forEach>
+
+            <%-- 3. 다음 페이지 (&gt;) --%>
+            <c:choose>
+                <c:when test="${pi.currentPage < pi.maxPage}">
+                    <li><a href="${pageUrl}${pi.currentPage + 1}">&gt;</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="#" onclick="return false;" style="color:#ccc; cursor:not-allowed;">&gt;</a></li>
+                </c:otherwise>
+            </c:choose>
+            
+        </ul>
+    </c:if>
+</div>
         </main>
     </div>
 
