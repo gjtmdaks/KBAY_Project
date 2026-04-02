@@ -3,51 +3,40 @@
 <mapper namespace="payment">
 
     <insert id="insertPayment" parameterType="Payment">
+        <selectKey keyProperty="payNo" resultType="_int" order="BEFORE">
+            SELECT SEQ_PAY_NO.NEXTVAL FROM DUAL
+        </selectKey>
+
         INSERT INTO PAYMENT (
-            PAY_NO,
-            ITEM_NO,
-            ORDER_ID,
-            PAYMENT_KEY,
-            TOTAL_AMOUNT,
-            METHOD,
-            RECEIPT_URL,
-            APPROVED_AT,
-            PAY_STATUS,
-            CREATE_DATE
+            PAY_NO, ITEM_NO, ORDER_ID, PAYMENT_KEY, TOTAL_AMOUNT, 
+            METHOD, RECEIPT_URL, APPROVED_AT, PAY_STATUS, CREATE_DATE
         ) VALUES (
-            SEQ_PAY_NO.NEXTVAL,
-            #{itemNo},
-            #{orderId},
-            #{paymentKey},
-            #{totalAmount},
-            #{method},
-            #{receiptUrl},
-            #{approvedAt},
-            'Y',
-            SYSDATE
+            #{payNo}, #{itemNo}, #{orderId}, #{paymentKey}, #{totalAmount}, 
+            #{method}, #{receiptUrl}, #{approvedAt}, 'Y', SYSDATE
         )
     </insert>
 
     <update id="updatePaymentStatus" parameterType="_int">
-        UPDATE ITEM 
-           SET PAY_STATUS = 'Y' 
-         WHERE ITEM_NO = #{itemNo}
+        BEGIN
+            UPDATE ITEM SET PAY_STATUS = 'Y' WHERE ITEM_NO = #{itemNo};
+            UPDATE PAYMENT SET PAY_STATUS = 'Y' WHERE ITEM_NO = #{itemNo};
+        END;
     </update>
     
     <select id="selectPaymentByItemNo" parameterType="_int" resultType="Payment">
-    SELECT 
-        P.PAY_NO as payNo,
-        P.ITEM_NO as itemNo,
-        P.ORDER_ID as orderId,
-        P.TOTAL_AMOUNT as totalAmount,
-        P.METHOD as method,
-        P.RECEIPT_URL as receiptUrl,
-        P.APPROVED_AT as approvedAt,
-        P.PAY_STATUS as payStatus,
-        I.ITEM_TITLE as orderName  FROM PAYMENT P
-    JOIN ITEM I ON (P.ITEM_NO = I.ITEM_NO)
-    WHERE P.ITEM_NO = #{itemNo}
-      AND P.PAY_STATUS = 'Y'
-</select>
+        SELECT 
+            P.PAY_NO as payNo,
+            P.ITEM_NO as itemNo,
+            P.ORDER_ID as orderId,
+            P.TOTAL_AMOUNT as totalAmount,
+            P.METHOD as method,
+            P.RECEIPT_URL as receiptUrl,
+            P.APPROVED_AT as approvedAt,
+            P.PAY_STATUS as payStatus,
+            I.ITEM_TITLE as orderName 
+        FROM PAYMENT P
+        JOIN ITEM I ON (P.ITEM_NO = I.ITEM_NO)
+        WHERE P.ITEM_NO = #{itemNo}
+    </select>
 
 </mapper>

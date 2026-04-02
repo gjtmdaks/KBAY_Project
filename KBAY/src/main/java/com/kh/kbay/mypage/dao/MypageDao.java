@@ -12,6 +12,7 @@ import com.kh.kbay.mypage.model.vo.Faq;
 import com.kh.kbay.mypage.model.vo.FaqCategory;
 import com.kh.kbay.mypage.model.vo.FaqImg;
 import com.kh.kbay.mypage.model.vo.ReplyListDto;
+import com.kh.kbay.mypage.model.vo.SaleListDto;
 import com.kh.kbay.report.model.vo.Report;
 
 public interface MypageDao {
@@ -51,5 +52,7 @@ public interface MypageDao {
 	List<FaqImg> selectFaqFiles(int faqId);
 
     List<BidListDto> getWonList(Map<String, Object> map);
+    
+    List<SaleListDto> getSellerPaymentList(Map<String, Object> map);
     
 }

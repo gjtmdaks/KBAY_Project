@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.kh.kbay.delivery.model.vo.Delivery;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
@@ -64,6 +65,13 @@ public class PaymentController {
             @RequestParam String orderId,
             @RequestParam String amount,
             @RequestParam int itemNo,
+            @RequestParam String receiverName,
+            @RequestParam String receiverPhone,
+            @RequestParam String postCode,
+            @RequestParam String address,
+            @RequestParam String addressDetail,
+            @RequestParam String deliveryRequest,
+            Authentication auth,
             Model model) {
 
         try {
@@ -86,6 +94,8 @@ public class PaymentController {
 
             if (response.statusCode() == 200) {
                 JSONObject jsonResponse = new JSONObject(response.body());
+                Member loginUser = (Member) auth.getPrincipal();
+                Item item = is.selectItemByNo(itemNo);
                 
                 // VO 세팅
                 Payment pay = new Payment();
@@ -102,9 +112,22 @@ public class PaymentController {
                     receiptUrl = jsonResponse.getJSONObject("receipt").optString("url");
                 }
                 pay.setReceiptUrl(receiptUrl);
+                
+                //초기 주소 정보만 저장
+                Delivery delivery = new Delivery();
+                delivery.setItemNo(itemNo);
+                delivery.setBuyerId(String.valueOf(loginUser.getUserNo()));
+                delivery.setSellerId(String.valueOf(item.getUserNo()));
+                delivery.setReceiverName(receiverName);
+                delivery.setReceiverPhone(receiverPhone);
+                delivery.setPostCode(postCode);
+                delivery.setAddress(address);
+                delivery.setAddressDetail(addressDetail);
+                delivery.setDeliveryRequest(deliveryRequest);
+                
+                ps.insertPayment(pay, delivery);
+              
 
-                // 단일 서비스 호출로 트랜잭션 처리 (Insert + Update)
-                ps.insertPayment(pay); 
                 
                 model.addAttribute("receiptUrl", receiptUrl);
                 model.addAttribute("paymentData", jsonResponse.toMap());

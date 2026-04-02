@@ -1,262 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="mypage">
+
 	<select id="selectAccidentCount" resultType="int">
 		SELECT COUNT(*) FROM (
-		
-		    SELECT r.report_no
-		    FROM REPORT r
+		    SELECT r.report_no FROM REPORT r
 		    JOIN ITEM i ON r.target_no = i.item_no
-		    WHERE r.target_type = 'item'
-		      AND i.user_no = #{userNo}
-		
+		    WHERE r.target_type = 'item' AND i.user_no = #{userNo}
 		    UNION ALL
-		
-		    SELECT r.report_no
-		    FROM REPORT r
+		    SELECT r.report_no FROM REPORT r
 		    JOIN BOARD_POST b ON r.target_no = b.board_no
-		    WHERE r.target_type = 'board'
-		      AND b.user_no = #{userNo}
-		
+		    WHERE r.target_type = 'board' AND b.user_no = #{userNo}
 		    UNION ALL
-		
-		    SELECT r.report_no
-		    FROM REPORT r
+		    SELECT r.report_no FROM REPORT r
 		    JOIN REPLY rp ON r.target_no = rp.reply_no
-		    WHERE r.target_type = 'reply'
-		      AND rp.user_no = #{userNo}
-		
+		    WHERE r.target_type = 'reply' AND rp.user_no = #{userNo}
 		)
 	</select>
 	
 	<select id="selectBidList" resultType="Bid">
-	    SELECT *
-	    FROM (
-	        SELECT 
-	            b.*,
-	            ROW_NUMBER() OVER (PARTITION BY b.item_no ORDER BY b.bid_price DESC) rn
-	        FROM BID b
-	        WHERE b.user_no = #{userNo}
-	    ) t
-	    WHERE rn = 1
+	    SELECT * FROM (
+	        SELECT b.*, ROW_NUMBER() OVER (PARTITION BY b.item_no ORDER BY b.bid_price DESC) rn
+	        FROM BID b WHERE b.user_no = #{userNo}
+	    ) t WHERE rn = 1
 	</select>
 	
 	<select id="selectSaleList" resultType="Item">
-		SELECT *
-		FROM ITEM
-		WHERE user_no = #{userNo}
-		ORDER BY item_no DESC
+		SELECT * FROM ITEM WHERE user_no = #{userNo} ORDER BY item_no DESC
 	</select>
 	
 	<select id="selectWishList" resultType="Item">
-    SELECT i.*, i.pay_status 
-    FROM WISHLIST w
-    JOIN ITEM i ON w.item_no = i.item_no
-    WHERE w.user_no = #{userNo}
-      AND i.STATUS != 'D'
-</select>
+        SELECT i.*, i.pay_status FROM WISHLIST w
+        JOIN ITEM i ON w.item_no = i.item_no
+        WHERE w.user_no = #{userNo} AND i.STATUS != 'D'
+    </select>
 	
 	<select id="selectBoardList" resultType="BoardPost">
-		SELECT *
-		FROM BOARD_POST
-		WHERE user_no = #{userNo}
-		ORDER BY board_no DESC
+		SELECT * FROM BOARD_POST WHERE user_no = #{userNo} ORDER BY board_no DESC
 	</select>
-	
+
 	<select id="getBoardListByCategory" resultType="BoardPost">
-	    SELECT *
-	    FROM BOARD_POST
-	    WHERE user_no = #{userNo}
-	
+	    SELECT * FROM BOARD_POST WHERE user_no = #{userNo}
 	    <if test="category != null and category != ''">
 	        AND board_cd_no = #{category}
 	    </if>
-	
 	    ORDER BY board_date DESC
 	</select>
 	
 	<select id="selectReplyList" resultType="ReplyListDto">
-		SELECT 
-		    r.reply_no,
-		    r.reply_content,
-		    r.reply_date,
-		    b.board_no,
-		    b.board_title
-		FROM REPLY r
-		JOIN BOARD_POST b ON r.board_no = b.board_no
-		WHERE r.user_no = #{userNo}
-		ORDER BY r.reply_date DESC
+		SELECT r.reply_no, r.reply_content, r.reply_date, b.board_no, b.board_title
+		FROM REPLY r JOIN BOARD_POST b ON r.board_no = b.board_no
+		WHERE r.user_no = #{userNo} ORDER BY r.reply_date DESC
 	</select>
 	
 	<select id="selectReportList" resultType="Report">
-	    SELECT *
-	    FROM (
-	        -- ITEM 신고
-	        SELECT 
-	            r.report_no,
-	            r.target_type,
-	            r.target_no,
-	            r.status,
-	            r.created_at,
-	            c.REPORT_CATEGORY AS categoryName,
-	            i.item_title AS targetTitle,
-	            NULL AS replyContent,
-			    NULL AS boardNo
-	        FROM REPORT r
-	        JOIN ITEM i ON r.target_no = i.item_no
-	        JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-	        WHERE r.target_type = 'item'
-	          AND r.user_no = #{userNo}
-	
+	    SELECT * FROM (
+	        SELECT r.report_no, r.target_type, r.target_no, r.status, r.created_at,
+	               c.REPORT_CATEGORY AS categoryName, i.item_title AS targetTitle, NULL AS replyContent, NULL AS boardNo
+	        FROM REPORT r JOIN ITEM i ON r.target_no = i.item_no JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+	        WHERE r.target_type = 'item' AND r.user_no = #{userNo}
 	        UNION ALL
-	
-	        -- BOARD 신고
-	        SELECT 
-	            r.report_no,
-	            r.target_type,
-	            r.target_no,
-	            r.status,
-	            r.created_at,
-	            c.REPORT_CATEGORY AS categoryName,
-	            b.board_title AS targetTitle,
-	            NULL AS replyContent,
-			    NULL AS boardNo
-	        FROM REPORT r
-	        JOIN BOARD_POST b ON r.target_no = b.board_no
-	        JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-	        WHERE r.target_type = 'board'
-	          AND r.user_no = #{userNo}
-	
+	        SELECT r.report_no, r.target_type, r.target_no, r.status, r.created_at,
+	               c.REPORT_CATEGORY AS categoryName, b.board_title AS targetTitle, NULL AS replyContent, NULL AS boardNo
+	        FROM REPORT r JOIN BOARD_POST b ON r.target_no = b.board_no JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+	        WHERE r.target_type = 'board' AND r.user_no = #{userNo}
 	        UNION ALL
-	
-			-- REPLY 신고
-			SELECT 
-			    r.report_no,
-			    r.target_type,
-			    r.target_no,
-			    r.status,
-			    r.created_at,
-			    c.REPORT_CATEGORY AS categoryName,
-			    NULL AS targetTitle,
-			    rp.reply_content AS replyContent,
-			    rp.board_no AS boardNo   -- 🔥 추가
-			FROM REPORT r
-			JOIN REPLY rp ON r.target_no = rp.reply_no
-			JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-			WHERE r.target_type = 'reply'
-			  AND r.user_no = #{userNo}
-	    ) t
-	    ORDER BY created_at DESC
+			SELECT r.report_no, r.target_type, r.target_no, r.status, r.created_at,
+			       c.REPORT_CATEGORY AS categoryName, NULL AS targetTitle, rp.reply_content AS replyContent, rp.board_no AS boardNo
+			FROM REPORT r JOIN REPLY rp ON r.target_no = rp.reply_no JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
+			WHERE r.target_type = 'reply' AND r.user_no = #{userNo}
+	    ) t ORDER BY created_at DESC
 	</select>
-	
-	<update id="updateUser">
-	    UPDATE MEMBER
-	    SET 
-	        user_name = #{userName},
-	        user_address = #{userAddress},
-	        user_phone = #{userPhone},
-	        user_email = #{userEmail}
+
+    <update id="updateUser">
+	    UPDATE MEMBER SET user_name = #{userName}, user_address = #{userAddress},
+	                      user_phone = #{userPhone}, user_email = #{userEmail}
 	    WHERE user_no = #{userNo}
 	</update>
 	
 	<select id="selectUserByNo" resultType="Member">
-	    SELECT 
-	        user_no,
-	        user_id,
-	        user_name,
-	        user_address,
-	        user_phone,
-	        user_email,
-	        user_enroll_date
-	    FROM MEMBER
-	    WHERE user_no = #{userNo}
+	    SELECT user_no, user_id, user_name, user_address, user_phone, user_email, user_enroll_date
+	    FROM MEMBER WHERE user_no = #{userNo}
 	</select>
 	
-	<select id="selectReportedList" resultType="Report">
-	    SELECT *
-	    FROM (
-	        -- ITEM 신고
-	        SELECT 
-	            r.report_no,
-	            r.target_type,
-	            r.target_no,
-	            r.status,
-	            r.created_at,
-	            c.REPORT_CATEGORY AS categoryName,
-	            i.item_title AS targetTitle,
-	            NULL AS replyContent,
-			    NULL AS boardNo
-	        FROM REPORT r
-	        JOIN ITEM i ON r.target_no = i.item_no
-	        JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-	        WHERE r.target_type = 'item'
-	          AND i.user_no = #{userNo}
-	
-	        UNION ALL
-	
-	        -- BOARD 신고
-	        SELECT 
-	            r.report_no,
-	            r.target_type,
-	            r.target_no,
-	            r.status,
-	            r.created_at,
-	            c.REPORT_CATEGORY AS categoryName,
-	            b.board_title AS targetTitle,
-	            NULL AS replyContent,
-			    NULL AS boardNo
-	        FROM REPORT r
-	        JOIN BOARD_POST b ON r.target_no = b.board_no
-	        JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-	        WHERE r.target_type = 'board'
-	          AND b.user_no = #{userNo}
-	
-	        UNION ALL
-	
-			-- REPLY 신고
-			SELECT 
-			    r.report_no,
-			    r.target_type,
-			    r.target_no,
-			    r.status,
-			    r.created_at,
-			    c.REPORT_CATEGORY AS categoryName,
-			    NULL AS targetTitle,
-			    rp.reply_content AS replyContent,
-			    rp.board_no AS boardNo   -- 🔥 추가
-			FROM REPORT r
-			JOIN REPLY rp ON r.target_no = rp.reply_no
-			JOIN REPORT_CATEGORY c ON r.report_cd_no = c.REPORT_CATEGORY_NO
-			WHERE r.target_type = 'reply'
-			  AND rp.user_no = #{userNo}
-	    ) t
-	    ORDER BY created_at DESC
-	</select>
-	
-	<select id="getFaqList" resultType="Faq">
-        SELECT F.*, C.CATEGORY_NAME
-        FROM FAQ F
+    <select id="getFaqList" resultType="Faq">
+        SELECT F.*, C.CATEGORY_NAME FROM FAQ F
         JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
-        WHERE F.USER_NO = #{userNo}
-        ORDER BY F.CREATE_DATE DESC
+        WHERE F.USER_NO = #{userNo} ORDER BY F.CREATE_DATE DESC
     </select>
 
 	<insert id="insertFaq">
-	    
 	    <selectKey keyProperty="faqId" resultType="int" order="BEFORE">
 	        SELECT SEQ_FAQ.NEXTVAL FROM DUAL
 	    </selectKey>
-	
-	    INSERT INTO FAQ (
-	        FAQ_ID, USER_NO, CATEGORY_ID, TITLE, CONTENT, FILE_PATH
-	    ) VALUES (
-	        #{faqId},
-	        #{userNo},
-	        #{categoryId},
-	        #{title},
-	        #{content},
-	        #{filePath}
-	    )
+	    INSERT INTO FAQ (FAQ_ID, USER_NO, CATEGORY_ID, TITLE, CONTENT, FILE_PATH)
+	    VALUES (#{faqId}, #{userNo}, #{categoryId}, #{title}, #{content}, #{filePath})
 	</insert>
 
     <select id="getCategoryList" resultType="FaqCategory">
@@ -264,48 +102,73 @@
     </select>
 
 	<select id="getFaqDetail" resultType="Faq">
-	    SELECT 
-	        F.*, 
-	        C.CATEGORY_NAME,
-	        M.USER_NAME
-	    FROM FAQ F
+	    SELECT F.*, C.CATEGORY_NAME, M.USER_NAME FROM FAQ F
 	    JOIN FAQ_CATEGORY C ON F.CATEGORY_ID = C.CATEGORY_ID
 	    JOIN MEMBER M ON F.USER_NO = M.USER_NO
 	    WHERE F.FAQ_ID = #{id}
 	</select>
 	
 	<insert id="insertFaqFile">
-	    INSERT INTO FAQ_IMG
-	    (FILE_ID, FAQ_ID, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
-	    VALUES
-	    (SEQ_FAQ_IMG.NEXTVAL, #{faqId}, #{originName}, #{changeName}, #{filePath})
+	    INSERT INTO FAQ_IMG (FILE_ID, FAQ_ID, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+	    VALUES (SEQ_FAQ_IMG.NEXTVAL, #{faqId}, #{originName}, #{changeName}, #{filePath})
 	</insert>
 	
 	<select id="selectFaqFiles" resultType="FaqImg">
-		SELECT *
-		FROM FAQ_IMG
-		WHERE FAQ_ID = #{faqId}
+		SELECT * FROM FAQ_IMG WHERE FAQ_ID = #{faqId}
 	</select>
-	  <select id="selectWonList" resultType="BidListDto" parameterType="map">
-    SELECT 
-        i.item_no, i.item_title, i.current_price, i.end_time, i.views, i.pay_status,
-        (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as img_url,
-        (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no) as bidCount
-    FROM ITEM i
-    WHERE i.STATUS = 'E' 
-      AND #{userNo} = (
-          SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
-          FROM BID
-          WHERE item_no = i.item_no
-      )
-    ORDER BY 
-    <choose>
-        <when test="sort == 'priceDesc'">i.current_price DESC</when>
-        <when test="sort == 'priceAsc'">i.current_price ASC</when>
-        <when test="sort == 'unpaid'">i.pay_status ASC, i.end_time DESC</when> <when test="sort == 'paid'">i.pay_status DESC, i.end_time DESC</when> 
-        <otherwise>i.end_time DESC</otherwise>
-    </choose>
-</select>
 
+    <select id="selectWonList" resultType="BidListDto" parameterType="map">
+        SELECT 
+            i.item_no, i.item_title, i.current_price, i.end_time, i.views, i.pay_status,
+            (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as img_url,
+            (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no) as bidCount
+        FROM ITEM i
+        WHERE i.STATUS = 'E' 
+          AND #{userNo} = (
+              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
+              FROM BID WHERE item_no = i.item_no
+          )
+        ORDER BY 
+        <choose>
+            <when test="sort == 'priceDesc'">i.current_price DESC</when>
+            <when test="sort == 'priceAsc'">i.current_price ASC</when>
+            <when test="sort == 'unpaid'">
+                CASE WHEN i.pay_status = 'N' THEN 0 ELSE 1 END, i.end_time DESC
+            </when>
+            <when test="sort == 'paid'">
+                CASE WHEN i.pay_status IN ('Y', 'S', 'P') THEN 0 ELSE 1 END, i.end_time DESC
+            </when>
+            <otherwise>i.end_time DESC</otherwise>
+        </choose>
+    </select>
+
+    <select id="getSellerPaymentList" resultType="SaleListDto" parameterType="map">
+    SELECT 
+        i.item_no, 
+        i.item_title, 
+        i.current_price, 
+        i.end_time, 
+        i.views,
+        p.pay_no as paymentNo, 
+        p.pay_status as payStatus,
+        (SELECT m.user_id 
+         FROM BID b 
+         JOIN MEMBER m ON b.user_no = m.user_no 
+         WHERE b.item_no = i.item_no 
+           AND b.bid_price = i.current_price 
+           AND ROWNUM = 1) as buyerId,
+        (SELECT COUNT(*) FROM BID b WHERE b.item_no = i.item_no) as bidCount, 
+        (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as imgUrl,
+        CASE 
+            WHEN p.pay_status = 'Y' THEN '결제 완료'
+            WHEN p.pay_status = 'S' THEN '배송 중'
+            WHEN p.pay_status = 'P' THEN '거래 완료'
+            ELSE '취소됨'
+        END as statusText
+    FROM ITEM i
+    JOIN PAYMENT p ON i.item_no = p.item_no
+    WHERE i.user_no = #{userNo} 
+    ORDER BY p.approved_at DESC
+</select>
 
 </mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="delivery">
+
+  <insert id="insertDelivery" parameterType="Delivery">
+    <selectKey keyProperty="deliveryNo" resultType="_int" order="BEFORE">
+        SELECT SEQ_DELIVERY_NO.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO DELIVERY (
+        DELIVERY_NO, PAYMENT_NO, BUYER_ID, SELLER_ID,
+        RECEIVER_NAME, RECEIVER_PHONE, POST_CODE,
+        ADDRESS, ADDRESS_DETAIL, DELIVERY_REQUEST,
+        COURIER, TRACKING_NO
+    ) VALUES (
+        #{deliveryNo}, #{paymentNo}, #{buyerId}, #{sellerId},
+        #{receiverName}, #{receiverPhone}, #{postCode},
+        #{address}, #{addressDetail}, #{deliveryRequest},
+        #{courier}, #{trackingNo}
+    )
+</insert>
+
+<update id="updateDelivery" parameterType="Delivery">
+    UPDATE DELIVERY 
+    SET COURIER = #{courier},
+        TRACKING_NO = #{trackingNo}
+    WHERE DELIVERY_NO = #{deliveryNo}
+</update>
+
+
+    <insert id="insertDeliveryDetail">
+        INSERT INTO DELIVERY_DETAIL (
+            DELIVERY_DETAIL_NO, DELIVERY_NO, STATUS, SHIPPED_DATE
+        ) VALUES (
+            SEQ_DELIVERY_DETAIL_NO.NEXTVAL, #{deliveryNo}, 'S', SYSDATE
+        )
+    </insert>
+
+    <update id="updatePaymentStatus" parameterType="map">
+        BEGIN
+            UPDATE ITEM SET PAY_STATUS = 'S' WHERE ITEM_NO = #{itemNo};
+            UPDATE PAYMENT SET PAY_STATUS = 'S' WHERE PAY_NO = #{paymentNo};
+        END;
+    </update>
+
+    <update id="updateItemToFinal" parameterType="map">
+        UPDATE ITEM SET PAY_STATUS = 'P' WHERE ITEM_NO = #{itemNo}
+    </update>
+
+    <update id="updatePaymentToFinal" parameterType="map">
+        UPDATE PAYMENT SET PAY_STATUS = 'P' WHERE PAY_NO = #{paymentNo}
+    </update>
+    
+    <select id="selectDeliveryByPaymentNo" resultType="Delivery">
+        SELECT 
+            DELIVERY_NO, PAYMENT_NO, BUYER_ID, SELLER_ID, 
+            RECEIVER_NAME, RECEIVER_PHONE, POST_CODE, 
+            ADDRESS, ADDRESS_DETAIL, DELIVERY_REQUEST,
+            COURIER, TRACKING_NO
+        FROM DELIVERY
+        WHERE PAYMENT_NO = #{paymentNo}
+    </select>
+
+    <select id="getSellerPaymentList" resultType="SaleListDto" parameterType="map">
+    SELECT 
+        i.item_no,
+        i.item_title,
+        i.current_price,
+        i.end_time,
+        p.pay_no as paymentNo,
+        p.pay_status as payStatus,
+        p.approved_at,
+        m.user_id as buyerId,  CASE 
+            WHEN p.pay_status = 'Y' THEN '결제 완료'
+            WHEN p.pay_status = 'S' THEN '배송 중'
+            WHEN p.pay_status = 'P' THEN '거래 완료'
+            ELSE '취소됨'
+        END as statusText,     (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as imgUrl
+    FROM ITEM i
+    JOIN PAYMENT p ON i.item_no = p.item_no
+    JOIN MEMBER m ON p.user_no = m.user_no  WHERE i.user_no = #{userNo}
+    ORDER BY 
+    <choose>
+        <when test="sort == 'status'">
+            CASE p.pay_status WHEN 'Y' THEN 1 WHEN 'S' THEN 2 WHEN 'P' THEN 3 ELSE 4 END ASC
+        </when>
+        <when test="sort == 'auction'">i.end_time DESC</when>
+        <otherwise>p.approved_at DESC</otherwise> </choose>
+</select>
+
+</mapper>
