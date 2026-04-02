@@ -11,9 +11,12 @@
 	    SELECT CASE
 	        -- 🔥 즉시구매가 존재하면 무조건 최고가
 	        WHEN EXISTS (
-	            SELECT 1 FROM BID 
-	            WHERE ITEM_NO = #{itemNo}
-	            AND BID_TYPE = 'BUY_NOW'
+			    SELECT 1
+			    FROM BID B
+			    JOIN ITEM I ON B.ITEM_NO = I.ITEM_NO
+			    WHERE B.ITEM_NO = #{itemNo}
+			    AND B.BID_TYPE = 'NOW'
+			    AND I.STATUS = 'N'
 	        )
 	        THEN (
 	            SELECT MAX(BID_PRICE)
@@ -71,7 +74,7 @@
 	        #{bidPrice},
 	        SYSTIMESTAMP,
 	        #{bidIp},
-	        #{bidType}     <!-- NORMAL / BUY_NOW -->
+	        #{bidType}     <!-- NORMAL / NOW -->
 	    )
 	</insert>
 	<select id="selectRanking" resultType="int">

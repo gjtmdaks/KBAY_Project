@@ -36,9 +36,10 @@ public class BidController {
 	        @RequestBody Bid req,
 	        HttpServletRequest request,
 	        Authentication auth){
+		
+		req.setRequestTime(System.currentTimeMillis()); // 🔥 여기서 찍어야 진짜 요청 시각
 
 	    Map<String, Object> result = new HashMap<>();
-	    Item item = id.selectItemDetail(req.getItemNo());
 
 	    // 1. 로그인 체크
 	    if(auth == null || !auth.isAuthenticated()) {
@@ -53,6 +54,8 @@ public class BidController {
 	        
 	        req.setUserNo(user.getUserNo());
 	        
+		    Item item = id.selectItemDetail(req.getItemNo());
+	        
 	        if (loginUserNo == item.getUserNo()) {
 	            result.put("result", "FAIL");
 	            result.put("message", "본인 상품 입찰 불가");
@@ -60,18 +63,17 @@ public class BidController {
 	        }
 	        
 	        //입찰 시점 IP 주소 추출
-	        String ip = request.getHeader("X-Forwarded-For");
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-	            ip = request.getHeader("Proxy-Client-IP");
-	        }
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-	            ip = request.getRemoteAddr();
-	        }
-	        
-	        // 로컬 테스트 IP 주소
-	        if("0:0:0:0:0:0:0:1".equals(ip)) {
-	            ip = "127.0.0.1";
-	        }
+			/*
+			 * String ip = request.getHeader("X-Forwarded-For"); if (ip == null ||
+			 * ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { ip =
+			 * request.getHeader("Proxy-Client-IP"); } if (ip == null || ip.length() == 0 ||
+			 * "unknown".equalsIgnoreCase(ip)) { ip = request.getRemoteAddr(); }
+			 * 
+			 * // 로컬 테스트 IP 주소 if("0:0:0:0:0:0:0:1".equals(ip)) { ip = "127.0.0.1"; }
+			 */
+            
+	        String ip = request.getRemoteAddr();
+	        if("0:0:0:0:0:0:0:1".equals(ip)) ip = "127.0.0.1";
 	        
 	        req.setBidIp(ip);
 	        int ranking = bs.placeBid(req);
@@ -123,6 +125,8 @@ public class BidController {
 	        @RequestBody Bid req,
 	        HttpServletRequest request,
 	        Authentication auth){
+		
+		req.setRequestTime(System.currentTimeMillis()); // 🔥 여기서 찍어야 진짜 요청 시각
 
 	    Map<String, Object> result = new HashMap<>();
 
@@ -131,18 +135,24 @@ public class BidController {
 	        result.put("message", "LOGIN_REQUIRED");
 	        return result;
 	    }
-	    // 2. 본인 체크
-	    if (((Member) auth.getPrincipal()).getUserNo() == req.getUserNo()) {
-	        result.put("result", "FAIL");
-	        result.put("message", "본인 상품 입찰 불가");
-	        return result;
-	    }
 
 	    try {
 	        Member user = (Member) auth.getPrincipal();
+	        int loginUserNo = user.getUserNo();
+	        
 	        req.setUserNo(user.getUserNo());
+	        
+		    Item item = id.selectItemDetail(req.getItemNo());
+	        
+	        if (loginUserNo == item.getUserNo()) {
+	            result.put("result", "FAIL");
+	            result.put("message", "본인 상품 입찰 불가");
+	            return result;
+	        }
 
 	        String ip = request.getRemoteAddr();
+	        if("0:0:0:0:0:0:0:1".equals(ip)) ip = "127.0.0.1";
+	        
 	        req.setBidIp(ip);
 
 	        bs.buyNow(req);

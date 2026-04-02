@@ -24,9 +24,6 @@ public class BidDaoImpl implements BidDao {
 	@Override
 	public int placeBid(Bid req) {
 
-	    // 1. lock
-	    session.selectOne("bid.itemLock", req.getItemNo());
-
 	    // 2. 현재가 조회
 	    int currentPrice = session.selectOne("bid.selectCurrentPrice", req.getItemNo());
 
