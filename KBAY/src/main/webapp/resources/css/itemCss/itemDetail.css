@@ -126,6 +126,9 @@
     font-weight: 800;
     margin-bottom: 8px;
     color: #222;
+    padding-right: 45px; 
+    word-break: keep-all; 
+    line-height: 1.4;
 }
 
 .meta-info {

@@ -204,16 +204,29 @@ console.log("웹소켓 수신 데이터:", data);
     }
 }
 
-function openBidModal(itemNo) {
+function openBidModal(itemNo, page = 1) {
     const modal = document.getElementById("bidModal");
     const tbody = document.getElementById("bidHistoryBody");
+    const paginationEl = document.getElementById("bidPagination");
+
     tbody.innerHTML = '<tr><td colspan="5">데이터를 불러오는 중...</td></tr>';
     modal.style.display = "flex";
-    fetch(CONTEXT_PATH + "/bid/history/" + itemNo)
+
+    fetch(`${CONTEXT_PATH}/bid/history/${itemNo}?cp=${page}`)
         .then(res => res.json())
-        .then(list => {
+        .then(data => {
+            const list = data.list;
+            const pi = data.pi;
+
             tbody.innerHTML = "";
-            list.forEach(b => {
+            
+            if(!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">입찰 기록이 없습니다.</td></tr>';
+                paginationEl.innerHTML = "";
+                return;
+            }
+
+            list.forEach((b, index) => {
                 const isMine = (String(CURRENT_USER_NO) === String(b.userNo));
                 let displayIp = "정보 없음";
                 if (b.bidIp) {
@@ -221,10 +234,65 @@ function openBidModal(itemNo) {
                     displayIp = isMine ? b.bidIp : (parts.length === 4 ? `${parts[0]}.${parts[1]}.***.${parts[3]}` : b.bidIp.substring(0, b.bidIp.lastIndexOf(":") + 1) + "***");
                 }
                 const d = new Date(b.bidTime);
-                const bidDateFull = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}:${String(d.getMilliseconds()).padStart(3, '0')}`;
-                tbody.innerHTML += `<tr class="${isMine ? 'my-bid-row' : ''}"><td>${b.ranking}</td><td>${isMine ? b.userId : b.ranking + '번 입찰자'}</td><td>${isMine ? b.bidPrice.toLocaleString() + '원' : '***원'}</td><td>${bidDateFull}</td><td>${displayIp}</td></tr>`;
+                const bidDateFull = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+                
+                // 🔥 pi.totalCount와 pi.limit으로 번호 계산
+                const displayNum = pi.totalCount - ((pi.currentPage - 1) * pi.limit) - index;
+
+                tbody.innerHTML += `
+                    <tr class="${isMine ? 'my-bid-row' : ''}">
+                        <td>${displayNum}</td>
+                        <td>${isMine ? b.userId : b.ranking + '번 입찰자'}</td>
+                        <td>${isMine ? b.bidPrice.toLocaleString() + '원' : '***원'}</td>
+                        <td>${bidDateFull}</td>
+                        <td>${displayIp}</td>
+                    </tr>`;
             });
+
+            renderModalPagination(pi, itemNo);
+        })
+        .catch(err => {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="5">데이터 로드 중 오류가 발생했습니다.</td></tr>';
         });
+}
+
+function renderModalPagination(pi, itemNo) {
+    const paginationEl = document.getElementById("bidPagination");
+    if (!paginationEl) return;
+
+    let html = "";
+    
+    // 🔥 PageInfo에 없는 startPage, endPage 계산 로직 추가
+    const pageLimit = 10; // 하단에 보여줄 페이지 번호 개수
+    const startPage = Math.floor((pi.currentPage - 1) / pageLimit) * pageLimit + 1;
+    let endPage = startPage + pageLimit - 1;
+    if (endPage > pi.maxPage) endPage = pi.maxPage;
+
+    // 이전 버튼
+    if (pi.currentPage <= 1) {
+        html += `<span class="disabled">&lt;</span>`;
+    } else {
+        html += `<a href="javascript:void(0)" onclick="openBidModal(${itemNo}, ${pi.currentPage - 1})">&lt;</a>`;
+    }
+
+    // 페이지 번호
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === pi.currentPage) {
+            html += `<span class="active">${i}</span>`;
+        } else {
+            html += `<a href="javascript:void(0)" onclick="openBidModal(${itemNo}, ${i})">${i}</a>`;
+        }
+    }
+
+    // 다음 버튼
+    if (pi.currentPage >= pi.maxPage) {
+        html += `<span class="disabled">&gt;</span>`;
+    } else {
+        html += `<a href="javascript:void(0)" onclick="openBidModal(${itemNo}, ${pi.currentPage + 1})">&gt;</a>`;
+    }
+
+    paginationEl.innerHTML = html;
 }
 
 function closeBidModal() { document.getElementById("bidModal").style.display = "none"; }
@@ -323,3 +391,5 @@ function buyNow(itemNo) {
         alert("에러 발생");
     });
 }
+
+

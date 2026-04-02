@@ -189,8 +189,8 @@ public class BidServiceImpl implements BidService {
 	}
 	
 	@Override
-	public List<Bid> selectBidHistory(int itemNo) {
-	    return bd.selectBidHistory(null, itemNo); 
+	public List<Bid> selectBidHistory(int itemNo, com.kh.kbay.common.PageInfo pi) {
+	    return bd.selectBidHistory(itemNo, pi);
 	}
 
 	@Override

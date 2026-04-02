@@ -99,25 +99,33 @@
 	</update>
 	
 	<select id="selectBidHistory" resultType="Bid">
-	    SELECT 
-	        B.USER_NO AS userNo, 
-	        M.USER_ID AS userId, 
-	        B.BID_PRICE AS bidPrice,
-	        B.BID_TIME AS bidTime,
-	        B.BID_IP AS bidIp,
-	        D.BIDDER_NO AS ranking
-	    FROM BID B
-	    JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
-	    JOIN (
-	        SELECT USER_NO, BID_IP, 
-	               ROW_NUMBER() OVER (ORDER BY MIN(BID_TIME) ASC) AS BIDDER_NO
-	        FROM BID
-	        WHERE ITEM_NO = #{itemNo}
-	        GROUP BY USER_NO, BID_IP
-	    ) D ON (B.USER_NO = D.USER_NO AND B.BID_IP = D.BID_IP)
-	    WHERE B.ITEM_NO = #{itemNo}
-	    ORDER BY B.BID_TIME DESC
-	</select>
+    SELECT *
+    FROM (
+        SELECT ROWNUM RNUM, A.*
+        FROM (
+            SELECT 
+                B.USER_NO AS userNo, 
+                M.USER_ID AS userId, 
+                B.BID_PRICE AS bidPrice,
+                B.BID_TIME AS bidTime,
+                B.BID_IP AS bidIp,
+                D.BIDDER_NO AS ranking
+            FROM BID B
+            JOIN MEMBER M ON (B.USER_NO = M.USER_NO)
+            JOIN (
+                SELECT USER_NO, BID_IP, 
+                       ROW_NUMBER() OVER (ORDER BY MIN(BID_TIME) ASC) AS BIDDER_NO
+                FROM BID
+                WHERE ITEM_NO = #{itemNo}
+                GROUP BY USER_NO, BID_IP
+            ) D ON (B.USER_NO = D.USER_NO AND B.BID_IP = D.BID_IP)
+            WHERE B.ITEM_NO = #{itemNo}
+            ORDER BY B.BID_TIME DESC
+        ) A
+        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
+    )
+    WHERE RNUM > #{offset}
+</select>
 	
 	    <select id="findTopBid" parameterType="_int" resultType="Bid">
     SELECT *

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kh.kbay.bid.model.vo.Bid;
@@ -116,8 +117,20 @@ public class BidController {
 	}
 	
 	@GetMapping("/history/{itemNo}")
-	public List<Bid> getBidHistory(@PathVariable int itemNo) {
-	    return bs.selectBidHistory(itemNo);
+	public Map<String, Object> getBidHistory(
+	        @PathVariable int itemNo,
+	        @RequestParam(value="cp", defaultValue="1") int page) {
+
+	    int listCount = bs.selectBidCount(itemNo);
+	    com.kh.kbay.common.PageInfo pi = com.kh.kbay.common.PageInfo.of(page, listCount, 10); // 10개씩 보기
+
+	    List<Bid> list = bs.selectBidHistory(itemNo, pi);
+
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("list", list);
+	    result.put("pi", pi);
+
+	    return result;
 	}
 	
 	@PostMapping("/buyNow")

@@ -172,20 +172,21 @@
 				<span class="close" onclick="closeBidModal()">&times;</span>
 			</div>
 			<div class="modal-body">
-				<table class="bid-table">
-					<thead>
-						<tr>
-							<th>입찰번호</th>
-							<th>입찰자</th>
-							<th>입찰금액</th>
-							<th>입찰일시</th>
-							<th>IP</th>
-						</tr>
-					</thead>
-					<tbody id="bidHistoryBody">
-					</tbody>
-				</table>
-			</div>
+    <table class="bid-table">
+        <thead>
+            <tr>
+                <th>입찰번호</th>
+                <th>입찰자</th>
+                <th>입찰금액</th>
+                <th>입찰일시</th>
+                <th>IP</th>
+            </tr>
+        </thead>
+        <tbody id="bidHistoryBody"></tbody>
+    </table>
+    
+    <div id="bidPagination" class="pagination" style="margin-top: 20px; justify-content: center; display: flex;"></div>
+</div>
 		</div>
 	</div>
 
@@ -209,6 +210,7 @@
 			        sellerUserNo: "${item.userNo}"
 			    };
 	</script>
+	<jsp:include page="/WEB-INF/views/common/paging.jsp" />
 	<script src="${pageContext.request.contextPath}/resources/js/itemJs/itemDetail.js" defer></script>
 	<script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
 </body>
