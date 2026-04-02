@@ -420,7 +420,7 @@
 	      AND PAY_STATUS = 'N'
     </select>
 	
-	<select id="selectSuccessionList" resultType="item">
+	<select id="selectSuccessionList" parameterType="map" resultType="item">
     SELECT * FROM (
         SELECT ROWNUM RNUM, A.* FROM (
             SELECT 
@@ -446,7 +446,7 @@
             ORDER BY i.ITEM_NO DESC, i.PAYMENT_DEADLINE ASC
         ) A
     )
-    WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    WHERE RNUM BETWEEN #{offset} AND #{limit}
 </select>
 	
 	<update id="updateForceFail">

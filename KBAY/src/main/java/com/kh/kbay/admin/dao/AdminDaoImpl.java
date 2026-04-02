@@ -196,9 +196,9 @@ public class AdminDaoImpl implements AdminDao {
 		return session.selectOne("adminMapper.selectSuccessionCount");
 	}
 	@Override
-	public List<Item> selectSuccessionList(PageInfo pi) {
+	public List<Item> selectSuccessionList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return session.selectList("adminMapper.selectSuccessionList", pi);
+		return session.selectList("adminMapper.selectSuccessionList", paramMap);
 	}
 	@Override
 	public int updateForceFail(int itemNo) {

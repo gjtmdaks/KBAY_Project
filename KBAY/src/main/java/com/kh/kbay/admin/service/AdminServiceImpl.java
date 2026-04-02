@@ -211,9 +211,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Item> selectSuccessionList(PageInfo pi) {
-        return ad.selectSuccessionList(pi);
-    }
+	public List<Item> selectSuccessionList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return ad.selectSuccessionList(paramMap);
+	}
 
     @Override
     public int updateForceFail(int itemNo) {
@@ -266,4 +267,6 @@ public class AdminServiceImpl implements AdminService {
     public List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap) {
         return ad.selectPaymentList(paramMap);
     }
+
+	
 }

@@ -88,7 +88,7 @@ public interface AdminDao {
     
  // 낙찰 취하 페이지
 	int selectSuccessionCount();
-	List<Item> selectSuccessionList(PageInfo pi);
+	List<Item> selectSuccessionList(Map<String, Object> paramMap);
 	int updateForceFail(int itemNo);
 	String selectTopBidType(int itemNo);
 	int selectNextBidderCount(int itemNo);
