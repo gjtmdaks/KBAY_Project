@@ -414,39 +414,40 @@
 	
 	<!-- 낙찰 취하 페이지 -->
 	<select id="selectSuccessionCount" resultType="_int">
-	    SELECT COUNT(*)
+    	SELECT COUNT(*)
 	    FROM ITEM
 	    WHERE STATUS = 'E'
-	</select>
+	      AND PAY_STATUS = 'N'
+    </select>
 	
 	<select id="selectSuccessionList" resultType="item">
-	    SELECT * FROM (
-	        SELECT ROWNUM RNUM, A.* FROM (
-	            SELECT 
-	                i.ITEM_NO, i.ITEM_TITLE, i.START_PRICE, i.CURRENT_PRICE, 
-	                i.END_TIME, i.PAYMENT_DEADLINE, i.STATUS,
-	                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS SELLER_NAME,
-	                
-	                TB.BUYER_NAME,
-	                TB.TOP_BID_TYPE, i.ITEM_CD_NO AS ITEM_CATEGORY 
-	            FROM ITEM i
-	            LEFT JOIN (
-	                SELECT ITEM_NO, USER_NAME AS BUYER_NAME, BID_TYPE AS TOP_BID_TYPE
-	                FROM (
-	                    SELECT B.ITEM_NO, M.USER_NAME, B.BID_TYPE,
-	                           ROW_NUMBER() OVER(PARTITION BY B.ITEM_NO ORDER BY B.BID_PRICE DESC) as rn
-	                    FROM BID B
-	                    JOIN MEMBER M ON B.USER_NO = M.USER_NO
-	                    WHERE B.BID_STATUS = 'N'
-	                )
-	                WHERE rn = 1
-	            ) TB ON i.ITEM_NO = TB.ITEM_NO
-	            WHERE i.STATUS = 'E'
-	            ORDER BY i.PAYMENT_DEADLINE ASC, i.ITEM_NO DESC
-	        ) A
-	    )
-	    WHERE RNUM BETWEEN #{offset} AND #{limit}
-	</select>
+    SELECT * FROM (
+        SELECT ROWNUM RNUM, A.* FROM (
+            SELECT 
+                i.ITEM_NO, i.ITEM_TITLE, i.START_PRICE, i.CURRENT_PRICE, 
+                i.END_TIME, i.PAYMENT_DEADLINE, i.STATUS,
+                (SELECT USER_NAME FROM MEMBER WHERE USER_NO = i.USER_NO) AS SELLER_NAME,
+                TB.BUYER_NAME,
+                TB.TOP_BID_TYPE, i.ITEM_CD_NO AS itemCategory 
+            FROM ITEM i
+            LEFT JOIN (
+                SELECT ITEM_NO, USER_NAME AS BUYER_NAME, BID_TYPE AS TOP_BID_TYPE
+                FROM (
+                    SELECT B.ITEM_NO, M.USER_NAME, B.BID_TYPE,
+                           ROW_NUMBER() OVER(PARTITION BY B.ITEM_NO ORDER BY B.BID_PRICE DESC) as rn
+                    FROM BID B
+                    JOIN MEMBER M ON B.USER_NO = M.USER_NO
+                    WHERE B.BID_STATUS = 'N'
+                )
+                WHERE rn = 1
+            ) TB ON i.ITEM_NO = TB.ITEM_NO
+            WHERE i.STATUS = 'E'
+              AND i.PAY_STATUS = 'N'
+            ORDER BY i.ITEM_NO DESC, i.PAYMENT_DEADLINE ASC
+        ) A
+    )
+    WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+</select>
 	
 	<update id="updateForceFail">
 	    UPDATE ITEM

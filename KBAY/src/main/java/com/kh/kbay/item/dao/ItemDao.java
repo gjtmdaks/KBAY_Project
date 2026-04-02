@@ -38,4 +38,7 @@ public interface ItemDao {
 	int checkWishlist(Map<String, Object> map);
 
 	void endByBuyNow(Map<String, Object> param);
+
+	int updateMissingPaymentDeadlines();
+	List<Integer> selectExpiredPaymentItems();
 }

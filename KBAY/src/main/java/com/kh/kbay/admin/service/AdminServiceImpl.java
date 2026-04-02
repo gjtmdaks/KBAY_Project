@@ -220,41 +220,41 @@ public class AdminServiceImpl implements AdminService {
         return ad.updateForceFail(itemNo);
     }
 
-    // 🚨 업그레이드된 사령관 로직 (차순위 승계 처리)
-    @Transactional // 예외 발생 시 무조건 DB 원상복구(롤백)!
+    // 차순위 승계 처리
+    @Transactional // 예외 발생 시 무조건 DB 원상복구(롤백)
     @Override
     public int updateForceSuccession(int itemNo) {
         
-        // 1. 현재 1등 입찰의 타입 확인 (즉시 낙찰 NOW 인지 확인)
+        // 현재 1등 입찰의 타입 확인 (즉시 낙찰 NOW 인지 확인)
         String topBidType = ad.selectTopBidType(itemNo);
 
-        // 2. 현재 1등 유저의 모든 입찰 내역을 박탈('F') 시킴
+        // 현재 1등 유저의 모든 입찰 내역을 박탈('F') 시킴
         int result1 = ad.updateCurrentBidderFail(itemNo);
         
-        // 🚨 3-A. [즉시 낙찰(NOW) 방어 로직] 
+        // 즉시 낙찰 방어 로직
         // 즉시 낙찰건이면 차순위 확인 없이 바로 아이템 유찰('O') 처리!
         if ("NOW".equalsIgnoreCase(topBidType)) {
             int result3 = ad.updateForceFail(itemNo);
             if (result1 > 0 && result3 > 0) {
-                return 3; // 👉 컨트롤러가 받아서 "now_fail"로 변환
+                return 3; // 컨트롤러가 받아서 "now_fail"로 변환
             }
             throw new RuntimeException("즉시 낙찰 유찰 처리 중 예외 발생");
         }
 
-        // 3-B. 일반 입찰(NORMAL)인 경우 기존대로 남은 차순위 유저 수 확인
+        // 일반 입찰(NORMAL)인 경우 기존대로 남은 차순위 유저 수 확인
         int remainCount = ad.selectNextBidderCount(itemNo);
         
         if (remainCount > 0) {
             // 남은 사람이 있다면 결제 기한 7일 연장
             int result2 = ad.updateDeadlineExtend(itemNo);
             if (result1 > 0 && result2 > 0) {
-                return 1; // 👉 컨트롤러가 받아서 "success"로 변환
+                return 1; // 컨트롤러가 받아서 "success"로 변환
             }
         } else {
             // 남은 사람이 아무도 없다면 해당 경매를 강제 유찰('O') 처리
             int result3 = ad.updateForceFail(itemNo);
             if (result1 > 0 && result3 > 0) {
-                return 2; // 👉 컨트롤러가 받아서 "empty"로 변환
+                return 2; // 컨트롤러가 받아서 "empty"로 변환
             }
         }
         

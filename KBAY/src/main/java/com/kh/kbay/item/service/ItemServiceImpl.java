@@ -156,4 +156,14 @@ public class ItemServiceImpl implements ItemService {
 		
 		id.endByBuyNow(param);
 	}
+
+	@Override
+	public int updateMissingPaymentDeadlines() {
+		return id.updateMissingPaymentDeadlines();
+	}
+
+	@Override
+	public List<Integer> selectExpiredPaymentItems() {
+		return id.selectExpiredPaymentItems();
+	}
 }

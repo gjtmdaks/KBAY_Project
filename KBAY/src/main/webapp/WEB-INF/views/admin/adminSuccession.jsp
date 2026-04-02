@@ -85,48 +85,25 @@
             <%-- 페이징 영역 (필요시 주석 해제하여 사용) --%>
             <%-- 페이징 영역 --%>
             <div class="pagination-area">
-                <%-- 리스트가 비어있지 않을 때만 페이징 바를 보여줍니다 --%>
-                <c:if test="${not empty pi}">
-				    <div class="pagination-area">
-				        <ul class="pagination-list">
-				            
-				            <%-- 1. 이전 페이지 --%>
-				            <c:choose>
-				                <c:when test="${pi.currentPage > 1}">
-				                    <%-- 🚨 pageUrl 변수는 이 파일을 불러오는 곳에서 동적으로 결정됩니다! --%>
-				                    <li><a href="${pageUrl}${pi.currentPage - 1}">&lt;</a></li>
-				                </c:when>
-				                <c:otherwise>
-				                    <li><a href="#" onclick="return false;" style="color:#ccc; cursor:not-allowed;">&lt;</a></li>
-				                </c:otherwise>
-				            </c:choose>
-				
-				            <%-- 2. 페이지 번호 --%>
-				            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-				                <c:choose>
-				                    <c:when test="${p eq pi.currentPage}">
-				                        <li class="active"><a href="#" onclick="return false;">${p}</a></li>
-				                    </c:when>
-				                    <c:otherwise>
-				                        <li><a href="${pageUrl}${p}">${p}</a></li>
-				                    </c:otherwise>
-				                </c:choose>
-				            </c:forEach>
-				
-				            <%-- 3. 다음 페이지 --%>
-				            <c:choose>
-				                <c:when test="${pi.currentPage < pi.maxPage}">
-				                    <li><a href="${pageUrl}${pi.currentPage + 1}">&gt;</a></li>
-				                </c:when>
-				                <c:otherwise>
-				                    <li><a href="#" onclick="return false;" style="color:#ccc; cursor:not-allowed;">&gt;</a></li>
-				                </c:otherwise>
-				            </c:choose>
-				            
-				        </ul>
-				    </div>
-				</c:if>
-            </div>
+			    <c:if test="${not empty pi}">
+			        <ul class="pagination-list">
+			            
+			            <%-- 이전 버튼 --%>
+			            <li><a href="adminSuccession?page=${pi.currentPage - 1}" ${pi.currentPage eq 1 ? 'onclick="return false;" style="color:#ccc;"' : ''}>&lt;</a></li>
+			
+			            <%-- 숫자 반복 (여기가 중요!) --%>
+			            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+			                <li class="${p eq pi.currentPage ? 'active' : ''}">
+			                    <a href="adminSuccession?page=${p}">${p}</a>
+			                </li>
+			            </c:forEach>
+			
+			            <%-- 다음 버튼 --%>
+			            <li><a href="adminSuccession?page=${pi.currentPage + 1}" ${pi.currentPage eq pi.maxPage ? 'onclick="return false;" style="color:#ccc;"' : ''}>&gt;</a></li>
+			            
+			        </ul>
+			    </c:if>
+			</div>
         </main>
     </div>
 

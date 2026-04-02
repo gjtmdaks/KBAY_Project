@@ -364,15 +364,15 @@ public class AdminController {
             @RequestParam(value="page", defaultValue="1") int page,
             Model model) {
         
-        // 1. 전체 개수 조회 (STATUS = 'E' 인 것들 중 결제 대기 중인 항목)
-        int totalCount = adminService.selectSuccessionCount();
+    	int totalCount = adminService.selectSuccessionCount();
         
-        // 2. 페이징 처리 (10개씩 보기)
+        // 2. 페이징 계산기 (무조건 pi 라는 이름으로 담으세요)
         PageInfo pi = PageInfo.of(page, totalCount, 10);
         
-        // 3. 승계 관리 리스트 조회 (중요: 여기서 현재 낙찰자와 결제마감일을 조인해서 가져옴)
+        // 3. 리스트 조회
         List<Item> successionList = adminService.selectSuccessionList(pi);
         
+        // 🚨 [핵심] JSP가 읽을 수 있게 바구니에 담기
         model.addAttribute("successionList", successionList);
         model.addAttribute("pi", pi);
         

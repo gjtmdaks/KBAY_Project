@@ -213,4 +213,24 @@
         WINNER_PROCESSED = 'Y'
     WHERE ITEM_NO = #{itemNo}
 </update>
+
+<!-- 결제 마감일 자동 설정(결제 마감 재설정은 admin-mapper에 있음) -->
+<update id="updateMissingPaymentDeadlines">
+    UPDATE ITEM
+    SET PAYMENT_DEADLINE = SYSDATE + 7
+    WHERE STATUS = 'E' 
+      AND PAYMENT_DEADLINE IS NULL
+</update>
+<!-- ![CDATA[의 의미는 그냥 이 안에 있는 모든 글자는 태그가 아니라 그냥 글자(문자열)니까 분석하지 말고 그대로 DB에 던져줘 라는 의미 -->
+<!-- 이거는 이제 결제 마감이 지난것을 자동으로 찾아오는 코드 -->
+<select id="selectExpiredPaymentItems" resultType="_int">
+    <![CDATA[
+    SELECT ITEM_NO
+    FROM ITEM
+    WHERE STATUS = 'E' 
+    	AND PAY_STATUS = 'N'
+    	AND PAYMENT_DEADLINE < SYSDATE
+    ]]>
+</select>
+
 </mapper>
