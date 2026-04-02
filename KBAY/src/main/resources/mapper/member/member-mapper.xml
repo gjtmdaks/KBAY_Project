@@ -101,4 +101,12 @@
     SET USER_STATUS = 'N' 
     WHERE USER_NO = #{userNo}
 </update>
+
+<update id="increaseSellerLike" parameterType="_int">
+    UPDATE MEMBER 
+    SET LIKE_COUNT = LIKE_COUNT + 1 
+    WHERE USER_NO = (SELECT USER_NO FROM ITEM WHERE ITEM_NO = #{itemNo})
+</update>
+
+
 </mapper>

@@ -177,6 +177,7 @@ function connect() {
 }
 
 function updateRealTimeUI(data) {
+console.log("웹소켓 수신 데이터:", data);
     const priceEl = document.getElementById("currentPrice");
     const bidCountEl = document.getElementById("bidCount");
     const topMsg = document.getElementById("topBidderMsg");
@@ -184,9 +185,9 @@ function updateRealTimeUI(data) {
     const prevPrice = parseInt(priceEl.innerText.replace(/,/g, '')) || 0;
 
     priceEl.innerText = data.bidPrice.toLocaleString();
-    if (bidCountEl) {
-        let count = parseInt(bidCountEl.innerText.replace(/[^0-9]/g, "")) || 0;
-        bidCountEl.innerText = (count + 1) + "회";
+    if (bidCountEl && data.bidCount !== undefined) {
+    console.log("화면 업데이트 시도 - 서버 입찰수:", data.bidCount);
+        bidCountEl.innerText = data.bidCount + "회";
     }
     if (bidPriceInput && document.activeElement !== bidPriceInput) {
         bidPriceInput.value = (data.bidPrice + 1000).toLocaleString();

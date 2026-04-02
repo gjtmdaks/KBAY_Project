@@ -334,4 +334,9 @@ public class MypageServiceImpl implements MypageService {
         return md.getSellerPaymentList(map);
     }
 
+	@Override
+	public int increaseSellerLike(int itemNo) {
+	    return md.increaseSellerLike(itemNo);
+	}
+
 }

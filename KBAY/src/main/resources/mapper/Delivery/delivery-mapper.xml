@@ -46,9 +46,18 @@
         UPDATE ITEM SET PAY_STATUS = 'P' WHERE ITEM_NO = #{itemNo}
     </update>
 
-    <update id="updatePaymentToFinal" parameterType="map">
-        UPDATE PAYMENT SET PAY_STATUS = 'P' WHERE PAY_NO = #{paymentNo}
-    </update>
+   <update id="updatePaymentToFinal" parameterType="map">
+    BEGIN
+        UPDATE PAYMENT SET PAY_STATUS = 'P' WHERE PAY_NO = #{paymentNo};
+        
+        UPDATE DELIVERY_DETAIL 
+        SET STATUS = 'P', 
+            DELIVERED_DATE = SYSDATE 
+        WHERE DELIVERY_NO = (
+            SELECT DELIVERY_NO FROM DELIVERY WHERE PAYMENT_NO = #{paymentNo}
+        );
+    END;
+</update>
     
     <select id="selectDeliveryByPaymentNo" resultType="Delivery">
         SELECT 

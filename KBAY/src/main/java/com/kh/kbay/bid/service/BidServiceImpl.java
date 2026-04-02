@@ -131,19 +131,23 @@ public class BidServiceImpl implements BidService {
                     );
                 }
             }
+         // 1. 실제 DB 입찰 수 조회
+            int currentBidCount = bd.selectBidCount(req.getItemNo());
 
-            // 현재가 계산
+            // 2. 현재가 계산
             int vickreyCurrentPrice = bd.selectCurrentPrice(req.getItemNo());
 
             Bid finalTopBid = bd.findTopBid(req.getItemNo());
             int topUserNo = (finalTopBid != null) ? finalTopBid.getUserNo() : req.getUserNo();
 
+            // 3. 메시지 객체 생성 
             Bid msg = new Bid(
                     req.getItemNo(),
                     vickreyCurrentPrice,
                     topUserNo,
                     ranking
             );
+            msg.setBidCount(currentBidCount); 
 
             if (redisPublisher != null) {
                 redisPublisher.publish("bid-channel", msg);

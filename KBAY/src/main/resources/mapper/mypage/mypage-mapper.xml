@@ -118,29 +118,36 @@
 	</select>
 
     <select id="selectWonList" resultType="BidListDto" parameterType="map">
-        SELECT 
-            i.item_no, i.item_title, i.current_price, i.end_time, i.views, i.pay_status,
-            (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as img_url,
-            (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no) as bidCount
-        FROM ITEM i
-        WHERE i.STATUS = 'E' 
-          AND #{userNo} = (
-              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
-              FROM BID WHERE item_no = i.item_no
-          )
-        ORDER BY 
-        <choose>
-            <when test="sort == 'priceDesc'">i.current_price DESC</when>
-            <when test="sort == 'priceAsc'">i.current_price ASC</when>
-            <when test="sort == 'unpaid'">
-                CASE WHEN i.pay_status = 'N' THEN 0 ELSE 1 END, i.end_time DESC
-            </when>
-            <when test="sort == 'paid'">
-                CASE WHEN i.pay_status IN ('Y', 'S', 'P') THEN 0 ELSE 1 END, i.end_time DESC
-            </when>
-            <otherwise>i.end_time DESC</otherwise>
-        </choose>
-    </select>
+    SELECT 
+        i.item_no, 
+        i.item_title, 
+        i.current_price, 
+        i.end_time, 
+        i.views, 
+        i.pay_status,
+        m.user_name as sellerName, 
+        (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as img_url,
+        (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no) as bidCount
+    FROM ITEM i
+    JOIN MEMBER m ON (i.user_no = m.user_no)
+    WHERE i.STATUS = 'E' 
+      AND #{userNo} = (
+          SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
+          FROM BID WHERE item_no = i.item_no
+      )
+    ORDER BY 
+    <choose>
+        <when test="sort == 'priceDesc'">i.current_price DESC</when>
+        <when test="sort == 'priceAsc'">i.current_price ASC</when>
+        <when test="sort == 'unpaid'">
+            CASE WHEN i.pay_status = 'N' THEN 0 ELSE 1 END, i.end_time DESC
+        </when>
+        <when test="sort == 'paid'">
+            CASE WHEN i.pay_status IN ('Y', 'S', 'P') THEN 0 ELSE 1 END, i.end_time DESC
+        </when>
+        <otherwise>i.end_time DESC</otherwise>
+    </choose>
+</select>
 
     <select id="getSellerPaymentList" resultType="SaleListDto" parameterType="map">
     SELECT 

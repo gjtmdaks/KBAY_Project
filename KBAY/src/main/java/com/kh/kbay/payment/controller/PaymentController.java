@@ -6,9 +6,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.delivery.model.vo.Delivery;
+import com.kh.kbay.delivery.service.DeliveryService;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.service.ItemService;
 import com.kh.kbay.member.model.vo.Member;
@@ -38,7 +41,7 @@ public class PaymentController {
 
     private final PaymentService ps;
     private final ItemService is;
-    
+    private final DeliveryService ds;
     @Value("${toss.secret.key}") 
     private String secretKey;
     
@@ -175,10 +178,22 @@ public class PaymentController {
     }
 
     // 모달로 결제 내역 조회(AJAX)
-    @GetMapping(value="/api/receipt/{itemNo}", produces="application/json; charset=utf-8")
+    @GetMapping(value="/api/detail/{itemNo}", produces="application/json; charset=utf-8")
     @ResponseBody
-    public Payment getReceiptApi(@PathVariable("itemNo") int itemNo) {
-        return ps.selectPaymentByItemNo(itemNo);
+    public Map<String, Object> getPaymentAndDeliveryDetail(@PathVariable("itemNo") int itemNo) {
+        Map<String, Object> map = new HashMap<>();
+        
+        // 결제 정보 조회
+        Payment pay = ps.selectPaymentByItemNo(itemNo);
+        map.put("payment", pay);
+        
+        // 배송 정보 조회
+        if(pay != null) {
+            Delivery delivery = ds.selectDeliveryByPaymentNo(pay.getPayNo());
+            map.put("delivery", delivery);
+        }
+        
+        return map;
     }
     
     

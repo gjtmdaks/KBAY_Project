@@ -54,5 +54,7 @@ public interface MypageDao {
     List<BidListDto> getWonList(Map<String, Object> map);
     
     List<SaleListDto> getSellerPaymentList(Map<String, Object> map);
+
+	int increaseSellerLike(int itemNo);
     
 }

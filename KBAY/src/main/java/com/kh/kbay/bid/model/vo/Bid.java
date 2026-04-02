@@ -20,7 +20,7 @@ public class Bid {
 	private int ranking;
 	private String bidIp;
 	private String itemTitle;
-	
+	private int bidCount;
 	private String bidStatus; // 낙찰 포기/박탈 여부 (N, F 등)
 	private String bidType;
 
