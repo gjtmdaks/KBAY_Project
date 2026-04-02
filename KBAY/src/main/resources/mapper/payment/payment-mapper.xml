@@ -39,4 +39,22 @@
         WHERE P.ITEM_NO = #{itemNo}
     </select>
 
+	<select id="selectSellerPaymentList" parameterType="_int" resultType="Payment">
+    SELECT 
+        P.PAY_NO as payNo,
+        P.ITEM_NO as itemNo,
+        P.ORDER_ID as orderId,
+        P.TOTAL_AMOUNT as totalAmount,
+        P.METHOD as method,
+        P.RECEIPT_URL as receiptUrl,
+        P.APPROVED_AT as approvedAt,
+        P.PAY_STATUS as payStatus,
+        I.ITEM_TITLE as orderName 
+    FROM PAYMENT P
+    JOIN ITEM I ON (P.ITEM_NO = I.ITEM_NO)
+    WHERE I.USER_NO = #{sellerNo}
+      AND P.PAY_STATUS = 'Y'
+    ORDER BY P.CREATE_DATE DESC
+</select>
+
 </mapper>

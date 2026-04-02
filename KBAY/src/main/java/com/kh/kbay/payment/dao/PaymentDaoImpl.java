@@ -1,10 +1,10 @@
 package com.kh.kbay.payment.dao;
 
-import org.mybatis.spring.SqlSessionTemplate;
+import java.util.List;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.kh.kbay.delivery.model.vo.Delivery;
 import com.kh.kbay.payment.model.vo.Payment;
 
 import lombok.RequiredArgsConstructor;
@@ -31,5 +31,9 @@ public class PaymentDaoImpl implements PaymentDao {
     public Payment selectPaymentByItemNo(int itemNo) {
         return session.selectOne("payment.selectPaymentByItemNo", itemNo);
     }
-
+    
+    @Override
+    public List<Payment> selectSellerPaymentList(int sellerNo) {
+        return session.selectList("payment.selectSellerPaymentList", sellerNo);
+    }
 }
