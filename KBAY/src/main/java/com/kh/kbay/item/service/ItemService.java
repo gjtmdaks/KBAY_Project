@@ -34,4 +34,7 @@ public interface ItemService {
 	int checkWishlist(Map<String, Object> map);
 
 	void endByBuyNow(int itemNo, int buyNowPrice);
+
+	int updateMissingPaymentDeadlines();
+	List<Integer> selectExpiredPaymentItems();
 }

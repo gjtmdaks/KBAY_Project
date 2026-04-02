@@ -3,6 +3,7 @@ package com.kh.kbay.item.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Update;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -92,5 +93,15 @@ public class ItemDaoImpl implements ItemDao {
 	@Override
 	public void endByBuyNow(Map<String, Object> param) {
 		session.update("item.endByBuyNow", param);
+	}
+
+	@Override
+	public int updateMissingPaymentDeadlines() {
+		return session.update("item.updateMissingPaymentDeadlines");
+	}
+
+	@Override
+	public List<Integer> selectExpiredPaymentItems() {
+		return session.selectList("item.selectExpiredPaymentItems");
 	}
 }
