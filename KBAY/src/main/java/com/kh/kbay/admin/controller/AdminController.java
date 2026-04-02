@@ -391,10 +391,10 @@ public class AdminController {
         // 아이템 상태를 'O'로 바꾸고, 필요하다면 낙찰자들의 BID_STATUS도 정리
         int result = adminService.updateForceFail(itemNo);
         
-        return result > 0 ? "success" : "fail";
+        return result > 0 ? "success" : "cfail";
     }
 
-    // 🚨 차순위 강제 승계 처리 (수정됨!)
+    // 차순위 강제 승계 처리
     @PostMapping("/forceSuccession")
     @ResponseBody
     public String forceSuccession(@RequestParam("itemNo") int itemNo) {

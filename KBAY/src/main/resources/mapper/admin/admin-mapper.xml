@@ -463,7 +463,7 @@
 	          SELECT USER_NO FROM (
 	              SELECT USER_NO FROM BID 
 	              WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
-	              ORDER BY BID_PRICE DESC
+	              ORDER BY BID_PRICE DESC, bid_time ASC
 	          ) WHERE ROWNUM = 1
 	      )
 	</update>

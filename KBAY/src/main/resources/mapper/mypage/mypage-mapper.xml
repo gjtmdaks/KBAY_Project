@@ -121,12 +121,13 @@
         SELECT 
             i.item_no, i.item_title, i.current_price, i.end_time, i.views, i.pay_status,
             (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as img_url,
-            (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no) as bidCount
+            (SELECT COUNT(*) FROM BID WHERE item_no = i.item_no AND BID_STATUS = 'N') as bidCount
         FROM ITEM i
         WHERE i.STATUS = 'E' 
           AND #{userNo} = (
-              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time ASC)
+              SELECT MAX(user_no) KEEP (DENSE_RANK FIRST ORDER BY bid_price DESC, bid_time DESC)
               FROM BID WHERE item_no = i.item_no
+              AND BID_STATUS = 'N'
           )
         ORDER BY 
         <choose>
