@@ -24,5 +24,5 @@ public class BidListDto {
     private String imgUrl;
     
     private String rankingText; // 최고입찰자 / 차순위입찰자
-    
+    private String sellerName; //판매자 이름(낙찰페이지에서 사용)
 }

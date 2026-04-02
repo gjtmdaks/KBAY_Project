@@ -54,6 +54,8 @@ public interface MypageService {
 	
 	List<SaleListDto> getSellerPaymentList(Map<String, Object> map);
 
+	int increaseSellerLike(int itemNo);
+
 	
 
 }

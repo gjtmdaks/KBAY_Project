@@ -118,4 +118,9 @@ public class MypageDaoImpl implements MypageDao {
 		return session.selectList("mypage.getSellerPaymentList", map);
 	}
 	
+	@Override
+	public int increaseSellerLike(int itemNo) {
+	    return session.update("member.increaseSellerLike", itemNo);
+	}
+	
 }

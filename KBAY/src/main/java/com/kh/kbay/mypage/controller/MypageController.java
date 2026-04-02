@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.kbay.board.model.vo.BoardPost;
@@ -295,6 +296,14 @@ public class MypageController {
         model.addAttribute("list", list);
         model.addAttribute("paymentList", payList); 
         return "mypage/paymentList"; 
+    }
+    
+    @PostMapping("/increaseLike")
+    @ResponseBody
+    public String increaseLike(int itemNo) {
+        // 아이템 번호로 판매자의 userNo를 찾아서 LIKE_COUNT 증가
+        int result = ms.increaseSellerLike(itemNo);
+        return (result > 0) ? "success" : "fail";
     }
     
     
