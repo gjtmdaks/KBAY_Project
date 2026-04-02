@@ -26,109 +26,115 @@
 	        <h4>${item.itemTitle}</h4>
 	        
 	        <!-- 가격 or 상태 -->
-		    <p class="price">
-		        <c:choose>
-		            <c:when test="${type eq 'nowDeal'}">
-		                현재가 
-		                <strong>
-		                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
-		                </strong>
-		            </c:when>
-		
-		            <c:when test="${type eq 'endDeal'}">
-		                <c:choose>
-					        <c:when test="${item.status eq 'C'}">
-					            취소 당시 가격 
-					        </c:when>
-					        <c:when test="${item.status eq 'O' or item.status eq 'F'}">
-					            유찰 당시 가격 
-					        </c:when>
-					        <c:otherwise>
-					            낙찰가 
-					        </c:otherwise>
-					    </c:choose> 
-		                <strong>
-		                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
-		                </strong>
-		            </c:when>
-		
-		            <c:when test="${type eq 'yetDeal'}">
-		                시작가 
-		                <strong>
-		                    <fmt:formatNumber value="${item.startPrice}" pattern="#,###"/>원
-		                </strong>
-		            </c:when>
-		        </c:choose>
-		    </p>
-	
+		    <div class="price-row">
+				<div class="price-col">
+			        <c:choose>
+			            <c:when test="${type eq 'nowDeal'}">
+							<span class="label">현재가</span>
+			                <strong>
+			                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
+			                </strong>
+			            </c:when>
+			
+			            <c:when test="${type eq 'endDeal'}">
+			                <c:choose>
+						        <c:when test="${item.status eq 'C'}">
+									<span class="label">취소 당시 가격</span>
+						        </c:when>
+						        <c:when test="${item.status eq 'O' or item.status eq 'F'}">
+									<span class="label">유찰 당시 가격</span>
+						        </c:when>
+						        <c:otherwise>
+									<span class="label">낙찰가</span>
+						        </c:otherwise>
+						    </c:choose> 
+			                <strong>
+			                    <fmt:formatNumber value="${item.currentPrice}" pattern="#,###"/>원
+			                </strong>
+			            </c:when>
+			
+			            <c:when test="${type eq 'yetDeal'}">
+							<span class="label">시작가</span>
+			                <strong>
+			                    <fmt:formatNumber value="${item.startPrice}" pattern="#,###"/>원
+			                </strong>
+			            </c:when>
+			        </c:choose>
+			    </div>
+				<div class="price-col">
+					<span class="label">분류</span>
+					<span class="label">${item.categoryName}</span>
+				</div>
+		    </div>
+
 	        <div class="item-meta">
-	            <span>판매자 ${item.userNo}</span>
+	            <span>판매자 ${item.userName}</span>
 	            <span>조회수 ${item.views}회</span>
 	            <span>입찰수 ${item.bidCount}회</span>
 	        </div>
-				
-	            <!-- 타이머 -->
-				<span class="timer">
-				    <c:choose>
-				
-				        <c:when test="${type eq 'endDeal' || remain <= 0}">
-				            <c:choose>
-				                <c:when test="${item.status eq 'C'}">
-				                    <strong style="color:#7f8c8d;">강제 취소됨</strong>
-				                </c:when>
-				                <c:when test="${item.status eq 'F'}">
-				                    <strong style="color:#7f8c8d;">유찰(미결제)</strong>
-				                </c:when>
-				                <c:when test="${item.status eq 'O'}">
-				                    <strong style="color:#7f8c8d;">강제 유찰됨</strong>
-				                </c:when>
-				                <c:otherwise>
-				                    <strong style="color:red;">종료</strong>
-				                </c:otherwise>
-				            </c:choose>
-				        </c:when>
-				
-				        <c:otherwise>
-				            <c:choose>
-				                <c:when test="${type eq 'yetDeal'}">
+
+			<!-- 타이머 -->
+			<span class="timer">
+				<c:choose>
+
+					<c:when test="${type eq 'endDeal' || remain <= 0}">
+						<c:choose>
+							<c:when test="${item.status eq 'C'}">
+								<strong style="color:#7f8c8d;">강제 취소됨</strong>
+							</c:when>
+							<c:when test="${item.status eq 'F'}">
+								<strong style="color:#7f8c8d;">유찰(미결제)</strong>
+							</c:when>
+							<c:when test="${item.status eq 'O'}">
+								<strong style="color:#7f8c8d;">강제 유찰됨</strong>
+							</c:when>
+							<c:otherwise>
+								<strong style="color:red;">종료</strong>
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${type eq 'yetDeal'}">
 				                    시작까지 
-				                </c:when>
-				                <c:otherwise>
+							</c:when>
+							<c:otherwise>
 				                    종료까지 
-				                </c:otherwise>
-				            </c:choose>
+							</c:otherwise>
+						</c:choose>
 				
-				            <c:choose>
-				                <c:when test="${remain < 3600}">
-				                    <c:set var="mins" value="${remain / 60}" />
-				                    <fmt:formatNumber value="${mins}" pattern="0"/>분
-				                </c:when>
+						<c:choose>
+							<c:when test="${remain < 3600}">
+								<c:set var="mins" value="${remain / 60}" />
+								<fmt:formatNumber value="${mins}" pattern="0"/>분
+							</c:when>
+
+							<c:when test="${remain < 259200}">
+								<c:set var="hours" value="${remain / 3600}" />
+								<c:set var="mins" value="${(remain % 3600) / 60}" />
+
+								<fmt:formatNumber value="${hours}" pattern="0"/>시간
+								<fmt:formatNumber value="${mins}" pattern="0"/>분
+							</c:when>
+
+							<c:otherwise>
+								<c:set var="days" value="${remain / 86400}" />
+								<c:set var="hours" value="${(remain % 86400) / 3600}" />
+								<c:set var="mins" value="${(remain % 3600) / 60}" />
 				
-				                <c:when test="${remain < 259200}">
-				                    <c:set var="hours" value="${remain / 3600}" />
-				                    <c:set var="mins" value="${(remain % 3600) / 60}" />
+								<fmt:formatNumber value="${days}" pattern="0"/>일
+								<fmt:formatNumber value="${hours}" pattern="0"/>시간
+								<fmt:formatNumber value="${mins}" pattern="0"/>분
+							</c:otherwise>
+						</c:choose>
 				
-				                    <fmt:formatNumber value="${hours}" pattern="0"/>시간
-				                    <fmt:formatNumber value="${mins}" pattern="0"/>분
-				                </c:when>
-				
-				                <c:otherwise>
-				                    <c:set var="days" value="${remain / 86400}" />
-				                    <c:set var="hours" value="${(remain % 86400) / 3600}" />
-				                    <c:set var="mins" value="${(remain % 3600) / 60}" />
-				
-				                    <fmt:formatNumber value="${days}" pattern="0"/>일
-				                    <fmt:formatNumber value="${hours}" pattern="0"/>시간
-				                    <fmt:formatNumber value="${mins}" pattern="0"/>분
-				                </c:otherwise>
-				            </c:choose>
-				
-				            <c:if test="${remain <= 600}">
-				                <span style="color:red;"> (마감임박)</span>
-				            </c:if>
-				        </c:otherwise>
-				    </c:choose>
-				</span>
+						<c:if test="${remain <= 600}">
+							<span style="color:red;"> (마감임박)</span>
+						</c:if>
+					</c:otherwise>
+				</c:choose>
+			</span>
 	    </div>
 	</div>
 </a>

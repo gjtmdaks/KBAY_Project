@@ -27,18 +27,21 @@ public class ItemServiceImpl implements ItemService {
 	private final ItemDao id;
 
 	@Override
-	public int selectItemCount(String type, String keyword) {
+	public int selectItemCount(String type, String keyword, Integer category) {
 	    Map<String, Object> param = new HashMap<>();
 	    param.put("type", type);
 	    param.put("keyword", keyword);
+	    param.put("category", category);
 	    return id.selectItemCount(param);
 	}
 
 	@Override
-	public List<Item> selectItemList(String type, String keyword, PageInfo pi) {
+	public List<Item> selectItemList(String type, String keyword, Integer category, String sort, PageInfo pi) {
 	    Map<String, Object> param = new HashMap<>();
 	    param.put("type", type);
 	    param.put("keyword", keyword);
+	    param.put("category", category);
+	    param.put("sort", sort);
 	    param.put("offset", pi.getOffset());
 	    param.put("limit", pi.getLimit());
 

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.service.BidService;
+import com.kh.kbay.item.dao.ItemDao;
+import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class BidController {
 	private final BidService bs;
+	private final ItemDao id;
 	
 	@PostMapping
 	public Map<String, Object> bid(
@@ -35,6 +38,7 @@ public class BidController {
 	        Authentication auth){
 
 	    Map<String, Object> result = new HashMap<>();
+	    Item item = id.selectItemDetail(req.getItemNo());
 
 	    // 1. 로그인 체크
 	    if(auth == null || !auth.isAuthenticated()) {
@@ -45,7 +49,15 @@ public class BidController {
 
 	    try {
 	        Member user = (Member) auth.getPrincipal();
+	        int loginUserNo = user.getUserNo();
+	        
 	        req.setUserNo(user.getUserNo());
+	        
+	        if (loginUserNo == item.getUserNo()) {
+	            result.put("result", "FAIL");
+	            result.put("message", "본인 상품 입찰 불가");
+	            return result;
+	        }
 	        
 	        //입찰 시점 IP 주소 추출
 	        String ip = request.getHeader("X-Forwarded-For");
@@ -117,6 +129,12 @@ public class BidController {
 	    if(auth == null || !auth.isAuthenticated()) {
 	        result.put("result", "FAIL");
 	        result.put("message", "LOGIN_REQUIRED");
+	        return result;
+	    }
+	    // 2. 본인 체크
+	    if (((Member) auth.getPrincipal()).getUserNo() == req.getUserNo()) {
+	        result.put("result", "FAIL");
+	        result.put("message", "본인 상품 입찰 불가");
 	        return result;
 	    }
 

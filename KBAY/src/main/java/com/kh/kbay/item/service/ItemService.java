@@ -11,9 +11,9 @@ import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.model.vo.ItemCategory;
 
 public interface ItemService {
-	int selectItemCount(String type, String keyword);
+	int selectItemCount(String type, String keyword, Integer category);
 
-	List<Item> selectItemList(String type, String keyword, PageInfo pi);
+	List<Item> selectItemList(String type, String keyword, Integer category, String sort, PageInfo pi);
 
 	int insertItem(Item item);
 

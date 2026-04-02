@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -36,10 +37,18 @@ public class BidServiceImpl implements BidService {
     private final ItemService is;
     private final RedissonClient redissonClient;
     private final RedisPublisher redisPublisher;
+	private final SqlSessionTemplate session;
 
     @Override
     @Transactional
     public int placeBid(Bid req) {
+        // 0. 본인 상품 체크
+        Item it = session.selectOne("item.selectItemDetail", req.getItemNo());
+
+        if (it.getUserNo() == req.getUserNo()) {
+            throw new RuntimeException("본인 상품에는 입찰할 수 없습니다.");
+        }
+        
         Bid previousTopBid = bd.findTopBid(req.getItemNo());
         
         // 1. Redis가 없는 경우 (Fallback)

@@ -48,12 +48,15 @@ public class ItemController {
 	        @PathVariable("type") String type,
 	        @RequestParam(value="page", defaultValue="1") int page,
 	        @RequestParam(value="keyword", required=false) String keyword,
+	        // ✅ 추가
+	        @RequestParam(value="category", required=false) Integer category,
+	        @RequestParam(value="sort", required=false) String sort,
 	        Model model) {
 
-	    int totalCount = is.selectItemCount(type, keyword);
+	    int totalCount = is.selectItemCount(type, keyword, category);
 	    PageInfo pi = PageInfo.of(page, totalCount, 16);
 
-	    List<Item> list = is.selectItemList(type, keyword, pi);
+	    List<Item> list = is.selectItemList(type, keyword, category, sort, pi);
 
 	    for(Item i : list) {
 	    	int bidCount = bs.selectBidCount(i.getItemNo());
@@ -68,6 +71,10 @@ public class ItemController {
 	    model.addAttribute("maxPage", pi.getMaxPage());
 	    model.addAttribute("type", type);
 	    model.addAttribute("keyword", keyword);
+	    
+	    // ✅ 유지 (상태 유지용)
+	    model.addAttribute("category", category);
+	    model.addAttribute("sort", sort);
 
 	    return "item/" + type;
 	}
