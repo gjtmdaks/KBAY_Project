@@ -75,15 +75,17 @@
 
             </table>
 
-            <div class="btn-area">
-                <button type="submit" class="btn-submit">수정하기</button>
-                <button type="button" onclick="history.back()">취소</button>
+            <div>
+            	<div class="btn-out">
+            		<button type="button" class="btn-submit">회원 탈퇴</button>
+            	</div>
+                <div class="btn-area">
+    	            <button type="submit" class="btn-submit">수정하기</button>
+	                <button type="button" class="btn-submit" onclick="history.back()">취소</button>
+                </div>
             </div>
-
         </form>
-
     </main>
-
 </section>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />

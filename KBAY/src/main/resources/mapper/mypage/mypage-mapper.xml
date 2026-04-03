@@ -211,32 +211,31 @@
 </select>
 
     <select id="getSellerPaymentList" resultType="SaleListDto" parameterType="map">
-    SELECT 
-        i.item_no, 
-        i.item_title, 
-        i.current_price, 
-        i.end_time, 
-        i.views,
-        p.pay_no as paymentNo, 
-        p.pay_status as payStatus,
-        (SELECT m.user_id 
-         FROM BID b 
-         JOIN MEMBER m ON b.user_no = m.user_no 
-         WHERE b.item_no = i.item_no 
-           AND b.bid_price = i.current_price 
-           AND ROWNUM = 1) as buyerId,
-        (SELECT COUNT(*) FROM BID b WHERE b.item_no = i.item_no) as bidCount, 
-        (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as imgUrl,
-        CASE 
-            WHEN p.pay_status = 'Y' THEN '결제 완료'
-            WHEN p.pay_status = 'S' THEN '배송 중'
-            WHEN p.pay_status = 'P' THEN '거래 완료'
-            ELSE '취소됨'
-        END as statusText
-    FROM ITEM i
-    JOIN PAYMENT p ON i.item_no = p.item_no
-    WHERE i.user_no = #{userNo} 
-    ORDER BY p.approved_at DESC
-</select>
+	    SELECT 
+	        i.item_no, 
+	        i.item_title, 
+	        i.current_price, 
+	        i.end_time, 
+	        i.views,
+	        p.pay_no as paymentNo, 
+	        p.pay_status as payStatus,
+			(SELECT MAX(m.user_id) KEEP (DENSE_RANK FIRST ORDER BY b.bid_price DESC, b.bid_time ASC)
+			 FROM BID b
+			 JOIN MEMBER m ON b.user_no = m.user_no
+			 WHERE b.item_no = i.item_no) AS buyerId,
+	        (SELECT COUNT(*) FROM BID b WHERE b.item_no = i.item_no) as bidCount, 
+	        (SELECT MIN(img_url) FROM ITEM_IMG WHERE item_no = i.item_no) as imgUrl,
+	        p.receipt_url as receiptUrl,
+	        CASE 
+	            WHEN p.pay_status = 'Y' THEN '결제 완료'
+	            WHEN p.pay_status = 'S' THEN '배송 중'
+	            WHEN p.pay_status = 'P' THEN '거래 완료'
+	            ELSE '취소됨'
+	        END as statusText
+	    FROM ITEM i
+	    JOIN PAYMENT p ON i.item_no = p.item_no
+	    WHERE i.user_no = #{userNo} 
+	    ORDER BY p.approved_at DESC
+	</select>
 
 </mapper>

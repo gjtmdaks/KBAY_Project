@@ -18,4 +18,5 @@ public class SaleListDto {
 
     private int paymentNo;     // PAYMENT_NO (배송 모달용)
     private String payStatus;  // 'Y'(결제완료), 'S'(배송중), 'P'(최종완료)
+    private String receiptUrl;
 }

@@ -67,13 +67,12 @@
 							</c:choose>
 
 							<%-- 매출전표 버튼 - 해당 아이템 번호와 매칭되는 결제 정보가 있을 때 --%>
-							<c:forEach var="p" items="${paymentList}">
-								<c:if test="${p.itemNo eq item.itemNo && not empty p.receiptUrl}">
-									<button type="button" class="btn-receipt" onclick="window.open('${p.receiptUrl}', 'receipt', 'width=500,height=700')">
-										거래 영수증 확인
-									</button>
-								</c:if>
-							</c:forEach>
+							<c:if test="${not empty item.receiptUrl}">
+							    <button type="button" class="btn-receipt"
+							        onclick="window.open('${item.receiptUrl}', 'receipt', 'width=500,height=700')">
+							        거래 영수증 확인
+							    </button>
+							</c:if>
 
 							<button type="button" class="btn-gray" onclick="location.href='${pageContext.request.contextPath}/auction/detail/${item.itemNo}'">상세보기</button>
 						</div>
