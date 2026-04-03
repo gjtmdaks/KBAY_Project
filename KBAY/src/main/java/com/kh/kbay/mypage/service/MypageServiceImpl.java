@@ -325,4 +325,10 @@ public class MypageServiceImpl implements MypageService {
                 return "-";
         }
     }
+    
+    @Override
+    public int deleteMember(int userNo) {
+        return md.deleteMember(userNo);
+    }
+    
 }

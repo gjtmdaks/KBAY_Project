@@ -244,4 +244,9 @@
     WHERE user_no = #{userNo}
 </update>
 
+<update id="deleteMember">
+    UPDATE MEMBER
+    SET USER_DELETE_YN = 'Y'
+    WHERE USER_NO = #{userNo}
+</update>
 </mapper>

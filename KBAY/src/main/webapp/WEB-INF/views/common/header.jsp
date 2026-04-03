@@ -97,13 +97,15 @@
         if (msg) {
             // 메시지 내용에 '성공'이나 '완료'가 포함되었을 때만 success 아이콘 사용
             const isSuccess = msg.includes("성공") || msg.includes("완료");
+            	
+            const isDeleteMsg = msg.includes("탈퇴");
             
             Swal.fire({
                 icon: isSuccess ? 'success' : 'info',
                 title: isSuccess ? '완료!' : '알림',
                 text: msg,
                 // 비로그인(회원가입 직후 등)일 때만 로그인 버튼 노출
-                showCancelButton: isAnonymous, 
+                showCancelButton: isAnonymous && !isDeleteMsg, 
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#4e73df',
                 confirmButtonText: '확인',

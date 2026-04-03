@@ -58,5 +58,7 @@ public interface MypageService {
 	
 	int updatePassword(int userNo, String encPwd);
 	
+	int deleteMember(int userNo);
+	
 
 }

@@ -58,5 +58,7 @@ public interface MypageDao {
 	int increaseSellerLike(int itemNo);
 	
 	int updatePassword(Map<String, Object> map);
+	
+	int deleteMember(int userNo);
     
 }

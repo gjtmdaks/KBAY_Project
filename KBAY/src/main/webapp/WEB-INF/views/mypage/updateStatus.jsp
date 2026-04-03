@@ -163,7 +163,35 @@ function updatePassword() {
         }
     });
 }
-function confirmDelete() { if(confirm("정말로 탈퇴하시겠습니까?")) location.href = "${pageContext.request.contextPath}/member/delete"; }
+function confirmDelete() { 
+    Swal.fire({
+        title: '정말로 탈퇴하시겠습니까?',
+        text: "탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: '네, 진행하겠습니다',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '신중히 선택해주시기 바랍니다..',
+                text: "이 작업은 되돌릴 수 없습니다.",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: '최종 탈퇴',
+                cancelButtonText: '한 번 더 생각해보기'
+            }).then((finalResult) => {
+                if (finalResult.isConfirmed) {
+                    location.href = "${pageContext.request.contextPath}/mypage/delete"; 
+                }
+            });
+        }
+    });
+}
 </script>
 </body>
 </html>

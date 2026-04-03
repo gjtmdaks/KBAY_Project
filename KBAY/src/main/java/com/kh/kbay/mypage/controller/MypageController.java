@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.item.model.vo.Item;
@@ -336,5 +340,24 @@ public class MypageController {
         return result;
     }
     
+    
+    @GetMapping("delete")
+    public String deleteMember(Authentication auth, HttpServletRequest request, RedirectAttributes ra) {
+        Member loginUser = (Member) auth.getPrincipal();
+        int result = ms.deleteMember(loginUser.getUserNo());
+
+        if (result > 0) {
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            ra.addFlashAttribute("alertMsg", "탈퇴가 성공적으로 처리되었습니다.");
+            return "redirect:/";
+        } else {
+            ra.addFlashAttribute("errorMsg", "탈퇴 처리 중 오류가 발생했습니다.");
+            return "redirect:/mypage/updateStatus";
+        }
+    }
     
 }
