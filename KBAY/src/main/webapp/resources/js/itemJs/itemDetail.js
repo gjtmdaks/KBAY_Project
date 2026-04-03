@@ -234,7 +234,7 @@ function openBidModal(itemNo, page = 1) {
                     displayIp = isMine ? b.bidIp : (parts.length === 4 ? `${parts[0]}.${parts[1]}.***.${parts[3]}` : b.bidIp.substring(0, b.bidIp.lastIndexOf(":") + 1) + "***");
                 }
                 const d = new Date(b.bidTime);
-                const bidDateFull = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+                const bidDateFull = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}.${String(d.getMilliseconds()).padStart(3, '0')}`;
                 
                 // 🔥 pi.totalCount와 pi.limit으로 번호 계산
                 const displayNum = pi.totalCount - ((pi.currentPage - 1) * pi.limit) - index;
