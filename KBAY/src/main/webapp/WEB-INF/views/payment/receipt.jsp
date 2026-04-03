@@ -57,7 +57,7 @@
 
         <div class="receipt-footer">
             <button type="button" class="btn-secondary" onclick="window.open('${receiptUrl}', 'receipt', 'width=500,height=700')">
-                공식 영수증 확인
+                영수증 확인
             </button>
             <button type="button" class="btn-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/wonList'">
                 낙찰 목록으로 이동

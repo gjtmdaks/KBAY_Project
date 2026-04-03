@@ -45,6 +45,10 @@
                     <td>사고 건수</td>
                     <td><a href="${pageContext.request.contextPath}/mypage/reportedList" class="card-btn">${accidentCount}건</a></td>
                 </tr>
+                   <tr>
+                    <td>거래 미결제 횟수</td>
+                    <td>${user.noPayCount}건</td>
+                </tr>
             </table>
         </c:when>
     </c:choose>
