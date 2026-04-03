@@ -4,6 +4,10 @@ const CURRENT_USER_NO = SERVER_DATA.currentUserNo;
 const INITIAL_PRICE = parseInt(SERVER_DATA.currentPrice) || 0;
 const MAX_BID = 1000000000;
 const BUY_NOW_PRICE = SERVER_DATA.buyNowPrice;
+const container = document.getElementById("imageContainer");
+const img = document.getElementById("mainImg");
+const magnifier = document.getElementById("magnifier");
+const zoom =2.5;
 
 let stompClient = null;
 
@@ -28,6 +32,32 @@ function moveImage(dir) {
         thumbs[newIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 }
+
+container.addEventListener("mousemove", (e) => {
+    magnifier.style.display = "block";
+    
+    const rect = container.getBoundingClientRect();
+    let x = e.pageX - rect.left - window.pageXOffset;
+    let y = e.pageY - rect.top - window.pageYOffset;
+
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    if (x > rect.width) x = rect.width;
+    if (y > rect.height) y = rect.height;
+
+    magnifier.style.left = (x - magnifier.offsetWidth / 2) + "px";
+    magnifier.style.top = (y - magnifier.offsetHeight / 2) + "px";
+
+    magnifier.style.backgroundImage = `url('${img.src}')`;
+    magnifier.style.backgroundSize = (rect.width * zoom) + "px " + (rect.height * zoom) + "px";
+    magnifier.style.backgroundPosition = "-" + ((x * zoom) - magnifier.offsetWidth / 2) + "px -" + ((y * zoom) - magnifier.offsetHeight / 2) + "px";
+});
+
+container.addEventListener("mouseleave", () => {
+    magnifier.style.display = "none";
+});
+
+
 
 function toggleWishlist(itemNo) {
     const wishBtn = document.getElementById("wishBtn");

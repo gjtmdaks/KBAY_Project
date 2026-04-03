@@ -26,9 +26,9 @@
 
 		<!-- 이미지 영역 -->
 		<div class="image-section">
-			<div class="main-image">
-				<img id="mainImg" src="${item.mainImg}"
-					onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+			        <div class="main-image" id="imageContainer">
+   				 <img id="mainImg" src="${item.mainImg}" onerror="this.onerror=null; this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg';">
+   				 <div id="magnifier"></div> 
 			</div>
 			<div class="thumbnail-wrapper">
 				<button class="thumb-btn left" onclick="moveImage(-1)">❮</button>

@@ -20,11 +20,25 @@
 }
 
 .main-image {
-    border-radius: 10px;
+	    position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
     background: #fff;
     box-shadow: var(--shadow);
+        cursor: none; 
+}
+
+#magnifier {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    display: none;
+    pointer-events: none; 
+    background-repeat: no-repeat;
+    z-index: 100;
 }
 
 .main-image img {
@@ -36,6 +50,10 @@
 }
 .main-image img.fade-out {
     opacity: 0.4;
+}
+
+.thumb:hover {
+    border-color: var(--navy); 
 }
 
 .thumbnail-wrapper {
