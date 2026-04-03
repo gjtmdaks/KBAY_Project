@@ -139,7 +139,7 @@ function search() {
 function viewReceipt(e, itemNo) {
     e.stopPropagation();
     
-    fetch(`${pageContext.request.contextPath}/payment/api/receipt/` + itemNo)
+    fetch(`${pageContext.request.contextPath}/payment/receipt/` + itemNo)
         .then(response => response.json())
         .then(data => {
             document.getElementById("m-orderName").innerText = data.orderName;
@@ -162,7 +162,7 @@ function viewReceipt(e, itemNo) {
             // 로딩 상태
             document.getElementById("m-orderName").innerText = "불러오는 중...";
             
-            fetch(`${pageContext.request.contextPath}/payment/api/receipt/` + itemNo)
+            fetch(`${pageContext.request.contextPath}/payment/receipt/` + itemNo)
         })
         .catch(err => {
             console.error(err);
