@@ -128,4 +128,9 @@ public class MypageDaoImpl implements MypageDao {
 	    return session.update("mypage.updatePassword", map);
 	}
 	
+	@Override
+	public int deleteMember(int userNo) {
+	    return session.update("mypage.deleteMember", userNo);
+	}
+	
 }

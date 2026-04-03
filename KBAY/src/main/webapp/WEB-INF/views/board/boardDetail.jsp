@@ -28,7 +28,7 @@
         <c:if test="${not empty loginUser and loginUser.userNo == b.userNo}">
             <div class="top-buttons">
                 <button type="button" onclick="location.href='/kbay/board/updateBoard/${b.boardNo}'">게시글 편집</button>
-                <button type="button" onclick="deletePost(${b.boardNo}, ${b.boardCdNo} })">게시글 삭제</button>
+                <button type="button" onclick="deletePost(${b.boardNo}, ${b.boardCdNo} )">게시글 삭제</button>
             </div>
         </c:if>
     </div>

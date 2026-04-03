@@ -4,13 +4,15 @@
 <resultMap id="memberResultSet" type="member">
     <id column="USER_NO" property="userNo" />
     <result column="USER_ID" property="userId" />
-    <result column="USER_PWD" property="userPwd" /> <result column="USER_NAME" property="userName" />
+    <result column="USER_PWD" property="userPwd" /> 
+    <result column="USER_NAME" property="userName" />
     <result column="AUTHORITY" property="authority" />
     <result column="USER_ADDRESS" property="userAddress" />
     <result column="USER_PHONE" property="userPhone" />
     <result column="USER_EMAIL" property="userEmail" />
     <result column="USER_ENROLL_DATE" property="userEnrollDate" />
     <result column="USER_DELETE_YN" property="userDeleteYn" />
+    <result column="USER_STATUS" property="userStatus" />
 </resultMap>
 	<select id="loginUserById" resultMap="memberResultSet">
 	SELECT *
