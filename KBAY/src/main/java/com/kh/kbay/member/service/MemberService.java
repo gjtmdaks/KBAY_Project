@@ -21,4 +21,6 @@ public interface MemberService {
 	boolean verifyCode(String email, String inputCode);
 	
     void sendOutbidEmail(String email, String itemTitle, int newPrice);
+
+	int deleteMailCode();
 }

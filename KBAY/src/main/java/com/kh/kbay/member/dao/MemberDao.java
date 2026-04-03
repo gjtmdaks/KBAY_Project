@@ -31,5 +31,7 @@ public interface MemberDao {
 
 	void updateReleaseSuspend(int userNo);
 
+	int deleteMailCode();
+
 	
 }

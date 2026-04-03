@@ -14,6 +14,7 @@ import com.kh.kbay.bid.service.BidService;
 import com.kh.kbay.board.service.BoardService;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.item.service.ItemService;
+import com.kh.kbay.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class schedulingController {
 	private final ItemService is;
     private final BidService bs;
     private final BoardService boards;
+    private final MemberService ms;
     private final AdminService adminService;
 	
 	@Scheduled(fixedDelay = 1000) // 1초마다
@@ -134,6 +136,14 @@ public class schedulingController {
                     log.error("{}번 아이템 미결제 자동 처리 중 오류 발생", itemNo, e);
                 }
             }
+        }
+	}
+	
+	@Scheduled(fixedDelay = 1000) // 1초마다
+	public void deleteMailCode() {
+		int delete = ms.deleteMailCode();
+		if (delete > 0) {
+            log.info("쓰레기 데이터 삭제: {}건", delete);
         }
 	}
 }
