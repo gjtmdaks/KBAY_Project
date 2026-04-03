@@ -162,7 +162,7 @@ public class PaymentController {
     }
     
     //상세 페이지 이동
-    @GetMapping("/receipt/{itemNo}")
+    @GetMapping(value="/receipt/{itemNo}", produces="application/json; charset=utf-8")
     public String viewReceipt(@PathVariable("itemNo") int itemNo, Model model) {
         Payment pay = ps.selectPaymentByItemNo(itemNo);
         

@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('targetUserNo').innerText = member.userNo;
                     document.getElementById('targetUserName').innerText = member.userName;
                     document.getElementById('targetUserId').innerText = "@" + member.userId;
+                    document.getElementById('targetUserNoPayCount').innerText = member.noPayCount;
                     
                     // 현재 메뉴 버튼 상태를 백업
                     originalModalBody = document.querySelector('.modal-body').innerHTML;

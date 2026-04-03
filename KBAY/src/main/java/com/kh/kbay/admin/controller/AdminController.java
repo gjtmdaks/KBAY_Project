@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.kbay.admin.service.AdminService;
-
 import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
@@ -26,6 +25,7 @@ import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
 import com.kh.kbay.mypage.model.vo.FaqImg;
+import com.kh.kbay.payment.model.vo.PaymentSearchDto;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -452,15 +452,13 @@ public class AdminController {
             @RequestParam(value="keyword", required=false) String keyword,
             Model model) {
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("sort", sort);
-        paramMap.put("keyword", keyword);
+    	PaymentSearchDto psd = new PaymentSearchDto();
+    	psd.setSort(sort);
+    	psd.setKeyword(keyword);
 
-        List<Map<String, Object>> list = adminService.selectPaymentList(paramMap);
+        List<Map<String, Object>> list = adminService.selectPaymentList(psd);
 
         model.addAttribute("list", list);
-        model.addAttribute("sort", sort);
-        model.addAttribute("keyword", keyword);
 
         return "admin/adminPaymentList";
     }

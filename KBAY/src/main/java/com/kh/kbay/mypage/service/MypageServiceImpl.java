@@ -71,22 +71,6 @@ public class MypageServiceImpl implements MypageService {
 
 	        // 4. 최고 입찰자
 	        Bid topBid = bd.findTopBid(itemNo);
-	        // 5. 상태 변환
-	        String statusText;
-
-	        switch(item.getStatus()){
-	            case "Y":
-	                statusText = "시작 전";
-	                break;
-	            case "N":
-	                statusText = "진행 중";
-	                break;
-	            case "E":
-	                statusText = "종료";
-	                break;
-	            default:
-	                statusText = "-";
-	        }
 
 	        // 6. 순위 판단
 	        String rankingText = "차순위입찰자";
@@ -101,7 +85,7 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setCurrentPrice(item.getCurrentPrice());
 	        dto.setBidPrice(b.getBidPrice());
 	        dto.setStatus(item.getStatus());
-	        dto.setStatusText(statusText);
+	        dto.setStatusText(statusText(item.getStatus()));
 	        dto.setBidCount(bidCount);
 	        dto.setViews(item.getViews());
 	        dto.setEndTime(item.getEndTime());
@@ -131,23 +115,6 @@ public class MypageServiceImpl implements MypageService {
 	        // 3. 입찰 수
 	        int bidCount = bd.selectBidCount(itemNo);
 
-	        // 4. 상태 변환
-	        String statusText;
-
-	        switch(item.getStatus()){
-	            case "Y":
-	                statusText = "시작 전";
-	                break;
-	            case "N":
-	                statusText = "진행 중";
-	                break;
-	            case "E":
-	                statusText = "종료";
-	                break;
-	            default:
-	                statusText = "-";
-	        }
-
 	        // 5. DTO 조립
 	        SaleListDto dto = new SaleListDto();
 	        dto.setItemNo(itemNo);
@@ -158,7 +125,7 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setEndTime(item.getEndTime());
 	        dto.setImgUrl(imgUrl);
 	        dto.setBuyerId(item.getUserNo()+""); // 필요시 join해서 userId로
-	        dto.setStatusText(statusText);
+	        dto.setStatusText(statusText(item.getStatus()));
 
 	        result.add(dto);
 	    }
@@ -184,15 +151,6 @@ public class MypageServiceImpl implements MypageService {
 	        // 2. 입찰 수
 	        int bidCount = bd.selectBidCount(itemNo);
 
-	        // 3. 상태 텍스트
-	        String statusText;
-	        switch(item.getStatus()){
-	            case "Y": statusText = "시작 전"; break;
-	            case "N": statusText = "진행 중"; break;
-	            case "E": statusText = "종료"; break;
-	            default: statusText = "-";
-	        }
-
 	        // 4. DTO 조립
 	        WishListDto dto = new WishListDto();
 	        dto.setItemNo(itemNo);
@@ -203,7 +161,7 @@ public class MypageServiceImpl implements MypageService {
 	        dto.setImgUrl(imgUrl);
 	        dto.setBidCount(bidCount);
 	        dto.setStatus(item.getStatus());
-	        dto.setStatusText(statusText);
+	        dto.setStatusText(statusText(item.getStatus()));
 	        dto.setPayStatus(item.getPayStatus());
 	        
 	        result.add(dto);
@@ -346,4 +304,25 @@ public class MypageServiceImpl implements MypageService {
 	    map.put("encPwd", encPwd);
 	    return md.updatePassword(map);
 	}
+    
+    private String statusText(String status) {
+        switch(status){
+            case "Y":
+                return "시작 전";
+            case "N":
+                return "진행 중";
+            case "E":
+                return "종료";
+            case "D":
+                return "삭제";
+            case "C":
+                return "취소";
+            case "F":
+                return "유찰";
+            case "O":
+                return "유찰"; // 아마도 강제유찰
+            default:
+                return "-";
+        }
+    }
 }

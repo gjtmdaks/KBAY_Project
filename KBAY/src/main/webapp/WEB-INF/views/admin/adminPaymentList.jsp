@@ -25,19 +25,22 @@
     <main class="main-content">
         <h2>회원 결제 내역 관리</h2>
 
-        <div class="top-bar">
-            <input type="text" id="searchKeyword" placeholder="회원명 또는 번호"
-                   value="${keyword}">
-
-            <select id="sortOrder">
-                <option value="latest">최신순</option>
-                <option value="oldest">오래된순</option>
-                <option value="priceDesc">금액 높은순</option>
-                <option value="priceAsc">금액 낮은순</option>
-            </select>
-
-            <button onclick="search()">검색</button>
-        </div>
+		<form method="get">
+		    <div class="top-bar">
+		        <input type="text" name="keyword" id="searchKeyword"
+		               placeholder="회원명 또는 번호"
+		               value="${keyword}">
+		
+		        <select name="sort" id="sortOrder">
+		            <option value="latest" ${sort == 'latest' ? 'selected' : ''}>최신순</option>
+		            <option value="oldest" ${sort == 'oldest' ? 'selected' : ''}>오래된순</option>
+		            <option value="priceDesc" ${sort == 'priceDesc' ? 'selected' : ''}>금액 높은순</option>
+		            <option value="priceAsc" ${sort == 'priceAsc' ? 'selected' : ''}>금액 낮은순</option>
+		        </select>
+		
+		        <button type="submit">검색</button>
+		    </div>
+		</form>
 
 		<div class="payment-list">
 		    <c:forEach var="p" items="${list}">
@@ -48,7 +51,7 @@
 		                 onerror="this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg'">
 		
 		            <div class="info">
-		                <div class="badge">결제완료</div>
+		                <div class="badge">${p.payStatus}</div>
 		                <h3 class="title">${p.ITEM_TITLE}</h3>
 		
 		                <p class="meta">
@@ -73,69 +76,9 @@
 		        </div>
 		    </c:forEach>
 		</div>
-		        
-        <div id="receiptModal" class="modal-overlay">
-		    <div class="receipt-card modal-content">
-		        <div class="receipt-header">
-		            <div class="success-icon">
-		                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-		                    <polyline points="20 6 9 17 4 12"></polyline>
-		                </svg>
-		            </div>
-		            <h2>결제 내역 상세</h2>
-		            <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
-		        </div>
-		
-		        <div class="receipt-body">
-		            <div class="item-summary">
-		                <span class="label">결제 상품</span>
-		                <strong id="m-orderName" class="value"></strong>
-		            </div>
-		            
-		            <div class="price-major">
-		                <span class="label">최종 결제 금액</span>
-		                <strong class="amount">
-		                    <span id="m-totalAmount"></span>
-		                    <span class="unit">원</span>
-		                </strong>
-		            </div>
-		
-		            <div class="detail-list">
-		                <div class="detail-item">
-		                    <span class="d-label">주문번호</span>
-		                    <span id="m-orderId" class="d-value"></span>
-		                </div>
-		                <div class="detail-item">
-		                    <span class="d-label">결제수단</span>
-		                    <span id="m-method" class="d-value"></span>
-		                </div>
-		                <div class="detail-item">
-		                    <span class="d-label">결제일시</span>
-		                    <span id="m-approvedAt" class="d-value"></span>
-		                </div>
-		            </div>
-		        </div>
-		
-		        <div class="receipt-footer">
-		            <button type="button" class="btn-secondary" id="m-receiptUrlBtn">
-		                영수증 확인
-		            </button>
-		            <button type="button" class="btn-primary" onclick="closeReceiptModal()">
-		                닫기
-		            </button>
-		        </div>
-		    </div>
-		</div>
     </main>
 </div>
 <script>
-function search() {
-    const keyword = document.getElementById("searchKeyword").value;
-    const sort = document.getElementById("sortOrder").value;
-
-    location.href = `?keyword=${keyword}&sort=${sort}`;
-}
-
 function viewReceipt(e, itemNo) {
     e.stopPropagation();
     

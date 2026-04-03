@@ -4,14 +4,14 @@ let currentBidPage = 1;
 const bidsPerPage = 10; // 💡 한 화면에 보여줄 개수 (10개)
 
 // 1. 모달창 열기 및 데이터 가져오기
-function openBidHistory(itemNo, itemTitle) {
+function openBidHistory(itemNo) {
     const modal = document.getElementById("bidModal");
     const titleEle = document.getElementById("modalItemTitle");
     const tbody = document.getElementById("bidHistoryList");
     const paginationArea = document.getElementById("modalPagination");
 
     modal.style.display = "flex";
-    titleEle.innerText = `[${itemNo}] ${itemTitle} - 입찰 기록`;
+    titleEle.innerText = `[${itemNo}] - 입찰 기록`;
     
     // 초기화
     tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>데이터를 불러오는 중입니다... ⏳</td></tr>";

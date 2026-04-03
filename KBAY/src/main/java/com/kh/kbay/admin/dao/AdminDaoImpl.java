@@ -10,11 +10,11 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
-import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
 import com.kh.kbay.mypage.model.vo.FaqImg;
+import com.kh.kbay.payment.model.vo.PaymentSearchDto;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -238,16 +238,13 @@ public class AdminDaoImpl implements AdminDao {
 	}
 	
 	@Override
-	public List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap) {
+	public List<Map<String, Object>> selectPaymentList(PaymentSearchDto paramMap) {
 	    return session.selectList("adminMapper.selectPaymentList", paramMap);
 	}
-
-	
 
 	@Override
 	public int updateMemberNoPayCount(int itemNo) {
 		return session.update("adminMapper.updateMemberNoPayCount", itemNo);
 	}
-
 	
 }
