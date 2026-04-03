@@ -237,5 +237,11 @@
 	    WHERE i.user_no = #{userNo} 
 	    ORDER BY p.approved_at DESC
 	</select>
+	
+	<update id="updatePassword">
+    UPDATE MEMBER 
+    SET user_pwd = #{encPwd} 
+    WHERE user_no = #{userNo}
+</update>
 
 </mapper>

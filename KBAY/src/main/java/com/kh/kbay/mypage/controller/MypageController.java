@@ -39,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MypageController {
-
+	
+	private final org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder passwordEncoder;
+	
     private final MypageService ms;
     private final ItemService is;
     private final PaymentService ps;
@@ -304,6 +306,34 @@ public class MypageController {
         // 아이템 번호로 판매자의 userNo를 찾아서 LIKE_COUNT 증가
         int result = ms.increaseSellerLike(itemNo);
         return (result > 0) ? "success" : "fail";
+    }
+    
+    @PostMapping("changePwd")
+    @ResponseBody
+    public Map<String, Object> changePwd(@RequestParam String currentPwd, 
+                                         @RequestParam String newPwd, 
+                                         Authentication auth) {
+        Map<String, Object> result = new HashMap<>();
+        Member loginUser = (Member) auth.getPrincipal();
+
+        if (!passwordEncoder.matches(currentPwd, loginUser.getUserPwd())) {
+            result.put("result", "FAIL");
+            result.put("message", "현재 비밀번호가 일치하지 않습니다.");
+            return result;
+        }
+
+        String encPwd = passwordEncoder.encode(newPwd);
+        int updateResult = ms.updatePassword(loginUser.getUserNo(), encPwd);
+
+        if (updateResult > 0) {
+            loginUser.setUserPwd(encPwd);
+            result.put("result", "SUCCESS");
+        } else {
+            result.put("result", "FAIL");
+            result.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
+        }
+
+        return result;
     }
     
     
