@@ -113,7 +113,7 @@ public class schedulingController {
         }
     }
 	
-	@Scheduled(fixedDelay = 600000) 
+	@Scheduled(fixedDelay = 60000) 
     public void processExpiredPayments() {
         
         // 1. 결제 마감일이 지난 아이템 번호들을 싹 다 가져옵니다.
@@ -126,12 +126,12 @@ public class schedulingController {
                     // 알아서 1등 날리고, 7일 연장하거나, 사람이 없으면 유찰('O')시켜 줍니다.
                     int result = adminService.updateForceSuccession(itemNo);
                     
-                    if (result == 1) log.info("⏳ 자동 승계 완료 (+7일 연장) : {}번 아이템", itemNo);
-                    if (result == 2) log.info("⏳ 자동 유찰 완료 (차순위 없음) : {}번 아이템", itemNo);
-                    if (result == 3) log.info("⏳ 자동 유찰 완료 (즉시낙찰 미결제) : {}번 아이템", itemNo);
+                    if (result == 1) log.info("자동 승계 완료 (+7일 연장) : {}번 아이템", itemNo);
+                    if (result == 2) log.info("자동 유찰 완료 (차순위 없음) : {}번 아이템", itemNo);
+                    if (result == 3) log.info("자동 유찰 완료 (즉시낙찰 미결제) : {}번 아이템", itemNo);
                     
                 } catch (Exception e) {
-                    log.error("🚨 {}번 아이템 미결제 자동 처리 중 오류 발생", itemNo, e);
+                    log.error("{}번 아이템 미결제 자동 처리 중 오류 발생", itemNo, e);
                 }
             }
         }

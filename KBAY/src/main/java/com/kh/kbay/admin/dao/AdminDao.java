@@ -90,11 +90,17 @@ public interface AdminDao {
 	int selectSuccessionCount();
 	List<Item> selectSuccessionList(Map<String, Object> paramMap);
 	int updateForceFail(int itemNo);
-	String selectTopBidType(int itemNo);
+	int updateForceFailF(int itemNo);
+	int updateMemberNoPayCount(int itemNo);
+	int selectFailedBidCount(int itemNo);
 	int selectNextBidderCount(int itemNo);
+	String selectTopBidType(int itemNo);
 	int updateCurrentBidderFail(int itemNo);
 	int updateDeadlineExtend(int itemNo);
 
 	List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap);
+
+
+
 	
 }
