@@ -169,6 +169,11 @@ public class MemberServiceImpl implements UserDetailsService, MemberService {
             log.error("메일 발송 중 오류 발생", e);
         }
     }
+
+	@Override
+	public int deleteMailCode() {
+		return md.deleteMailCode();
+	}
     
 	
 }

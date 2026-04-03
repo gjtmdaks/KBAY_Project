@@ -69,13 +69,16 @@ public class MemberDaoImpl implements MemberDao {
 
 	@Override
 	public Date selectSuspendEndDate(int userNo) {
-		// TODO Auto-generated method stub
 		return session.selectOne("member.selectSuspendEndDate",userNo);
 	}
 
 	@Override
 	public void updateReleaseSuspend(int userNo) {
-		// TODO Auto-generated method stub
 		session.update("member.updateReleaseSuspend", userNo);
+	}
+
+	@Override
+	public int deleteMailCode() {
+		return session.delete("member.deleteMailCode");
 	}
 }
