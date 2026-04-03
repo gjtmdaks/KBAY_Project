@@ -24,6 +24,8 @@ public class Bid {
 	private String bidStatus; // 낙찰 포기/박탈 여부 (N, F 등)
 	private String bidType;
 	
+	private int memberNoPayCount;
+	
 	private long requestTime;
 
 	public Bid(int itemNo, int bidPrice, int userNo, int ranking) {

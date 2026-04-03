@@ -455,18 +455,40 @@
 	    WHERE ITEM_NO = #{itemNo}
 	</update>
 	
-	<update id="updateCurrentBidderFail">
-	    UPDATE BID
-	    SET BID_STATUS = 'F'
+	<update id="updateForceFailF">
+	    UPDATE ITEM
+	    SET STATUS = 'F'
 	    WHERE ITEM_NO = #{itemNo}
-	      AND USER_NO = (
-	          SELECT USER_NO FROM (
-	              SELECT USER_NO FROM BID 
-	              WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N' 
-	              ORDER BY BID_PRICE DESC, bid_time ASC
-	          ) WHERE ROWNUM = 1
-	      )
 	</update>
+	
+	<update id="updateMemberNoPayCount" parameterType="_int">
+	    UPDATE MEMBER
+	    SET NO_PAY_COUNT = NO_PAY_COUNT + 1
+	    WHERE USER_NO = (
+	        SELECT USER_NO FROM (
+	            SELECT USER_NO FROM BID
+	            WHERE ITEM_NO = #{itemNo} 
+	              AND BID_STATUS = 'N'
+	            ORDER BY BID_PRICE DESC, BID_TIME ASC
+	        ) WHERE ROWNUM = 1
+	    )
+	</update>
+	
+	<update id="updateCurrentBidderFail">
+    UPDATE BID
+    SET BID_STATUS = 'F'
+    WHERE ITEM_NO = #{itemNo}
+      AND USER_NO = (
+          /* 현재 1등인 유저의 번호를 가져오는 서브쿼리 */
+          SELECT USER_NO FROM (
+              SELECT USER_NO FROM BID 
+              WHERE ITEM_NO = #{itemNo} 
+                AND BID_STATUS = 'N' 
+              ORDER BY BID_PRICE DESC
+          ) WHERE ROWNUM = 1
+      )
+</update>
+	
 	
 	<update id="updateDeadlineExtend">
 	    UPDATE ITEM
@@ -487,6 +509,13 @@
 	    FROM BID
 	    WHERE ITEM_NO = #{itemNo} AND BID_STATUS = 'N'
 	</select>
+	
+	<select id="selectFailedBidCount" resultType="_int">
+    SELECT COUNT(*) 
+    FROM BID 
+    WHERE ITEM_NO = #{itemNo} 
+      AND BID_STATUS = 'F'
+</select>
 <!-- 낙찰 취하 페이지 끝 -->
 	
     <!-- 입찰 로그 상세 -->

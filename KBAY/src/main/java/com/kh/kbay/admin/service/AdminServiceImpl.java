@@ -226,41 +226,43 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public int updateForceSuccession(int itemNo) {
         
+        // 현재 유찰이 2개 인지(F가 2개 인지)
+    	int failedCount = ad.selectFailedBidCount(itemNo);
+        if (failedCount > 2) {
+            ad.updateForceFailF(itemNo);
+            return 2;
+        }
+        
+        // 유저 벌점 부여
+        if (failedCount == 0) {
+            ad.updateMemberNoPayCount(itemNo); // 1등만 벌점 +1
+        }
+        
         // 현재 1등 입찰의 타입 확인 (즉시 낙찰 NOW 인지 확인)
         String topBidType = ad.selectTopBidType(itemNo);
-
-        // 현재 1등 유저의 모든 입찰 내역을 박탈('F') 시킴
-        int result1 = ad.updateCurrentBidderFail(itemNo);
+        
+        // 현재 1등 유저의 입찰 내역을 박탈(F) 시킴
+        ad.updateCurrentBidderFail(itemNo);
         
         // 즉시 낙찰 방어 로직
-        // 즉시 낙찰건이면 차순위 확인 없이 바로 아이템 유찰('O') 처리!
+        // 즉시 낙찰건이면 차순위 확인 없이 바로 아이템 유찰('F') 처리!
         if ("NOW".equalsIgnoreCase(topBidType)) {
-            int result3 = ad.updateForceFail(itemNo);
-            if (result1 > 0 && result3 > 0) {
-                return 3; // 컨트롤러가 받아서 "now_fail"로 변환
-            }
-            throw new RuntimeException("즉시 낙찰 유찰 처리 중 예외 발생");
+            ad.updateForceFailF(itemNo);
+            return 3;
         }
-
-        // 일반 입찰(NORMAL)인 경우 기존대로 남은 차순위 유저 수 확인
+        
+        // 남은 사람이 있는지 없는지
         int remainCount = ad.selectNextBidderCount(itemNo);
         
-        if (remainCount > 0) {
+        if (remainCount > 0 && failedCount < 1) {
             // 남은 사람이 있다면 결제 기한 7일 연장
-            int result2 = ad.updateDeadlineExtend(itemNo);
-            if (result1 > 0 && result2 > 0) {
-                return 1; // 컨트롤러가 받아서 "success"로 변환
-            }
+        	ad.updateDeadlineExtend(itemNo);
+            return 1; // "success"
         } else {
-            // 남은 사람이 아무도 없다면 해당 경매를 강제 유찰('O') 처리
-            int result3 = ad.updateForceFail(itemNo);
-            if (result1 > 0 && result3 > 0) {
-                return 2; // 컨트롤러가 받아서 "empty"로 변환
-            }
+            // 남은 사람이 없거나, 혹은 있는데 이미 2명째 탈락이라면 유찰!
+            ad.updateForceFail(itemNo);
+            return 2; // "empty"
         }
-        
-        // 여기까지 왔는데 return을 못 했다면 뭔가 꼬인 것이므로 강제 에러 발생 및 롤백!
-        throw new RuntimeException("승계 처리 중 문제가 발생하여 롤백합니다.");
     }
 
     @Override
