@@ -339,4 +339,11 @@ public class MypageServiceImpl implements MypageService {
 	    return md.increaseSellerLike(itemNo);
 	}
 
+	@Override
+	public int updatePassword(int userNo, String encPwd) {
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("userNo", userNo);
+	    map.put("encPwd", encPwd);
+	    return md.updatePassword(map);
+	}
 }

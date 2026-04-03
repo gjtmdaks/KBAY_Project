@@ -123,4 +123,9 @@ public class MypageDaoImpl implements MypageDao {
 	    return session.update("member.increaseSellerLike", itemNo);
 	}
 	
+	@Override
+	public int updatePassword(Map<String, Object> map) {
+	    return session.update("mypage.updatePassword", map);
+	}
+	
 }
