@@ -211,6 +211,10 @@ public class AdminDaoImpl implements AdminDao {
 		return session.update("adminMapper.updateForceFail", itemNo);
 	}
 	@Override
+	public int updateForceFailF(int itemNo) {
+		return session.update("adminMapper.updateForceFailF", itemNo);
+	}
+	@Override
 	public int updateCurrentBidderFail(int itemNo) {
 		// TODO Auto-generated method stub
 		return session.update("adminMapper.updateCurrentBidderFail", itemNo);
@@ -238,10 +242,7 @@ public class AdminDaoImpl implements AdminDao {
 	    return session.selectList("adminMapper.selectPaymentList", paramMap);
 	}
 
-	@Override
-	public int updateForceFailF(int itemNo) {
-		return session.update("adminMapper.selectPaymentList", itemNo);
-	}
+	
 
 	@Override
 	public int updateMemberNoPayCount(int itemNo) {

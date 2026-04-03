@@ -260,7 +260,7 @@ public class AdminServiceImpl implements AdminService {
             return 1; // "success"
         } else {
             // 남은 사람이 없거나, 혹은 있는데 이미 2명째 탈락이라면 유찰!
-            ad.updateForceFail(itemNo);
+            ad.updateForceFailF(itemNo);
             return 2; // "empty"
         }
     }
