@@ -118,7 +118,7 @@
 		
 		        <div class="receipt-footer">
 		            <button type="button" class="btn-secondary" id="m-receiptUrlBtn">
-		                공식 영수증 확인
+		                영수증 확인
 		            </button>
 		            <button type="button" class="btn-primary" onclick="closeReceiptModal()">
 		                닫기
