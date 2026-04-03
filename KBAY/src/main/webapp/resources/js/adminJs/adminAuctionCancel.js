@@ -62,8 +62,10 @@ function renderBidTable() {
                            String(dateObj.getMonth() + 1).padStart(2, '0') + "-" + 
                            String(dateObj.getDate()).padStart(2, '0') + " " + 
                            String(dateObj.getHours()).padStart(2, '0') + ":" + 
-                           String(dateObj.getMinutes()).padStart(2, '0');
-
+                           String(dateObj.getMinutes()).padStart(2, '0')+ ":" + 
+                           String(dateObj.getSeconds()).padStart(2, '0') + ":" + 
+                           String(dateObj.getMilliseconds()).padStart(3, '0');
+						
         const tr = document.createElement("tr");
         tr.style = isHighest;
         tr.innerHTML = `

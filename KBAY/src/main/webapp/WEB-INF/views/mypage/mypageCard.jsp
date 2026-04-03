@@ -33,7 +33,13 @@
             <table>
                 <tr>
                     <td>나의 상태</td>
-                    <td>입찰/등록 가능</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${user.authority == 1}">입찰 가능</c:when>
+                            <c:when test="${user.authority == 2 || user.authority == 3}">입찰 및 등록 가능</c:when>
+                            <c:otherwise>확인 불가</c:otherwise>
+                        </c:choose>
+                    </td>
                 </tr>
                 <tr>
                     <td>사고 건수</td>
