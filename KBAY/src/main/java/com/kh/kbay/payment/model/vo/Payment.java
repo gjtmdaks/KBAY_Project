@@ -1,7 +1,5 @@
 package com.kh.kbay.payment.model.vo;
 
-import java.util.Date;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +18,9 @@ public class Payment {
     private String createDate;
     
     private String orderName;
+    
+    private String itemTitle;
+    private String imgUrl;
+    private int userNo;
+    private String userName;
 }

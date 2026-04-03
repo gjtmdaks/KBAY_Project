@@ -45,7 +45,7 @@
                             <tr>
                                 <td>${item.itemNo}</td>
                                 <td>${item.categoryName}</td>
-                                <td class="title-cell" onclick="openBidHistory(${item.itemNo}, '${item.itemTitle}')">
+                                <td class="title-cell" onclick="openBidHistory(${item.itemNo})">
                                     ${item.itemTitle}
                                 </td>
                                 <td>${item.userId}</td>

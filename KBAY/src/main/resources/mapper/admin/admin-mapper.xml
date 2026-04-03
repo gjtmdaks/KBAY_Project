@@ -71,7 +71,7 @@
         SELECT 
             USER_NO as userNo, USER_ID as userId, USER_NAME as userName,
             USER_ADDRESS as userAddress, USER_PHONE as userPhone,
-            USER_EMAIL as userEmail, USER_ENROLL_DATE as userEnrollDate
+            USER_EMAIL as userEmail, USER_ENROLL_DATE as userEnrollDate, NO_PAY_COUNT as noPayCount
         FROM MEMBER
         WHERE USER_NO = #{userNo}
     </select>
@@ -524,6 +524,7 @@
             b.BID_NO,
             b.ITEM_NO,
             b.USER_NO,
+			P.PAY_STATUS,
             m.USER_ID,
             b.BID_PRICE,
             b.BID_TIME,
@@ -560,11 +561,12 @@
         ORDER BY b.bid_time DESC
     </select>
     
-	<select id="selectPaymentList" parameterType="map" resultType="map">
+	<select id="selectPaymentList" parameterType="PaymentSearchDto" resultType="map">
 	
 	    SELECT 
 	        P.PAY_NO,
 	        P.ITEM_NO,
+			P.PAY_STATUS,
 	        P.ORDER_ID,
 	        P.TOTAL_AMOUNT,
 	        P.METHOD,
@@ -610,15 +612,15 @@
 	    /* 구매자 정보 */
 	    LEFT JOIN MEMBER M
 	        ON B.BUYER_NO = M.USER_NO
-	
-	    WHERE P.PAY_STATUS = 'Y'
-	
-	    <if test="keyword != null and keyword != ''">
-	        AND (
-	            M.USER_NAME LIKE '%' || #{keyword} || '%'
-	            OR TO_CHAR(M.USER_NO) = #{keyword}
-	        )
-	    </if>
+
+		<where>
+		    <if test="keyword != null and keyword != ''">
+		        AND (
+		            M.USER_NAME LIKE '%' || #{keyword} || '%'
+		            OR TO_CHAR(M.USER_NO) = #{keyword, jdbcType=VARCHAR}
+		        )
+		    </if>
+		</where>
 	
 	    <choose>
 	        <when test="sort == 'latest'">

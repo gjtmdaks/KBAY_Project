@@ -11,11 +11,11 @@ import com.kh.kbay.bid.model.vo.Bid;
 import com.kh.kbay.bid.model.vo.BidLogVo;
 import com.kh.kbay.board.model.vo.BoardPost;
 import com.kh.kbay.board.model.vo.Reply;
-import com.kh.kbay.common.PageInfo;
 import com.kh.kbay.item.model.vo.Item;
 import com.kh.kbay.member.model.vo.Member;
 import com.kh.kbay.mypage.model.vo.Faq;
 import com.kh.kbay.mypage.model.vo.FaqImg;
+import com.kh.kbay.payment.model.vo.PaymentSearchDto;
 import com.kh.kbay.report.model.vo.Report;
 
 import lombok.RequiredArgsConstructor;
@@ -266,9 +266,26 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Map<String, Object>> selectPaymentList(Map<String, Object> paramMap) {
-        return ad.selectPaymentList(paramMap);
-    }
+    public List<Map<String, Object>> selectPaymentList(PaymentSearchDto paramMap) {
+        List<Map<String, Object>> list = ad.selectPaymentList(paramMap);
 
+        for (Map<String, Object> m : list) {
+
+            Object status = m.get("PAY_STATUS");
+
+            if ("Y".equals(status)) {
+                m.put("payStatus", "결제 완료");
+            } else if ("S".equals(status)) {
+                m.put("payStatus", "배송 중");
+            } else if ("P".equals(status)) {
+                m.put("payStatus", "거래 완료");
+            } else if ("C".equals(status)) {
+                m.put("payStatus", "취소됨");
+            } else {
+            	m.put("payStatus", "-");
+            }
+        }
+        return list;
+    }
 	
 }

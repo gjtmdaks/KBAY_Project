@@ -131,6 +131,7 @@
                 <span class="user-badge">회원 No. <span id="targetUserNo"></span></span>
                 <h4 id="targetUserName">사용자 이름</h4>
                 <p id="targetUserId"></p>
+                <h5>결제 거부 횟수 : <span id="targetUserNoPayCount"></span></h5>
             </div>
 
             <%-- 2. 5개 관리 메뉴 그리드 (이모지 제거, 클래스 추가) --%>
