@@ -210,7 +210,6 @@
 			        sellerUserNo: "${item.userNo}"
 			    };
 	</script>
-	<jsp:include page="/WEB-INF/views/common/paging.jsp" />
 	<script src="${pageContext.request.contextPath}/resources/js/itemJs/itemDetail.js" defer></script>
 	<script src="${pageContext.request.contextPath}/resources/js/reportJs/report.js"></script>
 </body>
