@@ -78,20 +78,7 @@
 				<c:choose>
 
 					<c:when test="${type eq 'endDeal' || remain <= 0}">
-						<c:choose>
-							<c:when test="${item.status eq 'C'}">
-								<strong style="color:#7f8c8d;">강제 취소됨</strong>
-							</c:when>
-							<c:when test="${item.status eq 'F'}">
-								<strong style="color:#7f8c8d;">유찰(미결제)</strong>
-							</c:when>
-							<c:when test="${item.status eq 'O'}">
-								<strong style="color:#7f8c8d;">강제 유찰됨</strong>
-							</c:when>
-							<c:otherwise>
-								<strong style="color:red;">종료</strong>
-							</c:otherwise>
-						</c:choose>
+						<strong style="color:red;">종료</strong>
 					</c:when>
 
 					<c:otherwise>
