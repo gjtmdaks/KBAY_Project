@@ -35,6 +35,8 @@
 		        <select name="sort">
 		            <option value="">기본 정렬</option>
 		            <option value="views" ${sort == 'views' ? 'selected' : ''}>조회수순</option>
+		            <option value="endDesc" ${sort == 'endDesc' ? 'selected' : ''}>최신순</option>
+		            <option value="endAsc" ${sort == 'endAsc' ? 'selected' : ''}>오래된순</option>
 		        </select>
 		
 		        <button type="submit">적용</button>
