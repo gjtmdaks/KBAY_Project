@@ -13,7 +13,6 @@ public class ExceptionController {
     public ModelAndView handleException(Exception e) throws Exception {
         log.error("에러 발생 원인 : ", e);
         
-        if(true) throw e;
 
         ModelAndView mav = new ModelAndView();
         mav.addObject("errorMsg", "서비스 이용 중 예상치 못한 오류가 발생했습니다.");
