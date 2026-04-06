@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mypageCss/mypage.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminCss/admin.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminCss/adminPayment.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mypageCss/wonList.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -51,7 +52,14 @@
 		                 onerror="this.src='https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg'">
 		
 		            <div class="info">
-		                <div class="badge">${p.payStatus}</div>
+		                <c:choose>
+							<c:when test="${p.PAY_STATUS eq 'Y'}"><span class="badge badge-y">결제 완료</span></c:when>
+							<c:when test="${p.PAY_STATUS eq 'S'}"><span class="badge badge-s">배송 중</span></c:when>
+                            <c:when test="${p.PAY_STATUS eq 'P'}"><span class="badge badge-p">거래 완료</span></c:when>
+                            <c:when test="${p.PAY_STATUS eq 'C'}"><span class="badge badge-c">취소됨</span></c:when>
+                            <c:otherwise><span class="badge badge-n">미결제</span></c:otherwise>
+                        </c:choose>
+
 		                <h3 class="title">${p.ITEM_TITLE}</h3>
 		
 		                <p class="meta">
