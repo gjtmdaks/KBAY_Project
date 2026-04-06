@@ -68,59 +68,82 @@
 		                    <fmt:formatNumber value="${p.TOTAL_AMOUNT}" pattern="#,###"/> 원
 		                </strong>
 		
-		                <button class="btn-view"
-		                        onclick="viewReceipt(event, ${p.ITEM_NO})">
-		                    내역 보기
-		                </button>
+		                <button type="button" class="btn-view" onclick="openDetailModal(event, ${p.ITEM_NO})">내역 보기</button>
 		            </div>
 		        </div>
 		    </c:forEach>
 		</div>
     </main>
 </div>
+<div id="detailModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+    <div class="modal-content" style="background: white; width: 400px; margin: 150px auto; padding: 25px; border-radius: 12px; text-align: center; position: relative;">
+        <h3 style="margin-bottom: 20px;">거래 상세 내역</h3>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <button type="button" id="btnReceipt" class="btn-blue" style="width: 100%; padding: 12px; cursor: pointer; background: #3282f6; color: white; border: none; border-radius: 6px;">📄 영수증 보기</button>
+            <button type="button" id="btnDelivery" class="btn-receipt" style="width: 100%; padding: 12px; cursor: pointer; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px;">🚚 배송내역 조회</button>
+            <button type="button" onclick="closeDetailModal()" class="btn-gray" style="width: 100%; padding: 12px; cursor: pointer; background: #eee; border: none; border-radius: 6px;">닫기</button>
+        </div>
+        <div id="deliveryInfoArea" style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: left; font-size: 0.9em; border: 1px solid #eee;">
+            <p style="margin: 5px 0;"><strong>택배사:</strong> <span id="textCourier"></span></p>
+            <p style="margin: 5px 0;"><strong>운송장 번호:</strong> <span id="textTracking"></span></p>
+            <p style="color: #3282f6; font-size: 0.8em; margin-top: 10px;">* 실제 배송 추적은 해당 택배사 홈페이지를 이용해주세요.</p>
+        </div>
+    </div>
+</div>
 <script>
-function viewReceipt(e, itemNo) {
-    e.stopPropagation();
-    
-    fetch(`${pageContext.request.contextPath}/payment/receipt/` + itemNo)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("m-orderName").innerText = data.orderName;
-            document.getElementById("m-totalAmount").innerText = data.totalAmount.toLocaleString();
-            document.getElementById("m-orderId").innerText = data.orderId;
-            document.getElementById("m-method").innerText = data.method;
-            
-            let dateStr = data.approvedAt;
-            if(dateStr && dateStr.includes('T')) {
-                dateStr = dateStr.substring(0,10) + " " + dateStr.substring(11,19);
-            }
-            document.getElementById("m-approvedAt").innerText = dateStr;
-            
-            document.getElementById("m-receiptUrlBtn").onclick = () => {
-                window.open(data.receiptUrl, 'receipt', 'width=500,height=700');
+function openDetailModal(e, itemNo) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
+    document.getElementById("deliveryInfoArea").style.display = "none";
+    document.getElementById("textCourier").innerText = "";
+    document.getElementById("textTracking").innerText = "";
+
+    fetch('${pageContext.request.contextPath}/payment/api/detail/' + itemNo)
+    .then(res => res.json())
+    .then(data => {
+        const pay = data.payment;
+        const del = data.delivery;
+
+        if(pay && pay.receiptUrl) {
+            document.getElementById("btnReceipt").onclick = function() {
+                window.open(pay.receiptUrl, 'receipt', 'width=500,height=700');
             };
-            
-            document.getElementById("receiptModal").style.display = "flex";
-            
-            // 로딩 상태
-            document.getElementById("m-orderName").innerText = "불러오는 중...";
-            
-            fetch(`${pageContext.request.contextPath}/payment/receipt/` + itemNo)
-        })
-        .catch(err => {
-            console.error(err);
-            alert("결제 내역을 불러오는 중 오류가 발생했습니다.");
-        });
+            document.getElementById("btnReceipt").style.display = "block";
+        } else {
+            document.getElementById("btnReceipt").style.display = "none";
+        }
+
+        if(del && del.trackingNo) {
+            document.getElementById("btnDelivery").onclick = function() {
+                document.getElementById("textCourier").innerText = del.courier;
+                document.getElementById("textTracking").innerText = del.trackingNo;
+                document.getElementById("deliveryInfoArea").style.display = "block";
+            };
+        } else {
+            document.getElementById("btnDelivery").onclick = function() {
+                alert("아직 판매자가 배송 정보를 등록하지 않았습니다.");
+            };
+        }
+
+        document.getElementById("detailModal").style.display = "block";
+    })
+    .catch(err => {
+        console.error(err);
+        alert("내역을 불러오는 중 오류가 발생했습니다.");
+    });
 }
 
-function closeReceiptModal() {
-    document.getElementById("receiptModal").style.display = "none";
+function closeDetailModal() {
+    document.getElementById("detailModal").style.display = "none";
 }
 
 window.onclick = function(event) {
-    const modal = document.getElementById("receiptModal");
-    if (event.target == modal) {
-        modal.style.display = "none";
+    const detailModal = document.getElementById("detailModal");
+    if (event.target == detailModal) {
+        detailModal.style.display = "none";
     }
 }
 </script>
