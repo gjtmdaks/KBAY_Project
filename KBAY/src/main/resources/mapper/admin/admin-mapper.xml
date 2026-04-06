@@ -524,7 +524,6 @@
             b.BID_NO,
             b.ITEM_NO,
             b.USER_NO,
-			P.PAY_STATUS,
             m.USER_ID,
             b.BID_PRICE,
             b.BID_TIME,
