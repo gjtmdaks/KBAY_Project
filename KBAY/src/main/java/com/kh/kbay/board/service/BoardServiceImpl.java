@@ -99,7 +99,18 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<String> getAllImageNames() {
-		return boardDao.getAllImageNames();
+	    List<String> list = boardDao.getAllImageNames();
+	    
+	    for (int i = 0; i < list.size(); i++) {
+	        String s = list.get(i);
+	        
+	        if (s != null && s.contains("/")) {
+	            String fileName = s.substring(s.lastIndexOf("/") + 1);
+	            list.set(i, fileName);
+	        }
+	    }
+	    
+	    return list;
 	}
 	
 }

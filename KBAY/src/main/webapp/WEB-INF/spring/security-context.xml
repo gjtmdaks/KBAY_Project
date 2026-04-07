@@ -35,7 +35,7 @@
 <security:intercept-url pattern="/admin/**" access="hasAuthority('3')"/>
 <security:intercept-url pattern="/chat/**" access="hasAnyAuthority('2', '3')"/>
 <security:intercept-url pattern="/board/insert/**" access="hasAnyAuthority('1', '2', '3')"/>
-<security:intercept-url pattern="/reply/**" access="hasAnyAuthority('2', '3')"/>
+<security:intercept-url pattern="/reply/**" access="hasAnyAuthority('1','2', '3')"/>
 <security:intercept-url pattern="/member/mypage.me" access="hasAnyAuthority('1', '2', '3')"/>
 <security:intercept-url pattern="/payment/**" access="hasAnyAuthority('1', '2', '3')"/>
 		<!-- 
