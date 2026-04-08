@@ -71,7 +71,7 @@
 						<input type="email" id="userEmail" name="userEmail" required>
 						<button type="button" id="sendMailBtn">인증번호 받기</button>
 						<div id="authArea" style="display:none; margin-top:5px;">
-   	 	 	 	 	    <input type="text" id="authCode" placeholder="인증번호 6자리">
+   	 	 	 	 	    <input type="text" id="authCode" placeholder="인증번호 6자리"><br>
      	 	 	 	    <button type="button" id="verifyBtn">확인</button>
      	 	 	 	    <button type="button" id="resendMailBtn" style="margin-left:5px;">재발송</button>
      	 	 	 	    <span id="timer">03:00</span>

@@ -117,7 +117,7 @@
 						</c:choose>
 				
 						<c:if test="${remain <= 600}">
-							<span style="color:red;"> (마감임박)</span>
+							<span style="color:red;"> (임박)</span>
 						</c:if>
 					</c:otherwise>
 				</c:choose>
