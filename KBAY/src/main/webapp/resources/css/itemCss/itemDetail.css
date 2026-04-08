@@ -336,6 +336,7 @@
     line-height: 1.8;
     color: #444;
     word-break: break-all;
+    white-space: pre-wrap;
 }
 
 /* 모달 및 입찰 테이블 수정 */
